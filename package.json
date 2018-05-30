@@ -15,7 +15,7 @@
     "npm_pack": "cd dist/login-form && npm pack",
     "package": "npm run build_lib && npm run npm_pack"
   },
-  "private": true,
+  "private": false,
   "dependencies": {
     "@angular/animations": "^6.0.3",
     "@angular/cdk": "^6.1.0",
