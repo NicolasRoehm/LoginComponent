@@ -1,0 +1,58 @@
+<form (ngSubmit)="onClickLogin()" [formGroup]="formGroup">
+  <div class="d-block">
+    <!-- NOTE: Login -->
+    <mat-form-field class="w-100">
+      <input matInput class="pr-4" formControlName="login" 
+        name="email" autocomplete="email" 
+        placeholder="{{ loginLabels.loginLabel }}" 
+        pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}" 
+        type="text"/> <!-- NOTE: Pattern matches any email -->
+      <mat-icon *ngIf="formGroup.controls.login.valid" (click)="formGroup.controls.login.setValue('')" class="clear-login" color="primary">close</mat-icon>
+      <!-- NOTE: Error messages can be displayed -->
+      <!-- <mat-hint align="start" *ngIf="formGroup.controls.login.errors?.required">
+        {{ loginLabels.fieldRequiredLabel | translate }}
+      </mat-hint>
+      <mat-hint align="start" *ngIf="formGroup.controls.login.errors?.pattern">
+        {{ loginLabels.fieldEmailLabel | translate }}
+      </mat-hint> -->
+    </mat-form-field>
+  </div>
+  <div class="d-block">
+    <!-- NOTE: Password -->
+    <mat-form-field class="w-100">
+      <input matInput class="pr-4" formControlName="password" 
+        name="password" autocomplete="password" 
+        placeholder="{{ loginLabels.passwordLabel }}" 
+        type="{{ showPassword ? 'text' : 'password' }}"/>
+      <mat-icon (click)="showPassword =! showPassword" class="show-password" color="primary">{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+      <!-- NOTE: Error messages can be displayed -->
+      <!-- <mat-hint align="end" *ngIf="formGroup.controls.password.errors?.required">
+        {{ loginLabels.fieldRequiredLabel | translate }}
+      </mat-hint> -->
+    </mat-form-field>
+  </div> 
+
+  <div class="d-block">
+    <div class="text-right pb-3">
+      <button mat-button (click)="forgottenPassword()" color="primary" class="small" type="button">
+        {{ loginLabels.forgottenPasswordLabel }}
+      </button>
+    </div>
+  </div>
+
+  <div class="d-block">
+    <div class="text-right">
+      <!-- TODO: Login with google -->
+      <!-- <button mat-raised-button color="warning"
+        class="google-btn"
+        (click)="grantOffline()">
+          <img src="assets/img/gplus-48.png" alt="Google+"/>
+          {{ loginLabels.googleConnectionLabel }}
+      </button> -->
+      <button mat-raised-button type="submit" color="primary" [disabled]="!formGroup.valid" class="small text-uppercase">
+        {{ loginLabels.signInLabel }}
+      </button>
+    </div>
+  </div>
+
+</form>

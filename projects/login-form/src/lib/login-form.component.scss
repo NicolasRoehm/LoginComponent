@@ -1,0 +1,32 @@
+.clear-login, .show-password {
+  position: absolute;
+  right: 0;
+  top: 5px;
+  font-size: 15px;
+  cursor: pointer;
+  width: 15px;
+  height: 15px;
+}
+
+// Bootstrap classes
+.small {
+  font-size: 75%;
+}
+.w-100 {
+  width: 100%;
+}
+.d-block {
+  display: block;
+}
+.text-right {
+  text-align: right;
+}
+.pb-3 {
+  padding-bottom: 1rem;
+}
+.pr-4 {
+  padding-right: 1.5rem;
+}
+.text-uppercase {
+  text-transform: uppercase;
+}
