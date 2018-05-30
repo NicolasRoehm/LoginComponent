@@ -2,6 +2,15 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.0.5.
 
+## Installation
+```sh
+npm install @caliatys/login-component --save
+```
+
+<a href="https://nodei.co/npm/@caliatys/login-component/" target="_blank">
+  <img src="https://nodei.co/npm/@caliatys/login-component.svg?downloads=true&downloadRank=true&stars=true">
+</a>
+
 ## Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
