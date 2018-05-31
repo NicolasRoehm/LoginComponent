@@ -35,7 +35,7 @@ export class AppComponent {
     this.loginForm.openDialog(false);
   }
 
-  public firstPassword() : void
+  public firstPassword($event) : void
   {
     console.log('firstPassword');
 
@@ -44,7 +44,7 @@ export class AppComponent {
     // Else snack bar
   }
 
-  public lostPassword() : void
+  public lostPassword($event) : void
   {
     console.log('lostPassword');
 

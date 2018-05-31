@@ -2,7 +2,7 @@
   <cal-login-form #loginForm 
     (login)="login($event)" 
     (forgottenPass)="forgottenPassword($event)" 
-    (sendFirstPass)="firstPassword()" 
-    (sendResetPass)="lostPassword()">
+    (sendFirstPass)="firstPassword($event)" 
+    (sendResetPass)="lostPassword($event)">
   </cal-login-form>
 </div>

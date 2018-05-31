@@ -30,8 +30,8 @@ export class LostPasswordComponent implements OnDestroy
   public captchaToken : string;
   public isFirst      : boolean;
 
-  public firstConnection : EventEmitter<string> = new EventEmitter();
-  public lostPassword    : EventEmitter<string> = new EventEmitter();
+  public firstConnection : EventEmitter<any> = new EventEmitter();
+  public lostPassword    : EventEmitter<any> = new EventEmitter();
 
   private closeSub : Subscription;
 
@@ -54,20 +54,26 @@ export class LostPasswordComponent implements OnDestroy
 
   public send() : void
   {
+    let event : any = {};
+
     let verifCode   : string = null;
     let newPassword : string = null;
+
     verifCode       = this.formGroup.controls.verifCode.value;
     newPassword     = this.formGroup.controls.newPassword.value;
+
+    event.newPassword = newPassword;
 
     // First connection
     if(this.isFirst)
     {
-      this.firstConnection.emit(newPassword);
+      this.firstConnection.emit(event);
       return;
     }
 
+    event.verifCode = verifCode;
     // Lost password
-    this.lostPassword.emit(newPassword);
+    this.lostPassword.emit(event);
   }
 
   private initFormsGroups() : void
