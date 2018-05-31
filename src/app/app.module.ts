@@ -17,6 +17,6 @@ import { LoginFormModule } from 'login-form';
     LoginFormModule
   ],
   providers: [],
-  bootstrap: [ AppComponent ]
+  bootstrap: [AppComponent]
 })
 export class AppModule { }

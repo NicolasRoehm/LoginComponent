@@ -18,7 +18,7 @@ import { Validators }       from '@angular/forms';
 import { Subscription }     from 'rxjs/Subscription';
 
 @Component({
-  selector    : 'enl-lost-password',
+  selector    : 'cal-lost-password',
   templateUrl : './lost-password.component.html',
   styleUrls   : ['./lost-password.component.scss']
 })
@@ -34,7 +34,7 @@ export class LostPasswordComponent implements OnDestroy
   public firstConnection : EventEmitter<string> = new EventEmitter();
   public lostPassword    : EventEmitter<string> = new EventEmitter();
 
-  private  closeSub : Subscription;
+  private closeSub : Subscription;
 
   constructor
   (

@@ -1,8 +1,6 @@
 {
-  "name": "@caliatys/login-component",
-  "description": "JavaScript library that provides a login component for Angular",
-  "version": "1.0.1",
-  "license": "MIT",
+  "name": "login-form-app",
+  "version": "0.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -30,6 +28,7 @@
     "@angular/router": "^6.0.3",
     "bootstrap": "^4.1.1",
     "core-js": "^2.5.4",
+    "hammerjs": "^2.0.8",
     "rxjs": "^6.2.0",
     "rxjs-compat": "^6.2.0",
     "zone.js": "^0.8.26"

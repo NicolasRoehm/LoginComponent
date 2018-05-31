@@ -19,7 +19,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { LostPasswordComponent } from './lost-password/lost-password.component';
 
 @Component({
-  selector    : 'enl-login-form',
+  selector    : 'cal-login-form',
   templateUrl : './login-form.component.html',
   styleUrls   : ['./login-form.component.scss']
 })

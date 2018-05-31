@@ -10,9 +10,7 @@ import { LoginFormComponent } from 'login-form';
   templateUrl : './app.component.html',
   styleUrls   : ['./app.component.scss']
 })
-export class AppComponent
-{
-
+export class AppComponent {
   @ViewChild('loginForm') loginForm : LoginFormComponent;
 
   public login($event : any) : void

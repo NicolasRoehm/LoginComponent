@@ -1,14 +1,14 @@
-# LoginComponent
+# LoginForm
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.0.5.
 
 ## Installation
 ```sh
-npm install @caliatys/login-component --save
+npm install @caliatys/login-form --save
 ```
 
-<a href="https://nodei.co/npm/@caliatys/login-component/" target="_blank">
-  <img src="https://nodei.co/npm/@caliatys/login-component.svg?downloads=true&downloadRank=true&stars=true">
+<a href="https://nodei.co/npm/@caliatys/login-form/" target="_blank">
+  <img src="https://nodei.co/npm/@caliatys/login-form.svg?downloads=true&downloadRank=true&stars=true">
 </a>
 
 ## Development server
