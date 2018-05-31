@@ -7,7 +7,6 @@ import { Output }           from '@angular/core';
 import { EventEmitter }     from '@angular/core';
 import { MatDialogRef }     from '@angular/material';
 import { MatDialog }        from '@angular/material';
-import { MatSnackBar }      from '@angular/material';
 import { MAT_DIALOG_DATA }  from '@angular/material';
 import { FormControl }      from '@angular/forms';
 import { FormGroup }        from '@angular/forms';
@@ -39,7 +38,6 @@ export class LostPasswordComponent implements OnDestroy
   constructor
   (
     public  dialogRef  : MatDialogRef<LostPasswordComponent>,
-    public  snackBar   : MatSnackBar,
     private builder    : FormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: any
   )

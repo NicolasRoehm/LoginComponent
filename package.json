@@ -1,6 +1,7 @@
 {
   "name": "login-form-app",
-  "version": "0.0.0",
+  "description": "JavaScript library that provides a login component for Angular",
+  "version": "1.1.1",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -8,10 +9,11 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "bar": "ng build --prod login-form && ng s",
+    "bar": "ng build --prod login-form && ng s --port=4300",
     "build_lib": "ng build --prod login-form",
     "npm_pack": "cd dist/login-form && npm pack",
-    "package": "npm run build_lib && npm run npm_pack"
+    "package": "npm run build_lib && npm run npm_pack",
+    "npm_publish": "cd dist/login-form && npm publish --access=public"
   },
   "private": false,
   "dependencies": {
