@@ -19,7 +19,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { LostPasswordComponent } from './lost-password/lost-password.component';
 
 @Component({
-  selector    : 'enl-login-form',
+  selector    : 'cal-login-form',
   templateUrl : './login-form.component.html',
   styleUrls   : ['./login-form.component.scss']
 })
@@ -74,13 +74,13 @@ export class LoginFormComponent implements OnInit, OnDestroy
 
     let dialogRef = this.dialog.open(LostPasswordComponent, { data : params });
 
-    this.firstSub = dialogRef.componentInstance.firstConnection.subscribe((newPassword) =>
+    this.firstSub = dialogRef.componentInstance.firstConnection.subscribe((event) =>
     {
-      this.sendFirstPass.emit(newPassword);
+      this.sendFirstPass.emit(event);
     });
-    this.lostSub  = dialogRef.componentInstance.lostPassword.subscribe((newPassword) =>
+    this.lostSub  = dialogRef.componentInstance.lostPassword.subscribe((event) =>
     {
-      this.sendResetPass.emit(newPassword);
+      this.sendResetPass.emit(event);
     });
     dialogRef.afterClosed().subscribe(result =>
     {
@@ -96,14 +96,14 @@ export class LoginFormComponent implements OnInit, OnDestroy
 
   public onClickLogin() : void
   {
-    let event : any = null;
+    let event : any = {};
     event = this.prepareEvent();
     this.login.emit(event);
   }
 
   public forgottenPassword() : void
   {
-    let event : any = null;
+    let event : any = {};
     event = this.prepareEvent();
     this.forgottenPass.emit(event);
   }
@@ -152,15 +152,13 @@ export class LoginFormComponent implements OnInit, OnDestroy
 
   private prepareEvent() : any
   {
-    let event : any = null;
+    let event : any = {};
 
     let login    : string = this.formGroup.controls.login.value;
     let password : string = this.formGroup.controls.password.value;
 
-    event = {
-      login      : login,
-      password   : password
-    };
+    event.login    = login;
+    event.password = password;
 
     return event;
   }

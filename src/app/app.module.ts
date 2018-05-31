@@ -1,6 +1,7 @@
 // Angular modules
-import { BrowserModule }   from '@angular/platform-browser';
-import { NgModule }        from '@angular/core';
+import { NgModule }                from '@angular/core';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { BrowserModule }           from '@angular/platform-browser';
 
 // Components
 import { AppComponent }    from './app.component';
@@ -13,10 +14,11 @@ import { LoginFormModule } from 'login-form';
     AppComponent
   ],
   imports: [
+    BrowserAnimationsModule,
     BrowserModule,
     LoginFormModule
   ],
   providers: [],
-  bootstrap: [ AppComponent ]
+  bootstrap: [AppComponent]
 })
 export class AppModule { }

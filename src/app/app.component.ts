@@ -10,9 +10,7 @@ import { LoginFormComponent } from 'login-form';
   templateUrl : './app.component.html',
   styleUrls   : ['./app.component.scss']
 })
-export class AppComponent
-{
-
+export class AppComponent {
   @ViewChild('loginForm') loginForm : LoginFormComponent;
 
   public login($event : any) : void
@@ -37,7 +35,7 @@ export class AppComponent
     this.loginForm.openDialog(false);
   }
 
-  public firstPassword() : void
+  public firstPassword($event) : void
   {
     console.log('firstPassword');
 
@@ -46,7 +44,7 @@ export class AppComponent
     // Else snack bar
   }
 
-  public lostPassword() : void
+  public lostPassword($event) : void
   {
     console.log('lostPassword');
 

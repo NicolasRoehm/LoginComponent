@@ -19,6 +19,9 @@
     "paths": {
       "login-form": [
         "dist/login-form"
+      ],
+      "login-form/*": [
+        "dist/login-form/*"
       ]
     }
   }

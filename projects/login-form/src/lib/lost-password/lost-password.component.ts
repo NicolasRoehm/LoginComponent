@@ -7,7 +7,6 @@ import { Output }           from '@angular/core';
 import { EventEmitter }     from '@angular/core';
 import { MatDialogRef }     from '@angular/material';
 import { MatDialog }        from '@angular/material';
-import { MatSnackBar }      from '@angular/material';
 import { MAT_DIALOG_DATA }  from '@angular/material';
 import { FormControl }      from '@angular/forms';
 import { FormGroup }        from '@angular/forms';
@@ -18,7 +17,7 @@ import { Validators }       from '@angular/forms';
 import { Subscription }     from 'rxjs/Subscription';
 
 @Component({
-  selector    : 'enl-lost-password',
+  selector    : 'cal-lost-password',
   templateUrl : './lost-password.component.html',
   styleUrls   : ['./lost-password.component.scss']
 })
@@ -31,15 +30,14 @@ export class LostPasswordComponent implements OnDestroy
   public captchaToken : string;
   public isFirst      : boolean;
 
-  public firstConnection : EventEmitter<string> = new EventEmitter();
-  public lostPassword    : EventEmitter<string> = new EventEmitter();
+  public firstConnection : EventEmitter<any> = new EventEmitter();
+  public lostPassword    : EventEmitter<any> = new EventEmitter();
 
-  private  closeSub : Subscription;
+  private closeSub : Subscription;
 
   constructor
   (
     public  dialogRef  : MatDialogRef<LostPasswordComponent>,
-    public  snackBar   : MatSnackBar,
     private builder    : FormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: any
   )
@@ -56,20 +54,26 @@ export class LostPasswordComponent implements OnDestroy
 
   public send() : void
   {
+    let event : any = {};
+
     let verifCode   : string = null;
     let newPassword : string = null;
+
     verifCode       = this.formGroup.controls.verifCode.value;
     newPassword     = this.formGroup.controls.newPassword.value;
+
+    event.newPassword = newPassword;
 
     // First connection
     if(this.isFirst)
     {
-      this.firstConnection.emit(newPassword);
+      this.firstConnection.emit(event);
       return;
     }
 
+    event.verifCode = verifCode;
     // Lost password
-    this.lostPassword.emit(newPassword);
+    this.lostPassword.emit(event);
   }
 
   private initFormsGroups() : void

@@ -4,15 +4,14 @@
         "directive-selector": [
             true,
             "attribute",
-            "enl",
+            "cal",
             "camelCase"
         ],
         "component-selector": [
             true,
             "element",
-            "enl",
+            "cal",
             "kebab-case"
-        ],
-        "import-destructuring-spacing": true
+        ]
     }
 }
