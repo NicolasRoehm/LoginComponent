@@ -38,9 +38,7 @@ import { MatDialogModule }          from '@angular/material';
 import { LoginFormComponent }       from './login-form.component';
 import { LostPasswordComponent }    from './lost-password/lost-password.component';
 
-/**
- * NgModule that includes all Material modules that are required to serve the app.
- */
+// NgModule that includes all Material modules that are required to serve the app.
 @NgModule({
   exports: [
     // Material modules
