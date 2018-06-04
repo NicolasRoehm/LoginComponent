@@ -31,7 +31,9 @@ export class LoginFormComponent implements OnInit, OnDestroy
   public    loginLabels : any;
   public    modalLabels : any;
 
+  /** Labels of the login form */
   @Input()  customLoginLabels : any;
+  /** Labels to be shown when password management is active */
   @Input()  customModalLabels : any;
 
   @Output() login         : EventEmitter<any>    = new EventEmitter();
