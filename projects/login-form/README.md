@@ -35,48 +35,48 @@ Use the `cal-login-form` component inside a `login.component.html`:
 </cal-login-form>
 ```
 
-See the example in [app.component.ts](https://github.com/Caliatys/LoginComponent/blob/master/src/app/app.component.ts)
+See the example in [https://github.com/Caliatys/LoginComponent/blob/master/src/app/app.component.ts](https://github.com/Caliatys/LoginComponent/blob/master/src/app/app.component.ts)
 
 #### Inputs
 ```typescript
-  /** Labels of the login form */
-  @Input() customLoginLabels : any = {
-    loginLabel             : 'Login',
-    passwordLabel          : 'Password',
-    forgottenPasswordLabel : 'Forgotten password',
-    signInLabel            : 'Sign in',
-    googleConnectionLabel  : 'Connect with Google',
-    fieldRequiredLabel     : 'This field is required',
-    fieldEmailLabel        : 'This value must be an email',
-  };
+/** Labels of the login form */
+@Input() customLoginLabels : any = {
+  loginLabel             : 'Login',
+  passwordLabel          : 'Password',
+  forgottenPasswordLabel : 'Forgotten password',
+  signInLabel            : 'Sign in',
+  googleConnectionLabel  : 'Connect with Google',
+  fieldRequiredLabel     : 'This field is required',
+  fieldEmailLabel        : 'This value must be an email',
+};
 
-  /** Labels to be shown when password management is active */
-  @Input() customModalLabels : any = {
-    lostPasswordLabel          : 'Lost password',
-    updatePasswordLabel        : 'Update password',
-    updatePasswordMessageLabel : 'Please enter a new password',
-    verifCodeMessageLabel      : 'Please enter the confirmation code you will receive by email',
-    verifCodeLabel             : 'Verification code',
-    newPasswordLabel           : 'New password',
-    sendLabel                  : 'Send',
-    policyPassword1Label       : 'Minimum password length (6 to 128)',
-    policyPassword2Label       : 'Require at least one uppercase letter (A to Z)',
-    policyPassword3Label       : 'Require at least one lowercase letter (a to z)',
-    policyPassword4Label       : 'Require at least one number (0 to 9)',
-    policyPassword5Label       : 'Require at least one nonalphanumeric character ! @ # $ % ^ & * ( ) _ + - = [ ] { } | \'',
-    fieldRequiredLabel         : 'This field is required',
-    fieldNonWhitespaceLabel    : 'This value must not contain any spaces',
-  };
+/** Labels to be shown when password management is active */
+@Input() customModalLabels : any = {
+  lostPasswordLabel          : 'Lost password',
+  updatePasswordLabel        : 'Update password',
+  updatePasswordMessageLabel : 'Please enter a new password',
+  verifCodeMessageLabel      : 'Please enter the confirmation code you will receive by email',
+  verifCodeLabel             : 'Verification code',
+  newPasswordLabel           : 'New password',
+  sendLabel                  : 'Send',
+  policyPassword1Label       : 'Minimum password length (6 to 128)',
+  policyPassword2Label       : 'Require at least one uppercase letter (A to Z)',
+  policyPassword3Label       : 'Require at least one lowercase letter (a to z)',
+  policyPassword4Label       : 'Require at least one number (0 to 9)',
+  policyPassword5Label       : 'Require at least one nonalphanumeric character ! @ # $ % ^ & * ( ) _ + - = [ ] { } | \'',
+  fieldRequiredLabel         : 'This field is required',
+  fieldNonWhitespaceLabel    : 'This value must not contain any spaces',
+};
 ```
 
 **Important Note**: This project uses the following dependencies :
 ```json
-  "@angular/common": "^6.0.0-rc.0 || ^6.0.0",
-  "@angular/core": "^6.0.0-rc.0 || ^6.0.0",
-  "@angular/material": "^6.0.0-rc.0 || ^6.0.0",
-  "rxjs": "^6.0.0",
-  "rxjs-compat": "^6.0.0",
-  "bootstrap": "^4.0.0"
+"@angular/common": "^6.0.0-rc.0 || ^6.0.0",
+"@angular/core": "^6.0.0-rc.0 || ^6.0.0",
+"@angular/material": "^6.0.0-rc.0 || ^6.0.0",
+"rxjs": "^6.0.0",
+"rxjs-compat": "^6.0.0",
+"bootstrap": "^4.0.0"
 ```
 
 ## Roadmap
