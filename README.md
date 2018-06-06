@@ -1,15 +1,13 @@
-# LoginForm
+# Login Form Component
+> Angular component providing login and password management using [Angular Material](https://material.angular.io) library.
 
 <a href="https://nodei.co/npm/@caliatys/login-form/" target="_blank">
-  <img src="https://nodei.co/npm/@caliatys/login-form.svg?downloads=true&downloadRank=true&stars=true">
+  <img src="https://nodei.co/npm/@caliatys/login-form.svg">
 </a>
-
-## What does it do?
-This library is an Angular component providing login and password management with the [Angular Material](https://material.angular.io) library.
 
 ![Example](src/assets/img/example.png)
 
-## How to use it?
+## Installation
 Install `@caliatys/login-form` in your project:
 ```sh
 npm install @caliatys/login-form --save
@@ -37,7 +35,7 @@ Use the `cal-login-form` component inside a `login.component.html`:
 </cal-login-form>
 ```
 
-See the example in [https://github.com/Caliatys/LoginComponent/blob/master/src/app/app.component.ts](https://github.com/Caliatys/LoginComponent/blob/master/src/app/app.component.ts)
+See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginComponent/blob/master/src/app/app.component.ts)
 
 #### Inputs
 ```typescript
