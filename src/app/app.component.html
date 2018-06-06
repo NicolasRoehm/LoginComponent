@@ -1,8 +1,12 @@
-<div style="width:50%;margin:5% auto;">
-  <cal-login-form #loginForm 
-    (login)="login($event)" 
-    (forgottenPass)="forgottenPassword($event)" 
-    (sendFirstPass)="firstPassword($event)" 
-    (sendResetPass)="lostPassword($event)">
-  </cal-login-form>
+<div class="container">
+  <div class="row mt-5">
+    <div class="col">
+      <cal-login-form #loginForm 
+        (login)="login($event)" 
+        (forgottenPass)="forgottenPassword($event)" 
+        (sendFirstPass)="firstPassword($event)" 
+        (sendResetPass)="lostPassword($event)">
+      </cal-login-form>
+    </div>
+  </div>
 </div>

@@ -2,6 +2,18 @@
   "name": "@caliatys/login-form",
   "description": "JavaScript library that provides a login component for Angular",
   "version": "1.1.3",
+  "author": "Nicolas Roehm <nicolas.roehm@gmail.com>",
+  "license": "MIT",
+  "private": false,
+  "keywords": [
+    "login",
+    "form",
+    "component",
+    "angular",
+    "material",
+    "typescript",
+    "javascript"
+  ],
   "peerDependencies": {
     "@angular/common": "^6.0.0-rc.0 || ^6.0.0",
     "@angular/core": "^6.0.0-rc.0 || ^6.0.0",

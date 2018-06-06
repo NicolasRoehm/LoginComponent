@@ -7,6 +7,8 @@
 ## What does it do?
 This library is an Angular component providing login and password management with the [Angular Material](https://material.angular.io) library.
 
+![Example](https://github.com/Caliatys/LoginComponent/blob/master/src/assets/img/example.png)
+
 ## How to use it?
 Install `@caliatys/login-form` in your project:
 ```sh
