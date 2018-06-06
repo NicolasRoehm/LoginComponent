@@ -2,7 +2,7 @@
 > Angular component providing login and password management using [Angular Material](https://material.angular.io) library.
 
 <a href="https://nodei.co/npm/@caliatys/login-form/" target="_blank">
-  <img src="https://nodei.co/npm/@caliatys/login-form.svg">
+  <img src="https://nodei.co/npm/@caliatys/login-form.svg?downloads=true">
 </a>
 
 ![Example](src/assets/img/example.png)
