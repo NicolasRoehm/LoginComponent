@@ -134,7 +134,7 @@ export class LoginFormComponent implements OnInit, OnDestroy
 
   /** Emit `$event` object containing login, password and social properties.
   *
-  * @param {string} social Name of the social provider
+  * @param social Name of the social provider
   * @example
   * var login    : string = $event.login;
   * var password : string = $event.password;
@@ -163,7 +163,7 @@ export class LoginFormComponent implements OnInit, OnDestroy
 
   /** Show password form either to initialize first password or to reset forgotten password.
   *
-  * @param {boolean} isFirst Initialize first password or reset forgotten password
+  * @param isFirst Initialize first password or reset forgotten password
   */
   public showPassForm(isFirst : boolean) : void
   {
