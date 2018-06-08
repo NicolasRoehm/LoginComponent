@@ -26,7 +26,7 @@ import { MatIconModule }            from '@angular/material';
 import { MatInputModule }           from '@angular/material';
 // import { MatDatepickerModule }      from '@angular/material';
 // import { MatNativeDateModule }      from '@angular/material';
-// import { MatTabsModule }            from '@angular/material';
+import { MatTabsModule }            from '@angular/material';
 // import { MatAutocompleteModule }    from '@angular/material';
 // import { MatStepperModule }         from '@angular/material';
 // import { MatPaginatorModule }       from '@angular/material';
@@ -36,7 +36,9 @@ import { MatDialogModule }          from '@angular/material';
 
 // Internal modules
 import { LoginFormComponent }       from './login-form.component';
-import { LostPasswordComponent }    from './lost-password/lost-password.component';
+import { PassFormComponent }        from './pass-form/pass-form.component';
+import { ModalPassComponent }       from './modal-pass/modal-pass.component';
+import { InlinePassComponent }      from './inline-pass/inline-pass.component';
 
 // NgModule that includes all Material modules that are required to serve the app.
 @NgModule({
@@ -64,7 +66,7 @@ import { LostPasswordComponent }    from './lost-password/lost-password.componen
     // MatNativeDateModule,
     // MatProgressSpinnerModule,
     // MatDatepickerModule,
-    // MatTabsModule,
+    MatTabsModule,
     // MatAutocompleteModule,
     // MatExpansionModule,
     // MatTooltipModule,
@@ -81,14 +83,18 @@ export class MaterialModule {}
   ],
   declarations: [
     LoginFormComponent,
-    LostPasswordComponent
+    PassFormComponent,
+    ModalPassComponent,
+    InlinePassComponent
   ],
   providers: [
   ],
-  entryComponents: [ LostPasswordComponent ],
+  entryComponents: [ ModalPassComponent ],
   exports: [
     LoginFormComponent,
-    LostPasswordComponent
+    PassFormComponent,
+    ModalPassComponent,
+    InlinePassComponent
   ]
 })
 export class LoginFormModule { }

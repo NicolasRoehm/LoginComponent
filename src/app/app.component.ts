@@ -56,7 +56,7 @@ export class AppComponent
 
     this.authService.fakeAuth(login, password).subscribe(user =>
     {
-      alert('success');
+      console.log('success');
     },
     err =>
     {
@@ -64,12 +64,29 @@ export class AppComponent
 
       // First connection
       if(err === -1)
-        this.loginForm.openDialog(true);
+        this.loginForm.showPassForm(true);
 
       // Error
       if(err === -2)
         this.snackBar.open(this.translate.instant('ERROR_LOGIN_FAILED'), 'X');
     });
+  }
+
+  public loginSocial($event : any) : void
+  { // NOTE: onClickLoginSocial
+    if(!$event)
+      return;
+
+    let login    : string = null;
+    let password : string = null;
+    let social   : string = null;
+    login    = $event.login;
+    password = $event.password;
+    social   = $event.social;
+
+    console.log($event);
+
+    // TODO: fakeService
   }
 
   public forgottenPassword($event : any) : void
@@ -80,6 +97,8 @@ export class AppComponent
     let login : string = null;
     login = $event.login;
 
+    console.log($event);
+
     if(!login)
     {
       this.snackBar.open(this.translate.instant('ERROR_LOGIN_REQUIRED'), 'X');
@@ -88,7 +107,7 @@ export class AppComponent
 
     this.authService.fakeResetPassword(login).subscribe((res : any) =>
     {
-      this.loginForm.openDialog(false);
+      this.loginForm.showPassForm(false);
     },
     err =>
     {
@@ -124,12 +143,14 @@ export class AppComponent
     if(!$event)
       return;
 
+    console.log($event);
+
     let newPassword : string = null;
-    newPassword = $event.newPassword;
+    newPassword = $event.password;
 
     this.authService.fakeInitPassword(newPassword).subscribe(res =>
     {
-      this.loginForm.closeDialog();
+      this.loginForm.hidePassForm();
       this.snackBar.open(this.translate.instant('SUCCESS_UPDATE_PWD'), 'x');
     },
     err =>
@@ -143,14 +164,16 @@ export class AppComponent
     if(!$event)
       return;
 
+    console.log($event);
+
     let newPassword : string = null;
     let verifCode   : string = null;
-    newPassword = $event.newPassword;
-    verifCode   = $event.verifCode;
+    newPassword = $event.password;
+    verifCode   = $event.code;
 
     this.authService.fakeConfirmPassword(newPassword, verifCode).subscribe(res =>
     {
-      this.loginForm.closeDialog();
+      this.loginForm.hidePassForm();
       this.snackBar.open(this.translate.instant('SUCCESS_UPDATE_PWD'), 'x');
     },
     err =>

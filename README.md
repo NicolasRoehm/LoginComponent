@@ -29,6 +29,7 @@ Use the `cal-login-form` component inside a `login.component.html`:
 ```html
 <cal-login-form #loginForm 
   (login)="login($event)" 
+  (loginSocial)="loginSocial($event)" 
   (forgottenPass)="forgottenPassword($event)" 
   (sendFirstPass)="firstPassword($event)" 
   (sendResetPass)="lostPassword($event)">
@@ -39,34 +40,82 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
 
 #### Inputs
 ```typescript
-/** Labels of the login form */
+// Policies applied on the password field
+@Input() customPolicies : any = {
+  range : {
+    min : 8,
+    max : 128,
+  },
+  char   : true,
+  number : true,
+  lower  : true,
+  upper  : true
+}
+// Social buttons displayed on the login form
+@Input() customSocialButtons : any = {
+  google   : true,
+  facebook : true
+}
+// Dislay user icon inside login input
+@Input() inputLoginWithIcon   : boolean = true;
+// Display clear button on login input
+@Input() inputLoginWithButton : boolean = true;
+// Display lock icon inside password input
+@Input() inputPassWithIcon    : boolean = true;
+// Display show/hide button on password input
+@Input() inputPassWithButton  : boolean = true;
+// Display password form inside modal or tab
+@Input() modalTemplate : boolean = true;
+// Labels of the login form
 @Input() customLoginLabels : any = {
   loginLabel             : 'Login',
   passwordLabel          : 'Password',
   forgottenPasswordLabel : 'Forgotten password',
   signInLabel            : 'Sign in',
-  googleConnectionLabel  : 'Connect with Google',
+  googleSignInLabel      : 'Sign in with Google',
+  facebookSignInLabel    : 'Sign in with Facebook',
   fieldRequiredLabel     : 'This field is required',
-  fieldEmailLabel        : 'This value must be an email',
+  fieldEmailLabel        : 'This value must be an email'
 };
-
-/** Labels to be shown when password management is active */
-@Input() customModalLabels : any = {
+// Labels of the password form
+@Input() customPassLabels : any = {
+  verifCodeMessageLabel   : 'Please enter the confirmation code you will receive by email',
+  verifCodeLabel          : 'Verification code',
+  newPasswordLabel        : 'New password',
+  sendLabel               : 'Send',
+  policyPassword1Label    : 'Minimum password length (6 to 128)',
+  policyPassword2Label    : 'Require at least one uppercase letter (A to Z)',
+  policyPassword3Label    : 'Require at least one lowercase letter (a to z)',
+  policyPassword4Label    : 'Require at least one number (0 to 9)',
+  policyPassword5Label    : 'Require at least one nonalphanumeric character ! @ # $ % ^ & * ( ) _ + - = [ ] { } | \'',
+  fieldRequiredLabel      : 'This field is required',
+  fieldNonWhitespaceLabel : 'This value must not contain any spaces'
+};
+// Labels on top of the password form
+@Input() customHeaderLabels : any = {
   lostPasswordLabel          : 'Lost password',
   updatePasswordLabel        : 'Update password',
   updatePasswordMessageLabel : 'Please enter a new password',
-  verifCodeMessageLabel      : 'Please enter the confirmation code you will receive by email',
-  verifCodeLabel             : 'Verification code',
-  newPasswordLabel           : 'New password',
-  sendLabel                  : 'Send',
-  policyPassword1Label       : 'Minimum password length (6 to 128)',
-  policyPassword2Label       : 'Require at least one uppercase letter (A to Z)',
-  policyPassword3Label       : 'Require at least one lowercase letter (a to z)',
-  policyPassword4Label       : 'Require at least one number (0 to 9)',
-  policyPassword5Label       : 'Require at least one nonalphanumeric character ! @ # $ % ^ & * ( ) _ + - = [ ] { } | \'',
-  fieldRequiredLabel         : 'This field is required',
-  fieldNonWhitespaceLabel    : 'This value must not contain any spaces',
 };
+```
+
+#### Outputs
+```typescript
+@Output() login         : EventEmitter<any>;
+/* login    : string
+*  password : string */
+@Output() loginSocial   : EventEmitter<any>;
+/* login    : string
+*  password : string
+*  social   : string */
+@Output() forgottenPass : EventEmitter<any>;
+/* login    : string
+*  password : string */
+@Output() sendFirstPass : EventEmitter<string>;
+/* password : string */
+@Output() sendResetPass : EventEmitter<string>;
+/* password : string
+*  code     : string */
 ```
 
 **Important Note**: This project uses the following dependencies :
@@ -82,20 +131,25 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
 ## Roadmap
 
 ### In Progress
-- Login with username instead of email only (let you choose your verification pattern / regex)
 
 ### Planning
 - Deploy with [Travis](https://travis-ci.org/) & Test Coverage with [Coveralls](https://coveralls.io/)
 - Remove Bootstrap 4 dependency
-- Choose between modal or tab for the display of password management
+- Sign up button
+- Optional error messages (on login form)
+- Let you choose your verification pattern / regex (for login input)
+- Captcha
+- Update screenshot
+- MFA
+- Change google button to the official one
 - Create an Online example with [StackBlitz](https://stackblitz.com)
+- Upgrade fake service (add fake credentials)
 
 ### Contributions
 
 Contributions are welcome, please open an issue and preferably submit a pull request.
 
 For example, if we replace Bootstrap 4 classes by hand-made style we can reduce the amount of required dependencies.
-We also want to provide a non pop-up solution for the password manager.
 
 ## Development
 

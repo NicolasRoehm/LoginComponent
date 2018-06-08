@@ -1,9 +1,84 @@
-.clear-login, .show-password {
-  position: absolute;
-  right: 0;
-  top: 5px;
-  font-size: 15px;
-  cursor: pointer;
-  width: 15px;
-  height: 15px;
+/deep/ #caliatys-login-form mat-tab-header {
+  display: none !important;
 }
+
+mat-form-field mat-icon {
+  color: grey;
+}
+
+// https://github.com/TerryMooreII/materialize-social/blob/master/materialize-social.less
+
+.button, .button-large, .full-width {
+  &.social {
+    > :first-child {
+      border-right: 1px solid rgba(0, 0, 0, 0.2);
+    }
+  }
+  &.social {
+    padding: 0 2rem 0 0;
+    i {
+      padding: 0 1rem;
+      margin-right: 1rem;
+    }
+  }
+
+  &.social-icon {
+    padding: 0;
+    i {
+      padding: 0 1rem;
+      margin-right: 0;
+    }
+  }
+}
+
+.button-large {
+  &.social-icon {
+    padding: 0 1rem;
+  }
+}
+
+.full-width {
+  &.social {
+    width: 100%;
+    text-align: left;
+
+    i.fa-fw {
+      width: 3.2rem;
+    }
+  }
+}
+
+@mixin social($color-bg, $color: #fff) {
+  background-color: $color-bg !important;
+  color: $color !important;
+  i {
+    color: $color !important;
+  }
+
+  &:hover {
+    background-color: lighten($color-bg, 10%) !important;
+  }
+}
+
+.adn           { @include social(#d87a68); }
+.bitbucket     { @include social(#205081); }
+.dropbox       { @include social(#1087dd); }
+.facebook      { @include social(#3b5998); }
+.flickr        { @include social(#ff0084); }
+.foursquare    { @include social(#f94877); }
+.github        { @include social(#444444); }
+.google        { @include social(#dd4b39); }
+.instagram     { @include social(#405de6); }
+.linkedin      { @include social(#007bb6); }
+.microsoft     { @include social(#2672ec); }
+.windows       { @include social(#2672ec); }
+.odnoklassniki { @include social(#f4731c); }
+.openid        { @include social(#f7931e); }
+.pinterest     { @include social(#cb2027); }
+.reddit        { @include social(#eff7ff, #000); }
+.soundcloud    { @include social(#ff5500); }
+.tumblr        { @include social(#2c4762); }
+.twitter       { @include social(#55acee); }
+.vimeo         { @include social(#1ab7ea); }
+.vk            { @include social(#587ea3); }
+.yahoo         { @include social(#720e9e); }

@@ -1,0 +1,28 @@
+<div class="header py-2 px-4">
+  <div class="row align-items-center">
+    <div class="col">
+      <div *ngIf="!isFirst">
+        <span class="h5 font-weight-light">{{ headerLabels.lostPasswordLabel }}</span>
+      </div>
+      <div *ngIf="isFirst">
+        <span class="d-block h5 mb-0 font-weight-light">{{ headerLabels.updatePasswordLabel }}</span>
+        <span class="d-block font-weight-light small">{{ headerLabels.updatePasswordMessageLabel }}</span>
+      </div>
+    </div>
+    <div class="col-2 px-0 text-right">
+      <button mat-icon-button mat-dialog-close>
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+</div>
+<mat-dialog-content class="py-4">
+  <!-- Pass Form -->
+  <cal-pass-form 
+    [isFirst]="isFirst" 
+    [passLabels]="passLabels" 
+    [passPolicies]="passPolicies" 
+    (firstConnection)="relayFirstLogEvent($event)" 
+    (lostPassword)="relayLostPassEvent($event)">
+  </cal-pass-form>
+</mat-dialog-content>

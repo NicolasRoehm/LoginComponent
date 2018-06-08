@@ -1,0 +1,95 @@
+<!-- NOTE: <form autocomplete="off"> will turn off autocomplete for the form in most browsers
+     except for username/email/password fields -->
+<form (ngSubmit)="send()" [formGroup]="formGroup" autocomplete="off">
+
+  <!-- NOTE: fake fields are a workaround for chrome/opera autofill getting the wrong fields -->
+  <input id="username" style="display:none" type="text" name="fakeusernameremembered">
+  <input id="password" style="display:none" type="password" name="fakepasswordremembered">
+
+  <div class="row w-100 no-gutters" *ngIf="!isFirst">
+    <div class="col">
+      <div class="w-100">
+        <p class="small">{{ passLabels.verifCodeMessageLabel }}</p>
+      </div>
+      <mat-form-field class="w-100">
+        <!-- NOTE: <input autocomplete="nope"> turns off autocomplete on many other browsers that don't respect
+          the form's "off", but not for "password" inputs. -->
+        <input matInput formControlName="verifCode" 
+          name="verif-code" autocomplete="nope" 
+          placeholder="{{ passLabels.verifCodeLabel }}" 
+          pattern="[\\S]+" 
+          type="text"/> <!-- NOTE: Pattern matches any non-whitespace character -->
+        <!-- NOTE: Error messages can be displayed -->
+        <!-- <mat-hint align="start" *ngIf="formGroup.controls.verifCode.errors?.required">
+          {{ passLabels.fieldRequiredLabel }}
+        </mat-hint>
+        <mat-hint align="start" *ngIf="formGroup.controls.verifCode.errors?.pattern">
+          {{ passLabels.fieldNonWhitespaceLabel }}
+        </mat-hint> -->
+      </mat-form-field>
+    </div>
+  </div>
+  <!-- NOTE: <input type="password" autocomplete="new-password" will turn it off for passwords everywhere -->
+  <div class="row w-100 no-gutters">
+    <div class="col">
+      <mat-form-field class="w-100">
+        <input matInput formControlName="newPassword" 
+          name="new-password" autocomplete="new-password" 
+          placeholder="{{ passLabels.newPasswordLabel }}" 
+          type="password"/>
+        <!-- NOTE: Error messages can be displayed -->
+        <!-- <mat-hint align="start" *ngIf="formGroup.controls.newPassword.errors?.required">
+          {{ passLabels.fieldRequiredLabel }}
+        </mat-hint> -->
+      </mat-form-field>
+    </div>
+  </div>
+  <div class="row w-100 no-gutters">
+    <div class="col">
+      <ul class="list-unstyled small">
+        <li class="check-policy">
+          <mat-icon class="red-policy" *ngIf="formGroup.controls.newPassword.errors && formGroup.controls.newPassword.errors.longEnough">close</mat-icon>
+          <mat-icon class="green-policy" *ngIf="!formGroup.controls.newPassword.errors || !formGroup.controls.newPassword.errors.longEnough">check</mat-icon>
+          {{ passLabels.policyPassword1Label }}
+        </li>
+        <li class="check-policy" *ngIf="passPolicies.upper">
+          <mat-icon class="red-policy" *ngIf="formGroup.controls.newPassword.errors && formGroup.controls.newPassword.errors.upper">close</mat-icon>
+          <mat-icon class="green-policy" *ngIf="!formGroup.controls.newPassword.errors || !formGroup.controls.newPassword.errors.upper">check</mat-icon>
+          {{ passLabels.policyPassword2Label }}
+        </li>
+        <li class="check-policy" *ngIf="passPolicies.lower">
+          <mat-icon class="red-policy" *ngIf="formGroup.controls.newPassword.errors && formGroup.controls.newPassword.errors.lower">close</mat-icon>
+          <mat-icon class="green-policy" *ngIf="!formGroup.controls.newPassword.errors || !formGroup.controls.newPassword.errors.lower">check</mat-icon>
+          {{ passLabels.policyPassword3Label }}
+        </li>
+        <li class="check-policy" *ngIf="passPolicies.number">
+          <mat-icon class="red-policy" *ngIf="formGroup.controls.newPassword.errors && formGroup.controls.newPassword.errors.number">close</mat-icon>
+          <mat-icon class="green-policy" *ngIf="!formGroup.controls.newPassword.errors || !formGroup.controls.newPassword.errors.number">check</mat-icon>
+          {{ passLabels.policyPassword4Label }}
+        </li>
+        <li class="check-policy" *ngIf="passPolicies.char">
+          <mat-icon class="red-policy" *ngIf="formGroup.controls.newPassword.errors && formGroup.controls.newPassword.errors.char">close</mat-icon>
+          <mat-icon class="green-policy" *ngIf="!formGroup.controls.newPassword.errors || !formGroup.controls.newPassword.errors.char">check</mat-icon>
+          {{ passLabels.policyPassword5Label }}
+        </li>
+      </ul>
+    </div>
+  </div>
+  <!-- TODO: Enable Google Captcha -->
+  <!-- <div class="row w-100 no-gutters">
+    <div class="col">
+      <re-captcha site_key="6LdBtAkUAAAAAB2_l_TOz7oZmTLXaFjP1cxnu4yM"
+        (captchaResponse)="handleCorrectCaptcha($event)">
+      </re-captcha>
+    </div>
+  </div> -->
+  <div class="pt-0 pb-4 px-4">
+    <div class="row w-100 no-gutters">
+      <div class="col text-right">
+        <button color="primary" mat-raised-button class="small text-uppercase" type="submit" [disabled]="!formGroup.valid">
+          {{ passLabels.sendLabel }}
+        </button>
+      </div>
+    </div>
+  </div>
+</form>
