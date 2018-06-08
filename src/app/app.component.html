@@ -2,6 +2,7 @@
   <div class="row mt-5">
     <div class="col">
       <cal-login-form #loginForm 
+        [modalTemplate]="false"
         (login)="login($event)" 
         (forgottenPass)="forgottenPassword($event)" 
         (sendFirstPass)="firstPassword($event)" 

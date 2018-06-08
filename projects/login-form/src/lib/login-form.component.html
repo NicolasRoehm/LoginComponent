@@ -1,63 +1,100 @@
-<form (ngSubmit)="onClickLogin()" [formGroup]="formGroup">
-  <div class="row no-gutters">
-    <div class="col">
+<mat-tab-group id="caliatys-login-form" [selectedIndex]="selectedTab">
+  <mat-tab label="login-form">
+    <form (ngSubmit)="onClickLogin()" [formGroup]="formGroup">
       <div class="row no-gutters">
         <div class="col">
-          <!-- NOTE: Login -->
-          <mat-form-field class="w-100">
-            <input matInput class="pr-4" formControlName="login" 
-              name="email" autocomplete="email" 
-              placeholder="{{ loginLabels.loginLabel }}" 
-              pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}" 
-              type="text"/> <!-- NOTE: Pattern matches any email -->
-            <mat-icon *ngIf="formGroup.controls.login.valid" (click)="formGroup.controls.login.setValue('')" class="clear-login" color="primary">close</mat-icon>
-            <!-- NOTE: Error messages can be displayed -->
-            <!-- <mat-hint align="start" *ngIf="formGroup.controls.login.errors?.required">
-              {{ loginLabels.fieldRequiredLabel | translate }}
-            </mat-hint>
-            <mat-hint align="start" *ngIf="formGroup.controls.login.errors?.pattern">
-              {{ loginLabels.fieldEmailLabel | translate }}
-            </mat-hint> -->
-          </mat-form-field>
+          <div class="row no-gutters">
+            <div class="col">
+              <!-- NOTE: Login -->
+              <mat-form-field class="w-100">
+                <div matPrefix class="mr-2" *ngIf="inputLoginWithIcon">
+                  <mat-icon class="align-bottom">person</mat-icon>
+                </div>
+                <input matInput formControlName="login" 
+                  name="email" autocomplete="email" 
+                  placeholder="{{ loginLabels.loginLabel }}" 
+                  type="text"/>
+                <button *ngIf="formGroup.controls.login.valid && inputLoginWithButton" 
+                  mat-button matSuffix mat-icon-button aria-label="Clear" 
+                  color="primary" (click)="formGroup.controls.login.setValue('')" 
+                  type="button">
+                  <mat-icon>close</mat-icon>
+                </button>
+                <!-- NOTE: Error messages can be displayed -->
+                <!-- <mat-hint align="start" *ngIf="formGroup.controls.login.errors?.required">
+                  {{ loginLabels.fieldRequiredLabel | translate }}
+                </mat-hint>
+                <mat-hint align="start" *ngIf="formGroup.controls.login.errors?.pattern">
+                  {{ loginLabels.fieldEmailLabel | translate }}
+                </mat-hint> -->
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="row no-gutters">
+            <div class="col">
+              <!-- NOTE: Password -->
+              <mat-form-field class="w-100">
+                <div matPrefix class="mr-2" *ngIf="inputPassWithIcon">
+                  <mat-icon class="align-bottom">lock</mat-icon>
+                </div>
+                <input matInput formControlName="password" 
+                  name="password" autocomplete="password" 
+                  placeholder="{{ loginLabels.passwordLabel }}" 
+                  type="{{ showPassword ? 'text' : 'password' }}"/>
+                <button *ngIf="inputPassWithButton" 
+                  mat-button matSuffix mat-icon-button aria-label="Clear" 
+                  color="primary" (click)="showPassword=!showPassword" 
+                  type="button">
+                  <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
+                <!-- NOTE: Error messages can be displayed -->
+                <!-- <mat-hint align="end" *ngIf="formGroup.controls.password.errors?.required">
+                  {{ loginLabels.fieldRequiredLabel | translate }}
+                </mat-hint> -->
+              </mat-form-field>
+            </div> 
+          </div>
+          <div class="row no-gutters pb-3">
+            <div class="col text-left">
+              <button mat-button (click)="forgottenPassword()" color="primary" class="small" type="button">
+                {{ loginLabels.forgottenPasswordLabel }}
+              </button>
+            </div>
+            <div class="col text-right">
+              <button mat-raised-button type="submit" color="primary" [disabled]="!formGroup.valid" class="small text-uppercase">
+                {{ loginLabels.signInLabel }}
+              </button>
+            </div>
+          </div>
+          <div class="row no-gutters">
+            <div class="col text-center">
+              <!-- NOTE: Google -->
+              <div class="d-block mb-3" *ngIf="socialButtons.google">
+                <button mat-raised-button type="button" class="google" (click)="onClickLoginSocial('google')">
+                  <mat-icon class="align-middle mr-2" svgIcon="google"></mat-icon> {{ loginLabels.googleSignInLabel }}
+                </button>
+              </div>
+              <!-- NOTE: Facebook -->
+              <div class="d-block" *ngIf="socialButtons.facebook">
+                <button mat-raised-button type="button" class="facebook" (click)="onClickLoginSocial('facebook')">
+                  <mat-icon class="align-middle mr-2" svgIcon="facebook"></mat-icon> {{ loginLabels.facebookSignInLabel }}
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="row no-gutters">
-        <div class="col">
-          <!-- NOTE: Password -->
-          <mat-form-field class="w-100">
-            <input matInput class="pr-4" formControlName="password" 
-              name="password" autocomplete="password" 
-              placeholder="{{ loginLabels.passwordLabel }}" 
-              type="{{ showPassword ? 'text' : 'password' }}"/>
-            <mat-icon (click)="showPassword =! showPassword" class="show-password" color="primary">{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
-            <!-- NOTE: Error messages can be displayed -->
-            <!-- <mat-hint align="end" *ngIf="formGroup.controls.password.errors?.required">
-              {{ loginLabels.fieldRequiredLabel | translate }}
-            </mat-hint> -->
-          </mat-form-field>
-        </div> 
-      </div>
-      <div class="row no-gutters">
-        <div class="col text-right pb-3">
-          <button mat-button (click)="forgottenPassword()" color="primary" class="small" type="button">
-            {{ loginLabels.forgottenPasswordLabel }}
-          </button>
-        </div>
-      </div>
-      <div class="row no-gutters">
-        <div class="col text-right">
-          <!-- TODO: Login with google -->
-          <!-- <button mat-raised-button color="warning"
-            class="google-btn"
-            (click)="grantOffline()">
-              <img src="assets/img/gplus-48.png" alt="Google+"/>
-              {{ loginLabels.googleConnectionLabel }}
-          </button> -->
-          <button mat-raised-button type="submit" color="primary" [disabled]="!formGroup.valid" class="small text-uppercase">
-            {{ loginLabels.signInLabel }}
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</form>
+    </form>
+  </mat-tab>
+  <mat-tab label="pass-form" *ngIf="!modalTemplate">
+    <cal-inline-pass 
+      [isFirst]="isFirst" 
+      [headerLabels]="headerLabels" 
+      [passLabels]="passLabels" 
+      [passPolicies]="passPolicies" 
+      (sendCloseTab)="onClickCloseInline($event)" 
+      (relayFirstLog)="inlineFirstLog($event)" 
+      (relayLostPass)="inlineLostPass($event)">
+    </cal-inline-pass>
+  </mat-tab>
+</mat-tab-group>
