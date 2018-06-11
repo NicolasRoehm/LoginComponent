@@ -12,12 +12,11 @@ mat-form-field mat-icon {
 
 .cal-btn {
   line-height: 35px;
-  height: 36px;
+  //height: 36px;
   border: 0px !important;
   padding: 1px !important;
   .cal-bg-icon {
     padding: 8px;
-    background: #fff;
     width: 34px;
     height: 34px;
     display: inline-block;
@@ -80,5 +79,8 @@ mat-form-field mat-icon {
   }
   &.dark {
     @include social(#4285f4, #ffffff);
+    .cal-bg-icon {
+      background: #fff;
+    }
   }
 }

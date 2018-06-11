@@ -21,5 +21,8 @@
     "rxjs": "^6.0.0",
     "rxjs-compat": "^6.0.0",
     "bootstrap": "^4.0.0"
+  },
+  "optionalDependencies": {
+    "angularx-qrcode": "^1.1.7"
   }
 }

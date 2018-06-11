@@ -1,13 +1,58 @@
-<div class="container">
-  <div class="row mt-5">
-    <div class="col">
-      <cal-login-form #loginForm 
-        [modalTemplate]="false"
-        (login)="login($event)" 
-        (forgottenPass)="forgottenPassword($event)" 
-        (sendFirstPass)="firstPassword($event)" 
-        (sendResetPass)="lostPassword($event)">
-      </cal-login-form>
+<div class="container-fluid">
+  <div class="row">
+    <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+      <div class="sidebar-sticky">
+        <ul class="nav flex-column">
+          <li class="nav-item" (click)="onClickChangeDemo(demo.SIMPLE_CONNECTION)">
+            <a class="nav-link" [class.active]="selectedDemo === demo.SIMPLE_CONNECTION">
+              Simple connection
+            </a>
+          </li>
+          <li class="nav-item" (click)="onClickChangeDemo(demo.MFA_CONNECTION)">
+            <a class="nav-link" [class.active]="selectedDemo === demo.MFA_CONNECTION">
+              MFA connection
+            </a>
+          </li>
+          <li class="nav-item" (click)="onClickChangeDemo(demo.PASSWORD_SETUP)">
+            <a class="nav-link" [class.active]="selectedDemo === demo.PASSWORD_SETUP">
+              Password setup
+            </a>
+          </li>
+          <li class="nav-item" (click)="onClickChangeDemo(demo.MFA_SETUP)">
+            <a class="nav-link" [class.active]="selectedDemo === demo.MFA_SETUP">
+              MFA setup
+            </a>
+          </li>
+          <li class="nav-item" (click)="onClickChangeDemo(demo.GOOGLE)">
+            <a class="nav-link" [class.active]="selectedDemo === demo.GOOGLE">
+              Google
+            </a>
+          </li>
+          <li class="nav-item" (click)="onClickChangeDemo(demo.FACEBOOK)">
+            <a class="nav-link" [class.active]="selectedDemo === demo.FACEBOOK">
+              Facebook
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <div class="col-md-9 ml-sm-auto col-lg-10 px-4">
+      <div class="container">
+        <div class="row my-5">
+          <div class="col">
+            <cal-login-form #loginForm 
+              (login)="login($event)" 
+              (forgottenPass)="forgottenPassword($event)" 
+              (sendFirstPass)="firstPassword($event)" 
+              (sendResetPass)="lostPassword($event)" 
+              (saveMfaKey)="saveMfaKey($event)" 
+              (sendMfaCode)="sendMfaCode($event)">
+            </cal-login-form>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
+
 </div>
+

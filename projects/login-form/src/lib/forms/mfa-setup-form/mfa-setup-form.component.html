@@ -1,13 +1,20 @@
+<div class="desc">
+  {{ mfaSetupLabels.description }}
+</div>
+<div class="codes">
+  <qrcode [qrdata]="qrCode" [size]="100" [level]="'L'"></qrcode>
+  <span class="code">{{ code }}</span>
+</div>
 <form (ngSubmit)="send()" [formGroup]="formGroup" autocomplete="off">
   <mat-form-field class="w-100">
     <input matInput formControlName="verifCode" 
-      name="verifCode" placeholder="{{ mfaLabels.verifCodeLabel }}" 
+      name="verifCode" placeholder="{{ mfaSetupLabels.verifCodeLabel }}" 
       type="text"/>
   </mat-form-field>
   <div class="row w-100 no-gutters">
     <div class="col text-right">
       <button color="primary" mat-raised-button class="small text-uppercase" type="submit" [disabled]="!formGroup.valid">
-        {{ mfaLabels.sendLabel }}
+        {{ mfaSetupLabels.saveLabel }}
       </button>
     </div>
   </div>

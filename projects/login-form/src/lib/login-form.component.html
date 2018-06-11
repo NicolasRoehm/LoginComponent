@@ -96,15 +96,23 @@
       </div>
     </form>
   </mat-tab>
-  <mat-tab label="pass-form" *ngIf="!modalTemplate">
-    <cal-inline-pass 
+  <mat-tab label="pass-form" *ngIf="formLayouts | existsLayout: layouts.TAB">
+    <!-- NOTE: Tab form -->
+    <cal-tab-wrapper
+      [formType]="formType"
       [isFirst]="isFirst" 
+      [code]   = "code"
+      [qrCode] = "qrCode"
       [headerLabels]="headerLabels" 
       [passLabels]="passLabels" 
-      [passPolicies]="passPolicies" 
-      (sendCloseTab)="onClickCloseInline($event)" 
-      (relayFirstLog)="inlineFirstLog($event)" 
-      (relayLostPass)="inlineLostPass($event)">
-    </cal-inline-pass>
+      [passPolicies]="passPolicies"
+      [mfaSetupLabels]="mfaSetupLabels"
+      [mfaLabels]="mfaLabels"
+      (sendCloseTab)="onClickCloseTab($event)" 
+      (relayFirstLog)="tabFirstLog($event)" 
+      (relayLostPass)="tabLostPass($event)"
+      (relaySaveMfaKey)="tabSaveMfaKey($event)"
+      (relaySendMfaCode)="tabSendMfaCode($event)">
+    </cal-tab-wrapper>
   </mat-tab>
 </mat-tab-group>

@@ -1,0 +1,41 @@
+<div class="header py-2 px-4 mb-3">
+  <div class="row align-items-center">
+    <div class="col-2 px-0 text-left">
+      <button mat-icon-button (click)="backToLogin()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+    </div>
+    <div class="col text-right">
+      <div *ngIf="!isFirst && formType === forms.PASSWORD">
+        <span class="h5 font-weight-light">{{ headerLabels.lostPasswordLabel }}</span>
+      </div>
+      <div *ngIf="isFirst && formType === forms.PASSWORD">
+        <span class="d-block h5 mb-0 font-weight-light">{{ headerLabels.updatePasswordLabel }}</span>
+        <span class="d-block font-weight-light small">{{ headerLabels.updatePasswordMessageLabel }}</span>
+      </div>
+      <div *ngIf="formType === forms.MFA">
+        <span class="h5 font-weight-light">{{ headerLabels.mfaCodeLabel }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- NOTE: Pass Form -->
+<cal-pass-form *ngIf="formType === forms.PASSWORD" 
+  [isFirst]="isFirst" 
+  [passLabels]="passLabels" 
+  [passPolicies]="passPolicies" 
+  (firstConnection)="relayFirstLogEvent($event)" 
+  (lostPassword)="relayLostPassEvent($event)">
+</cal-pass-form>
+<!-- NOTE: MFA Setup Form -->
+<cal-mfa-setup-form *ngIf="formType === forms.MFA_SETUP" 
+  [mfaSetupLabels]="mfaSetupLabels" 
+  [qrCode]="qrCode" 
+  [code]="code" 
+  (saveMfa)="relaySaveMfaKeyEvent($event)">
+</cal-mfa-setup-form>
+<!-- NOTE: MFA Form -->
+<cal-mfa-form *ngIf="formType === forms.MFA" 
+  [mfaLabels]="mfaLabels" 
+  (sendMfa)="relaySendMfaCodeEvent($event)">
+</cal-mfa-form>

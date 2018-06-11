@@ -1,6 +1,7 @@
 // Angular modules
 import { Component }          from '@angular/core';
 import { ViewChild }          from '@angular/core';
+import { OnInit }             from '@angular/core';
 import { MatSnackBar }        from '@angular/material';
 
 // External modules
@@ -14,16 +15,21 @@ import { LoginFormComponent } from 'login-form';
 
 // Enums
 import { AuthError }          from './auth.enum';
+import { Demo }               from './demo.enum';
+import { Credentials }        from './credentials.enum';
 
 @Component({
   selector    : 'app-root',
   templateUrl : './app.component.html',
   styleUrls   : ['./app.component.scss']
 })
-export class AppComponent
+export class AppComponent implements OnInit
 {
-
   @ViewChild('loginForm') loginForm : LoginFormComponent;
+
+  public demo        = Demo;
+  public credentials = Credentials;
+  public selectedDemo : string = Demo.SIMPLE_CONNECTION;
 
   constructor
   (
@@ -36,6 +42,11 @@ export class AppComponent
     translate.setDefaultLang('en');
     // NOTE: The lang to use, if the lang isn't available, it will use the current loader to get them
     translate.use('en');
+  }
+
+  public ngOnInit() : void
+  {
+    this.setValues(Credentials.LOGIN_1, Credentials.PASS_1);
   }
 
   // -------------------------------------------------------------------------------
@@ -56,19 +67,25 @@ export class AppComponent
 
     this.authService.fakeAuth(login, password).subscribe(user =>
     {
-      console.log('success');
+      console.log(user);
+      this.snackBar.open('SUCCESS', 'X');
     },
     err =>
     {
+      console.log(err);
       // Hide loader
 
       // First connection
-      if(err === -1)
+      if(err === 1)
         this.loginForm.showPassForm(true);
 
       // Error
-      if(err === -2)
+      if(err === 2)
         this.snackBar.open(this.translate.instant('ERROR_LOGIN_FAILED'), 'X');
+
+      // MFA setup
+      if(err === 3)
+        this.loginForm.showMfaSetupForm('JBSWY3DPEHPK3PXP', 'otpauth://totp/john@doe.com?secret=JBSWY3DPEHPK3PXP&issuer=Caliatys');
     });
   }
 
@@ -197,5 +214,70 @@ export class AppComponent
 
       this.snackBar.open(errorMsg, 'x');
     });
+  }
+
+  public saveMfaKey($event : any) : void
+  { // NOTE: MFA code
+    if(!$event)
+      return;
+
+    console.log($event);
+
+    let verifCode   : string = null;
+    verifCode   = $event.code;
+
+    this.loginForm.hideMfaSetupForm();
+  }
+
+  public sendMfaCode($event : any) : void
+  { // NOTE: MFA code
+    if(!$event)
+      return;
+
+    console.log($event);
+
+    let verifCode : string = null;
+    verifCode = $event.code;
+
+    console.log(verifCode);
+  }
+
+  // -------------------------------------------------------------------------------
+  // ---- NOTE: Demo ---------------------------------------------------------------
+  // -------------------------------------------------------------------------------
+
+  public onClickChangeDemo(demo : string) : void
+  {
+    this.selectedDemo = demo;
+    switch(demo)
+    {
+      case Demo.SIMPLE_CONNECTION :
+        this.setValues(Credentials.LOGIN_1, Credentials.PASS_1);
+        break;
+      case Demo.MFA_CONNECTION :
+        this.setValues(Credentials.LOGIN_2, Credentials.PASS_2);
+        break;
+      case Demo.PASSWORD_SETUP :
+        this.setValues(Credentials.LOGIN_3, Credentials.PASS_3);
+        break;
+      case Demo.MFA_SETUP :
+        this.setValues(Credentials.LOGIN_4, Credentials.PASS_4);
+        break;
+      case Demo.GOOGLE :
+        this.setValues(Credentials.LOGIN_5, Credentials.PASS_5);
+        break;
+      case Demo.FACEBOOK :
+        this.setValues(Credentials.LOGIN_6, Credentials.PASS_6);
+        break;
+      default :
+        this.setValues(Credentials.LOGIN_1, Credentials.PASS_1);
+        break;
+    }
+  }
+
+  public setValues(login : string, password: string) : void
+  {
+    this.loginForm.formGroup.controls.login.setValue(login);
+    this.loginForm.formGroup.controls.password.setValue(password);
   }
 }

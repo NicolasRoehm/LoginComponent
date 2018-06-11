@@ -31,7 +31,7 @@ export class PassFormComponent implements OnInit, OnDestroy
   // Labels
   @Input()  passLabels   : any;
   @Input()  passPolicies : any;
-  // Event sent to login-form and relayed parents (modal & inline)
+  // Event sent to login-form and relayed parents (modal & tab)
   @Output() firstConnection : EventEmitter<any> = new EventEmitter();
   @Output() lostPassword    : EventEmitter<any> = new EventEmitter();
 

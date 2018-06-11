@@ -15,17 +15,22 @@ import { Validators }   from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 
 @Component({
-  selector    : 'cal-mfa-form',
-  templateUrl : './mfa-form.component.html',
-  styleUrls   : ['./mfa-form.component.scss']
+  selector    : 'cal-mfa-setup-form',
+  templateUrl : './mfa-setup-form.component.html',
+  styleUrls   : ['./mfa-setup-form.component.scss']
 })
-export class MfaFormComponent implements OnInit, OnDestroy
+export class MfaSetupFormComponent implements OnInit, OnDestroy
 {
-  public    formGroup : FormGroup;
+  public    formGroup      : FormGroup;
+  // MFA secret key
+  @Input()  qrCode         : string;
+  @Input()  code           : string;
   // Labels
-  @Input()  mfaLabels : any;
+  @Input()  mfaSetupLabels : any;
   // Event sent to login-form and relayed parents (modal & tab)
-  @Output() sendMfa        : EventEmitter<any> = new EventEmitter();
+  @Output() saveMfa        : EventEmitter<any> = new EventEmitter();
+
+  public showCode          : boolean           = false;
 
   constructor
   (
@@ -45,12 +50,15 @@ export class MfaFormComponent implements OnInit, OnDestroy
 
   public send() : void
   {
-    let event     : any    = {};
+    let event : any = {};
+
     let verifCode : string = null;
 
-    verifCode  = this.formGroup.controls.verifCode.value;
+    verifCode = this.formGroup.controls.verifCode.value;
+
     event.code = verifCode;
-    this.sendMfa.emit(event);
+
+    this.saveMfa.emit(event);
   }
 
   private initFormsGroups() : void
