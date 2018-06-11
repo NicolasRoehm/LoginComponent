@@ -70,14 +70,24 @@
             <div class="col text-center">
               <!-- NOTE: Google -->
               <div class="d-block mb-3" *ngIf="socialButtons.google">
-                <button mat-raised-button type="button" class="google" (click)="onClickLoginSocial('google')">
-                  <mat-icon class="align-middle mr-2" svgIcon="google"></mat-icon> {{ loginLabels.googleSignInLabel }}
+                <button mat-raised-button type="button" class="mat-raised-button cal-btn google {{ theme }}" (click)="onClickLoginSocial('google')">
+                  <span class="cal-bg-icon">
+                    <mat-icon class="align-middle cal-icon" svgIcon="google"></mat-icon>
+                  </span>
+                  <span class="cal-label">{{ loginLabels.googleSignInLabel }}</span>
                 </button>
               </div>
+            </div>
+          </div>
+          <div class="row no-gutters">
+            <div class="col text-center">
               <!-- NOTE: Facebook -->
               <div class="d-block" *ngIf="socialButtons.facebook">
-                <button mat-raised-button type="button" class="facebook" (click)="onClickLoginSocial('facebook')">
-                  <mat-icon class="align-middle mr-2" svgIcon="facebook"></mat-icon> {{ loginLabels.facebookSignInLabel }}
+                <button mat-raised-button type="button" class="mat-raised-button cal-btn facebook" (click)="onClickLoginSocial('facebook')">
+                  <span class="cal-bg-icon">
+                    <mat-icon class="align-middle cal-icon" svgIcon="facebook"></mat-icon>
+                  </span>
+                  <span class="cal-label">{{ loginLabels.facebookSignInLabel }}</span>
                 </button>
               </div>
             </div>

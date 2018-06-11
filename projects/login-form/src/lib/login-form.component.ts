@@ -18,9 +18,9 @@ import { Validators }      from '@angular/forms';
 import { Subscription }    from 'rxjs/Subscription';
 
 // Components
-import { ModalPassComponent }  from './modal-pass/modal-pass.component';
-import { InlinePassComponent } from './inline-pass/inline-pass.component';
-import { PassFormComponent }   from './pass-form/pass-form.component';
+import { ModalPassComponent }  from './layouts/modal-pass/modal-pass.component';
+import { InlinePassComponent } from './layouts/inline-pass/inline-pass.component';
+import { PassFormComponent }   from './forms/pass-form/pass-form.component';
 
 @Component({
   selector    : 'cal-login-form',
@@ -48,7 +48,7 @@ export class LoginFormComponent implements OnInit, OnDestroy
   @Input()  customPolicies       : any;
   // Social buttons displayed on the login form
   @Input()  customSocialButtons  : any;
-  // Dislay user icon inside login input
+  // Display user icon inside login input
   @Input()  inputLoginWithIcon   : boolean = true;
   // Display clear button on login input
   @Input()  inputLoginWithButton : boolean = true;
@@ -57,7 +57,9 @@ export class LoginFormComponent implements OnInit, OnDestroy
   // Display show/hide button on password input
   @Input()  inputPassWithButton  : boolean = true;
   // Display password form inside modal or tab
-  @Input()  modalTemplate : boolean = true;
+  @Input()  modalTemplate        : boolean = true;
+  // Display login and password forms with the provided theme : light / dark
+  @Input()  theme                : string  = 'light'; // TODO:
 
   // Event object containing login and password properties
   @Output() login         : EventEmitter<any>    = new EventEmitter();

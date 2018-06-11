@@ -36,9 +36,10 @@ import { MatDialogModule }          from '@angular/material';
 
 // Internal modules
 import { LoginFormComponent }       from './login-form.component';
-import { PassFormComponent }        from './pass-form/pass-form.component';
-import { ModalPassComponent }       from './modal-pass/modal-pass.component';
-import { InlinePassComponent }      from './inline-pass/inline-pass.component';
+import { PassFormComponent }        from './forms/pass-form/pass-form.component';
+import { ModalPassComponent }       from './layouts/modal-pass/modal-pass.component';
+import { InlinePassComponent }      from './layouts/inline-pass/inline-pass.component';
+import { MfaFormComponent }         from './forms/mfa-form/mfa-form.component';
 
 // NgModule that includes all Material modules that are required to serve the app.
 @NgModule({
@@ -85,7 +86,8 @@ export class MaterialModule {}
     LoginFormComponent,
     PassFormComponent,
     ModalPassComponent,
-    InlinePassComponent
+    InlinePassComponent,
+    MfaFormComponent
   ],
   providers: [
   ],
@@ -94,7 +96,8 @@ export class MaterialModule {}
     LoginFormComponent,
     PassFormComponent,
     ModalPassComponent,
-    InlinePassComponent
+    InlinePassComponent,
+    MfaFormComponent
   ]
 })
 export class LoginFormModule { }

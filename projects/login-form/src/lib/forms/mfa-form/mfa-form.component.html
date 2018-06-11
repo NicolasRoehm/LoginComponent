@@ -1,0 +1,26 @@
+<!-- NOTE: <form autocomplete="off"> will turn off autocomplete for the form in most browsers
+     except for username/email/password fields -->
+     <form (ngSubmit)="send()" [formGroup]="formGroup" autocomplete="off">
+      <div class="row w-100 no-gutters">
+        <div class="col">
+          <mat-form-field class="w-100">
+            <input matInput formControlName="code" 
+              name="code" placeholder="{{ mfaLabels.codeLabel }}" 
+              type="password"/>
+            <!-- NOTE: Error messages can be displayed -->
+            <!-- <mat-hint align="start" *ngIf="formGroup.controls.newPassword.errors?.required">
+              {{ passLabels.fieldRequiredLabel }}
+            </mat-hint> -->
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="pt-0 pb-4 px-4">
+        <div class="row w-100 no-gutters">
+          <div class="col text-right">
+            <button color="primary" mat-raised-button class="small text-uppercase" type="submit" [disabled]="!formGroup.valid">
+              {{ mfaLabels.sendLabel }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
