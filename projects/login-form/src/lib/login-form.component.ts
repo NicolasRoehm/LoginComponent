@@ -5,7 +5,6 @@ import { Input }           from '@angular/core';
 import { Output }          from '@angular/core';
 import { Component }       from '@angular/core';
 import { EventEmitter }    from '@angular/core';
-import { MatDialogRef }    from '@angular/material';
 import { MatDialog }       from '@angular/material';
 import { MatIconRegistry } from '@angular/material';
 import { DomSanitizer }    from '@angular/platform-browser';
@@ -23,8 +22,6 @@ import { Forms }           from './enums/forms.enum';
 
 // Components
 import { ModalWrapperComponent } from './layouts/modal-wrapper/modal-wrapper.component';
-import { TabWrapperComponent }   from './layouts/tab-wrapper/tab-wrapper.component';
-import { PassFormComponent }     from './forms/pass-form/pass-form.component';
 
 @Component({
   selector    : 'cal-login-form',
@@ -51,7 +48,7 @@ export class LoginFormComponent implements OnInit, OnDestroy
   public    passPolicies   : any;
   public    socialButtons  : any;
 
-  // Display password form inside modal or tab
+  // Display forms inside a modal or a tab
   @Input()  customFormLayouts    : any;
   // Display login and password forms with the provided theme : light / dark
   @Input()  theme                : string  = 'light'; // TODO:
@@ -65,7 +62,7 @@ export class LoginFormComponent implements OnInit, OnDestroy
   // Labels of the mfa setup form
   @Input()  customMfaSetupLabels : any;
   // Labels of the mfa form
-  @Input()  customMfaLabels       : any;
+  @Input()  customMfaLabels      : any;
 
   // Policies applied on the password field
   @Input()  customPolicies       : any;
@@ -97,8 +94,8 @@ export class LoginFormComponent implements OnInit, OnDestroy
   @Output() sendMfaCode   : EventEmitter<string> = new EventEmitter();
 
   public    isFirst         : boolean = false;
-  public    code : string = null;
-  public    qrCode : string = null;
+  public    code            : string  = null;
+  public    qrCode          : string  = null;
   public    selectedTab     : number  = 0;
   public    closeModalEvent : EventEmitter<boolean> = new EventEmitter();
 
@@ -118,18 +115,21 @@ export class LoginFormComponent implements OnInit, OnDestroy
     private builder      : FormBuilder
   )
   {
+    // Login form
     this.initFormsGroups();
-    this.prepareFormLayouts();
-    this.prepareLabels();
-    this.preparePolicies();
-    this.prepareSocialButtons();
-
+    // Social icons
+    // TODO: Fix Angular 6 Library assets : https://github.com/angular/angular-cli/issues/11071
     iconRegistry.addSvgIcon('google',   sanitizer.bypassSecurityTrustResourceUrl('../assets/img/google.svg'));
     iconRegistry.addSvgIcon('facebook', sanitizer.bypassSecurityTrustResourceUrl('../assets/img/facebook.svg'));
   }
 
   public ngOnInit() : void
   {
+    // Inputs
+    this.prepareFormLayouts();
+    this.prepareLabels();
+    this.preparePolicies();
+    this.prepareSocialButtons();
   }
 
   public ngOnDestroy() : void
@@ -175,12 +175,6 @@ export class LoginFormComponent implements OnInit, OnDestroy
     event = this.prepareEvent();
     event.social = social;
     this.loginSocial.emit(event);
-  }
-
-  public onClickSaveMfa(code : string) : void
-  { // TODO:
-    console.log('onClickSaveMfa');
-    console.log(code);
   }
 
   /** Emit `$event` object containing login and password properties.

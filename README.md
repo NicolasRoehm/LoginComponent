@@ -40,6 +40,12 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
 
 #### Inputs
 ```typescript
+// Display forms inside a modal or a tab
+@Input() customFormLayouts : any = {
+  password : 'modal',
+  mfaSetup : 'tab',
+  mfa      : 'tab'
+}
 // Policies applied on the password field
 @Input() customPolicies : any = {
   range : {
@@ -64,39 +70,49 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
 @Input() inputPassWithIcon    : boolean = true;
 // Display show/hide button on password input
 @Input() inputPassWithButton  : boolean = true;
-// Display password form inside modal or tab
-@Input() modalTemplate : boolean = true;
 // Labels of the login form
 @Input() customLoginLabels : any = {
-  loginLabel             : 'Login',
-  passwordLabel          : 'Password',
-  forgottenPasswordLabel : 'Forgotten password',
-  signInLabel            : 'Sign in',
-  googleSignInLabel      : 'Sign in with Google',
-  facebookSignInLabel    : 'Sign in with Facebook',
-  fieldRequiredLabel     : 'This field is required',
-  fieldEmailLabel        : 'This value must be an email'
+  loginLabel                 : 'Login',
+  passwordLabel              : 'Password',
+  forgottenPasswordLabel     : 'Forgotten password',
+  signInLabel                : 'Sign in',
+  googleSignInLabel          : 'Sign in with Google',
+  facebookSignInLabel        : 'Sign in with Facebook',
+  fieldRequiredLabel         : 'This field is required',
+  fieldEmailLabel            : 'This value must be an email'
 };
 // Labels of the password form
 @Input() customPassLabels : any = {
-  verifCodeMessageLabel   : 'Please enter the confirmation code you will receive by email',
-  verifCodeLabel          : 'Verification code',
-  newPasswordLabel        : 'New password',
-  sendLabel               : 'Send',
-  policyPassword1Label    : 'Minimum password length (6 to 128)',
-  policyPassword2Label    : 'Require at least one uppercase letter (A to Z)',
-  policyPassword3Label    : 'Require at least one lowercase letter (a to z)',
-  policyPassword4Label    : 'Require at least one number (0 to 9)',
-  policyPassword5Label    : 'Require at least one nonalphanumeric character ! @ # $ % ^ & * ( ) _ + - = [ ] { } | \'',
-  fieldRequiredLabel      : 'This field is required',
-  fieldNonWhitespaceLabel : 'This value must not contain any spaces'
+  verifCodeMessageLabel      : 'Please enter the confirmation code you will receive by email',
+  verifCodeLabel             : 'Verification code',
+  newPasswordLabel           : 'New password',
+  sendLabel                  : 'Send',
+  policyPassword1Label       : 'Minimum password length (6 to 128)',
+  policyPassword2Label       : 'Require at least one uppercase letter (A to Z)',
+  policyPassword3Label       : 'Require at least one lowercase letter (a to z)',
+  policyPassword4Label       : 'Require at least one number (0 to 9)',
+  policyPassword5Label       : 'Require at least one nonalphanumeric character ! @ # $ % ^ & * ( ) _ + - = [ ] { } | \'',
+  fieldRequiredLabel         : 'This field is required',
+  fieldNonWhitespaceLabel    : 'This value must not contain any spaces'
 };
 // Labels on top of the password form
 @Input() customHeaderLabels : any = {
+  mfaCodeLabel               : 'MFA Code',
   lostPasswordLabel          : 'Lost password',
   updatePasswordLabel        : 'Update password',
   updatePasswordMessageLabel : 'Please enter a new password',
 };
+// Labels of the mfa setup form
+@Input() customMfaSetupLabels : any = {
+  verifCodeLabel : 'Verification code',
+  saveLabel      : 'Save',
+  description    : 'Save this secret key for future connection'
+}
+// Labels of the mfa form
+@Input() customMfaLabels : any = {
+  verifCodeLabel : 'Verification code',
+  sendLabel      : 'Send'
+}
 ```
 
 #### Outputs
@@ -116,34 +132,43 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
 @Output() sendResetPass : EventEmitter<string>;
 /* password : string
 *  code     : string */
+@Output() saveMfaKey    : EventEmitter<string>;
+/* code     : string */
+@Output() sendMfaCode   : EventEmitter<string>;
+/* code     : string */
 ```
 
 **Important Note**: This project uses the following dependencies :
 ```json
-"@angular/common": "^6.0.0-rc.0 || ^6.0.0",
-"@angular/core": "^6.0.0-rc.0 || ^6.0.0",
-"@angular/material": "^6.0.0-rc.0 || ^6.0.0",
-"rxjs": "^6.0.0",
-"rxjs-compat": "^6.0.0",
-"bootstrap": "^4.0.0"
+"peerDependencies": {
+  "@angular/common": "^6.0.0-rc.0 || ^6.0.0",
+  "@angular/core": "^6.0.0-rc.0 || ^6.0.0",
+  "@angular/material": "^6.0.0-rc.0 || ^6.0.0",
+  "rxjs": "^6.0.0",
+  "rxjs-compat": "^6.0.0",
+  "bootstrap": "^4.0.0"
+},
+"optionalDependencies": {
+  "angularx-qrcode": "^1.1.7"
+}
 ```
 
 ## Roadmap
 
 ### In Progress
+- Captcha
+- Optional error messages
+- Inline layout
+- Show password button on Password setup field
 
 ### Planning
 - Deploy with [Travis](https://travis-ci.org/) & Test Coverage with [Coveralls](https://coveralls.io/)
 - Remove Bootstrap 4 dependency
 - Sign up button
-- Optional error messages (on login form)
 - Let you choose your verification pattern / regex (for login input)
-- Captcha
 - Update screenshot
-- MFA
-- Change google button to the official one
+- Fix Angular 6 Library assets
 - Create an Online example with [StackBlitz](https://stackblitz.com)
-- Upgrade fake service (add fake credentials)
 
 ### Contributions
 
