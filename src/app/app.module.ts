@@ -21,7 +21,7 @@ import { TranslateHttpLoader }      from '@ngx-translate/http-loader';
 // import { MatSelectModule }          from '@angular/material';
 // import { MatSlideToggleModule }     from '@angular/material';
 // import { MatMenuModule }            from '@angular/material';
-// import { MatSidenavModule }         from '@angular/material';
+ import { MatSidenavModule }         from '@angular/material';
 // import { MatToolbarModule }         from '@angular/material';
 // import { MatGridListModule }        from '@angular/material';
 // import { MatTooltipModule }         from '@angular/material';
@@ -59,7 +59,7 @@ import { LoginFormModule } from 'login-form';
     // MatSelectModule,
     // MatSlideToggleModule,
     // MatMenuModule,
-    // MatSidenavModule,
+    MatSidenavModule,
     // MatToolbarModule,
     // MatListModule,
     // MatGridListModule,

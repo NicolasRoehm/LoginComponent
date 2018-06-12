@@ -34,11 +34,17 @@ import { MatDialogModule }          from '@angular/material';
 // import { MatSnackBarModule }        from '@angular/material';
 // import { MatExpansionModule }       from '@angular/material';
 
+
+import { QRCodeModule }             from 'angularx-qrcode';
+
 // Internal modules
 import { LoginFormComponent }       from './login-form.component';
-import { PassFormComponent }        from './pass-form/pass-form.component';
-import { ModalPassComponent }       from './modal-pass/modal-pass.component';
-import { InlinePassComponent }      from './inline-pass/inline-pass.component';
+import { PassFormComponent }        from './forms/pass-form/pass-form.component';
+import { ModalWrapperComponent }    from './layouts/modal-wrapper/modal-wrapper.component';
+import { TabWrapperComponent }      from './layouts/tab-wrapper/tab-wrapper.component';
+import { MfaSetupFormComponent }    from './forms/mfa-setup-form/mfa-setup-form.component';
+import { MfaFormComponent }         from './forms/mfa-form/mfa-form.component';
+import { ExistsLayoutPipe }         from './pipes/existsLayout.pipe';
 
 // NgModule that includes all Material modules that are required to serve the app.
 @NgModule({
@@ -80,21 +86,28 @@ export class MaterialModule {}
     MaterialModule,
     FormsModule,
     ReactiveFormsModule,
+    QRCodeModule
   ],
   declarations: [
     LoginFormComponent,
     PassFormComponent,
-    ModalPassComponent,
-    InlinePassComponent
+    ModalWrapperComponent,
+    TabWrapperComponent,
+    MfaSetupFormComponent,
+    MfaFormComponent,
+    ExistsLayoutPipe
   ],
   providers: [
   ],
-  entryComponents: [ ModalPassComponent ],
+  entryComponents: [ ModalWrapperComponent ],
   exports: [
     LoginFormComponent,
     PassFormComponent,
-    ModalPassComponent,
-    InlinePassComponent
+    ModalWrapperComponent,
+    TabWrapperComponent,
+    MfaSetupFormComponent,
+    MfaFormComponent,
+    ExistsLayoutPipe
   ]
 })
 export class LoginFormModule { }

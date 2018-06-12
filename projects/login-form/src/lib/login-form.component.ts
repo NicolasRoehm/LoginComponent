@@ -17,10 +17,14 @@ import { Validators }      from '@angular/forms';
 // External modules
 import { Subscription }    from 'rxjs/Subscription';
 
+// Enums
+import { Layouts }         from './enums/layouts.enum';
+import { Forms }           from './enums/forms.enum';
+
 // Components
-import { ModalPassComponent }  from './modal-pass/modal-pass.component';
-import { InlinePassComponent } from './inline-pass/inline-pass.component';
-import { PassFormComponent }   from './pass-form/pass-form.component';
+import { ModalWrapperComponent } from './layouts/modal-wrapper/modal-wrapper.component';
+import { TabWrapperComponent }   from './layouts/tab-wrapper/tab-wrapper.component';
+import { PassFormComponent }     from './forms/pass-form/pass-form.component';
 
 @Component({
   selector    : 'cal-login-form',
@@ -29,14 +33,28 @@ import { PassFormComponent }   from './pass-form/pass-form.component';
 })
 export class LoginFormComponent implements OnInit, OnDestroy
 {
-  public    formGroup     : FormGroup;
-  public    showPassword  : boolean = false;
+  public    formGroup      : FormGroup;
+  public    formType       : string;
 
-  public    loginLabels   : any;
-  public    passLabels    : any;
-  public    headerLabels  : any;
-  public    passPolicies  : any;
-  public    socialButtons : any;
+  // NOTE: Useful for template
+  public    showPassword   : boolean = false;
+  public    layouts = Layouts;
+
+  public    formLayouts    : any;
+
+  public    loginLabels    : any;
+  public    passLabels     : any;
+  public    headerLabels   : any;
+  public    mfaSetupLabels : any;
+  public    mfaLabels      : any;
+
+  public    passPolicies   : any;
+  public    socialButtons  : any;
+
+  // Display password form inside modal or tab
+  @Input()  customFormLayouts    : any;
+  // Display login and password forms with the provided theme : light / dark
+  @Input()  theme                : string  = 'light'; // TODO:
 
   // Labels of the login form
   @Input()  customLoginLabels    : any;
@@ -44,11 +62,17 @@ export class LoginFormComponent implements OnInit, OnDestroy
   @Input()  customPassLabels     : any;
   // Labels on top of the password form
   @Input()  customHeaderLabels   : any;
+  // Labels of the mfa setup form
+  @Input()  customMfaSetupLabels : any;
+  // Labels of the mfa form
+  @Input()  customMfaLabels       : any;
+
   // Policies applied on the password field
   @Input()  customPolicies       : any;
   // Social buttons displayed on the login form
   @Input()  customSocialButtons  : any;
-  // Dislay user icon inside login input
+
+  // Display user icon inside login input
   @Input()  inputLoginWithIcon   : boolean = true;
   // Display clear button on login input
   @Input()  inputLoginWithButton : boolean = true;
@@ -56,8 +80,6 @@ export class LoginFormComponent implements OnInit, OnDestroy
   @Input()  inputPassWithIcon    : boolean = true;
   // Display show/hide button on password input
   @Input()  inputPassWithButton  : boolean = true;
-  // Display password form inside modal or tab
-  @Input()  modalTemplate : boolean = true;
 
   // Event object containing login and password properties
   @Output() login         : EventEmitter<any>    = new EventEmitter();
@@ -69,15 +91,21 @@ export class LoginFormComponent implements OnInit, OnDestroy
   @Output() sendFirstPass : EventEmitter<string> = new EventEmitter();
   // Event object containing password and code properties
   @Output() sendResetPass : EventEmitter<string> = new EventEmitter();
+  // Event object containing code property
+  @Output() saveMfaKey    : EventEmitter<string> = new EventEmitter();
+  // Event object containing code property
+  @Output() sendMfaCode   : EventEmitter<string> = new EventEmitter();
 
   public    isFirst         : boolean = false;
+  public    code : string = null;
+  public    qrCode : string = null;
   public    selectedTab     : number  = 0;
   public    closeModalEvent : EventEmitter<boolean> = new EventEmitter();
 
-  private   modalFirstSub  : Subscription;
-  private   modalLostSub   : Subscription;
-  private   inlineFirstSub : Subscription;
-  private   inlineLostSub  : Subscription;
+  private   modalFirstSub       : Subscription;
+  private   modalLostSub        : Subscription;
+  private   modalSaveMfaKeySub  : Subscription;
+  private   modalSendMfaCodeSub : Subscription;
 
   // TODO: Captcha
   // @Input()  rememberMe    : boolean = true; // TODO: check box
@@ -91,6 +119,7 @@ export class LoginFormComponent implements OnInit, OnDestroy
   )
   {
     this.initFormsGroups();
+    this.prepareFormLayouts();
     this.prepareLabels();
     this.preparePolicies();
     this.prepareSocialButtons();
@@ -109,10 +138,10 @@ export class LoginFormComponent implements OnInit, OnDestroy
       this.modalFirstSub.unsubscribe();
     if(this.modalLostSub)
       this.modalLostSub.unsubscribe();
-    if(this.inlineFirstSub)
-      this.inlineFirstSub.unsubscribe();
-    if(this.inlineLostSub)
-      this.inlineLostSub.unsubscribe();
+    if(this.modalSaveMfaKeySub)
+      this.modalSaveMfaKeySub.unsubscribe();
+    if(this.modalSendMfaCode)
+      this.modalSendMfaCodeSub.unsubscribe();
   }
 
   // -------------------------------------------------------------------------------------------
@@ -148,6 +177,12 @@ export class LoginFormComponent implements OnInit, OnDestroy
     this.loginSocial.emit(event);
   }
 
+  public onClickSaveMfa(code : string) : void
+  { // TODO:
+    console.log('onClickSaveMfa');
+    console.log(code);
+  }
+
   /** Emit `$event` object containing login and password properties.
   *
   * @example
@@ -167,24 +202,51 @@ export class LoginFormComponent implements OnInit, OnDestroy
   */
   public showPassForm(isFirst : boolean) : void
   {
-    this.isFirst = isFirst;
-    if(this.modalTemplate)
-      this.openModal();
-    else
-      this.openInline();
+    this.isFirst  = isFirst;
+    this.formType = Forms.PASSWORD;
+    this.showLayout(this.formLayouts.password);
+  }
+
+  /** Show MFA setup form to initialize first TOTP (Time-based One-time Password).
+  *
+  * @param code  
+  * @param qrCode 
+  */
+  public showMfaSetupForm(code : string, qrCode : string) : void
+  {
+    this.code     = code;
+    this.qrCode   = qrCode;
+    this.formType = Forms.MFA_SETUP;
+    this.showLayout(this.formLayouts.mfaSetup);
+  }
+
+  /** Show MFA form to get verification code. */
+  public showMfaForm() : void
+  {
+    this.formType = Forms.MFA;
+    this.showLayout(this.formLayouts.mfa);
   }
 
   /** Hide password form */
   public hidePassForm() : void
   {
-    if(this.modalTemplate)
-      this.closeModal();
-    else
-      this.closeInline();
+    this.closeLayout(this.formLayouts.password);
+  }
+
+  /** Hide MFA setup form */
+  public hideMfaSetupForm() : void
+  {
+    this.closeLayout(this.formLayouts.mfaSetup);
+  }
+
+  /** Hide MFA form */
+  public hideMfaForm() : void
+  {
+    this.closeLayout(this.formLayouts.mfa);
   }
 
   // -------------------------------------------------------------------------------------------
-  // NOTE: Inline events -----------------------------------------------------------------------
+  // NOTE: Tab events --------------------------------------------------------------------------
   // -------------------------------------------------------------------------------------------
 
   /** Emit `$event` object containing password property.
@@ -192,7 +254,7 @@ export class LoginFormComponent implements OnInit, OnDestroy
   * @example
   * var newPassword : string = $event.password;
   */
-  public inlineFirstLog($event : any) : void
+  public tabFirstLog($event : any) : void
   {
     this.sendFirstPass.emit($event);
   }
@@ -203,9 +265,29 @@ export class LoginFormComponent implements OnInit, OnDestroy
   * var newPassword      : string = $event.password;
   * var verificationCode : string = $event.code;
   */
-  public inlineLostPass($event : any) : void
+  public tabLostPass($event : any) : void
   {
-    this.sendFirstPass.emit($event);
+    this.sendResetPass.emit($event);
+  }
+
+  /** Emit `$event` object containing code property.
+  *
+  * @example
+  * var verificationCode : string = $event.code;
+  */
+  public tabSaveMfaKey($event : any) : void
+  {
+    this.saveMfaKey.emit($event);
+  }
+
+  /** Emit `$event` object containing code property.
+  *
+  * @example
+  * var verificationCode : string = $event.code;
+  */
+  public tabSendMfaCode($event : any) : void
+  {
+    this.sendMfaCode.emit($event);
   }
 
   // -------------------------------------------------------------------------------------------
@@ -233,19 +315,45 @@ export class LoginFormComponent implements OnInit, OnDestroy
   */
   public modalLostPass(dialogRef : any) : void
   {
-    this.modalLostSub  = dialogRef.componentInstance.relayLostPass.subscribe((event) =>
+    this.modalLostSub = dialogRef.componentInstance.relayLostPass.subscribe((event) =>
     {
       this.sendResetPass.emit(event);
     });
   }
 
+  /** Emit `$event` object containing code property.
+  *
+  * @example
+  * var verificationCode : string = $event.code;
+  */
+  public modalSaveMfaKey(dialogRef : any) : void
+  {
+    this.modalSaveMfaKeySub = dialogRef.componentInstance.relaySaveMfaKey.subscribe((event) =>
+    {
+      this.saveMfaKey.emit(event);
+    });
+  }
+
+  /** Emit `$event` object containing code property.
+  *
+  * @example
+  * var verificationCode : string = $event.code;
+  */
+ public modalSendMfaCode(dialogRef : any) : void
+ {
+   this.modalSendMfaCodeSub = dialogRef.componentInstance.relaySendMfaCode.subscribe((event) =>
+   {
+     this.sendMfaCode.emit(event);
+   });
+ }
+
   // -------------------------------------------------------------------------------------------
-  // NOTE: Inline ------------------------------------------------------------------------------
+  // NOTE: Tab ---------------------------------------------------------------------------------
   // -------------------------------------------------------------------------------------------
 
-  public onClickCloseInline($event : any) : void
+  public onClickCloseTab($event : any) : void
   {
-    this.closeInline();
+    this.closeTab();
   }
 
   // -------------------------------------------------------------------------------------------
@@ -255,17 +363,31 @@ export class LoginFormComponent implements OnInit, OnDestroy
   private openModal() : void
   {
     let params : any = {
-      isFirst      : this.isFirst,
-      closeEvent   : this.closeModalEvent,
-      headerLabels : this.headerLabels,
-      passLabels   : this.passLabels,
-      passPolicies : this.passPolicies
+      isFirst        : this.isFirst,
+      closeEvent     : this.closeModalEvent,
+      headerLabels   : this.headerLabels,
+      passLabels     : this.passLabels,
+      passPolicies   : this.passPolicies,
+      mfaLabels      : this.mfaLabels,
+      mfaSetupLabels : this.mfaSetupLabels,
+      formType       : this.formType,
+      code           : this.code,
+      qrCode         : this.qrCode
     };
 
-    let dialogRef = this.dialog.open(ModalPassComponent, { data : params });
+    let dialogRef = this.dialog.open(ModalWrapperComponent, { data : params });
 
-    this.modalFirstLog(dialogRef);
-    this.modalLostPass(dialogRef);
+    if(this.formType === Forms.PASSWORD)
+    {
+      this.modalFirstLog(dialogRef);
+      this.modalLostPass(dialogRef);
+    }
+
+    if(this.formType === Forms.MFA_SETUP)
+      this.modalSaveMfaKey(dialogRef);
+
+    if(this.formType === Forms.MFA)
+      this.modalSendMfaCode(dialogRef);
 
     dialogRef.afterClosed().subscribe(result =>
     {
@@ -278,19 +400,73 @@ export class LoginFormComponent implements OnInit, OnDestroy
   // NOTE: Private -----------------------------------------------------------------------------
   // -------------------------------------------------------------------------------------------
 
+  private showLayout(formLayout : string) : void
+  {
+    switch(formLayout)
+    {
+      case Layouts.TAB    :
+        this.openTab();
+        break;
+      case Layouts.MODAL  :
+        this.openModal();
+        break;
+      case Layouts.INLINE :
+        // TODO:
+        break;
+      default :
+        this.openTab();
+        break;
+    }
+  }
+
+  private closeLayout(formLayout : string) : void
+  {
+    switch(formLayout)
+    {
+      case Layouts.TAB    :
+        this.closeTab();
+        break;
+      case Layouts.MODAL  :
+        this.closeModal();
+        break;
+      case Layouts.INLINE :
+        // TODO:
+        break;
+      default :
+        this.closeTab();
+        break;
+    }
+  }
+
   private closeModal() : void
   {
     this.closeModalEvent.emit();
   }
 
-  private openInline() : void
+  private openTab() : void
   {
     this.selectedTab = 1;
   }
 
-  private closeInline() : void
+  private closeTab() : void
   {
     this.selectedTab = 0;
+  }
+
+  private prepareFormLayouts() : any
+  {
+    let defaultFormLayouts : any = null;
+    let formLayouts        : any = null;
+
+    // Form layouts
+    defaultFormLayouts = {
+      password : Layouts.TAB,
+      mfaSetup : Layouts.TAB,
+      mfa      : Layouts.TAB,
+    };
+
+    formLayouts = Object.assign(defaultFormLayouts, this.customFormLayouts);
+    this.formLayouts = formLayouts;
   }
 
   private prepareSocialButtons() : any
@@ -340,12 +516,16 @@ export class LoginFormComponent implements OnInit, OnDestroy
 
   private prepareLabels() : any
   {
-    let defaultLoginLabels  : any = null;
-    let defaultPassLabels   : any = null;
-    let defaultHeaderLabels : any = null;
-    let loginLabels         : any = null;
-    let passLabels          : any = null;
-    let headerLabels        : any = null;
+    let defaultLoginLabels    : any = null;
+    let defaultPassLabels     : any = null;
+    let defaultHeaderLabels   : any = null;
+    let defaultMfaSetupLabels : any = null;
+    let defaultMfaLabels      : any = null;
+    let loginLabels           : any = null;
+    let passLabels            : any = null;
+    let headerLabels          : any = null;
+    let mfaSetupLabels        : any = null;
+    let mfaLabels             : any = null;
 
     // Login labels
     defaultLoginLabels = {
@@ -374,18 +554,34 @@ export class LoginFormComponent implements OnInit, OnDestroy
     };
     // Header labels
     defaultHeaderLabels = {
+      mfaCodeLabel               : 'MFA Code',
       lostPasswordLabel          : 'Lost password',
       updatePasswordLabel        : 'Update password',
       updatePasswordMessageLabel : 'Please enter a new password',
     };
+    // Mfa setup labels
+    defaultMfaSetupLabels = {
+      verifCodeLabel : 'Verification code',
+      saveLabel      : 'Save',
+      description    : 'Save this secret key for future connection'
+    };
+    // Mfa labels
+    defaultMfaLabels = {
+      verifCodeLabel : 'Verification code',
+      sendLabel      : 'Send'
+    };
 
-    loginLabels  = Object.assign(defaultLoginLabels, this.customLoginLabels);
-    passLabels   = Object.assign(defaultPassLabels, this.customPassLabels);
-    headerLabels = Object.assign(defaultHeaderLabels, this.customHeaderLabels);
+    loginLabels    = Object.assign(defaultLoginLabels, this.customLoginLabels);
+    passLabels     = Object.assign(defaultPassLabels, this.customPassLabels);
+    headerLabels   = Object.assign(defaultHeaderLabels, this.customHeaderLabels);
+    mfaSetupLabels = Object.assign(defaultMfaSetupLabels, this.customMfaSetupLabels);
+    mfaLabels      = Object.assign(defaultMfaLabels, this.customMfaLabels);
 
-    this.loginLabels  = loginLabels;
-    this.passLabels   = passLabels;
-    this.headerLabels = headerLabels;
+    this.loginLabels    = loginLabels;
+    this.passLabels     = passLabels;
+    this.headerLabels   = headerLabels;
+    this.mfaSetupLabels = mfaSetupLabels;
+    this.mfaLabels      = mfaLabels;
   }
 
   private prepareEvent() : any

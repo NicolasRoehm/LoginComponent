@@ -11,15 +11,18 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/fromPromise';
 
+// Enums
+import { Credentials } from './credentials.enum';
+
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService
 {
-  public fakeAuth(login : string, password : string, response? : string) : Observable<any>
+  public fakeAuth(username : string, password : string, response? : string) : Observable<any>
   {
     if(!response)
-      response = 'onSuccess';
+      response = this.getResponseByCredentials(username, password);
 
     let user : any = {};
 
@@ -28,17 +31,22 @@ export class AuthService
       switch(response)
       {
         case 'newPasswordRequired' :
-          reject(-1);
+          reject(1);
           break;
         case 'onSuccess' :
           resolve(user);
           break;
         case 'onFailure' :
-          reject(-2);
+          reject(2);
+          break;
+        case 'mfaSetup' :
+          reject(3);
           break;
       }
     }));
   }
+
+  // public fakeAuthGoogle();
 
   public fakeResetPassword(username : string, response? : string) : Observable<any>
   {
@@ -100,4 +108,23 @@ export class AuthService
     }));
   }
 
+  private getResponseByCredentials(username? : string, password? : string, verificationCode? : string) : string
+  {
+    let response : string = null;
+
+    switch(username)
+    {
+      case Credentials.LOGIN_1 :
+        response = 'onSuccess';
+        break;
+      case Credentials.LOGIN_3 :
+        response = 'newPasswordRequired';
+        break;
+      case Credentials.LOGIN_4 :
+        response = 'mfaSetup';
+        break;
+    }
+
+    return response;
+  }
 }

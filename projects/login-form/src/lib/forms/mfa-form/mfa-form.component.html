@@ -1,0 +1,14 @@
+<form (ngSubmit)="send()" [formGroup]="formGroup" autocomplete="off">
+  <mat-form-field class="w-100">
+    <input matInput formControlName="verifCode" 
+      name="verifCode" placeholder="{{ mfaLabels.verifCodeLabel }}" 
+      type="text"/>
+  </mat-form-field>
+  <div class="row w-100 no-gutters">
+    <div class="col text-right">
+      <button color="primary" mat-raised-button class="small text-uppercase" type="submit" [disabled]="!formGroup.valid">
+        {{ mfaLabels.sendLabel }}
+      </button>
+    </div>
+  </div>
+</form>
