@@ -21,21 +21,28 @@
 </div>
 <!-- NOTE: Pass Form -->
 <cal-pass-form *ngIf="formType === forms.PASSWORD" 
+  [btnShowPass]="btnShowPassOnPassForm" 
+  [btnClearCode]="btnClearCodeOnPassForm" 
   [isFirst]="isFirst" 
   [passLabels]="passLabels" 
   [passPolicies]="passPolicies" 
+  [err]="errOnPassForm" 
   (firstConnection)="relayFirstLogEvent($event)" 
   (lostPassword)="relayLostPassEvent($event)">
 </cal-pass-form>
 <!-- NOTE: MFA Setup Form -->
 <cal-mfa-setup-form *ngIf="formType === forms.MFA_SETUP" 
+  [btnClearCode]="btnClearCodeOnMfaForm" 
   [mfaSetupLabels]="mfaSetupLabels" 
   [qrCode]="qrCode" 
   [code]="code" 
+  [err]="errOnMfaForm" 
   (saveMfa)="relaySaveMfaKeyEvent($event)">
 </cal-mfa-setup-form>
 <!-- NOTE: MFA Form -->
 <cal-mfa-form *ngIf="formType === forms.MFA" 
+  [btnClearCode]="btnClearCodeOnMfaForm" 
   [mfaLabels]="mfaLabels" 
+  [err]="errOnMfaForm" 
   (sendMfa)="relaySendMfaCodeEvent($event)">
 </cal-mfa-form>

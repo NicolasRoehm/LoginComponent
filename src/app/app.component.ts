@@ -134,8 +134,8 @@ export class AppComponent implements OnInit
 
       switch(errorCode)
       { // NOTE: This example use AWS errors
-        case AuthError.FORGOT_PASS_VERIF_EMAIL :
-          errorMsg = this.translate.instant('ERROR_INCORRECT_EMAIL');
+        case AuthError.FORGOT_PASS_VERIF_USER :
+          errorMsg = this.translate.instant('ERROR_INCORRECT_USER');
           break;
         case AuthError.FORGOT_PASS_VERIF_INIT :
           errorMsg = this.translate.instant('ERROR_FORGOT_PASS_VERIF_INIT');

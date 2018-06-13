@@ -19,13 +19,19 @@
           placeholder="{{ passLabels.verifCodeLabel }}" 
           pattern="[\\S]+" 
           type="text"/> <!-- NOTE: Pattern matches any non-whitespace character -->
-        <!-- NOTE: Error messages can be displayed -->
-        <!-- <mat-hint align="start" *ngIf="formGroup.controls.verifCode.errors?.required">
+        <button *ngIf="formGroup.controls.verifCode.valid && btnClearCode" 
+          mat-button matSuffix mat-icon-button aria-label="Clear" 
+          color="primary" (click)="formGroup.controls.verifCode.setValue('')" 
+          type="button">
+          <mat-icon>close</mat-icon>
+        </button>
+        <!-- NOTE: Error messages -->
+        <mat-hint align="start" *ngIf="formGroup.controls.verifCode.errors?.required && err">
           {{ passLabels.fieldRequiredLabel }}
         </mat-hint>
-        <mat-hint align="start" *ngIf="formGroup.controls.verifCode.errors?.pattern">
+        <mat-hint align="start" *ngIf="formGroup.controls.verifCode.errors?.pattern && err">
           {{ passLabels.fieldNonWhitespaceLabel }}
-        </mat-hint> -->
+        </mat-hint>
       </mat-form-field>
     </div>
   </div>
@@ -36,11 +42,17 @@
         <input matInput formControlName="newPassword" 
           name="new-password" autocomplete="new-password" 
           placeholder="{{ passLabels.newPasswordLabel }}" 
-          type="password"/>
-        <!-- NOTE: Error messages can be displayed -->
-        <!-- <mat-hint align="start" *ngIf="formGroup.controls.newPassword.errors?.required">
+          type="{{ showPassword ? 'text' : 'password' }}"/>
+        <button *ngIf="btnShowPass" 
+          mat-button matSuffix mat-icon-button aria-label="Clear" 
+          color="primary" (click)="showPassword=!showPassword" 
+          type="button">
+          <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        <!-- NOTE: Error message -->
+        <mat-hint align="start" *ngIf="formGroup.controls.newPassword.errors?.required && err">
           {{ passLabels.fieldRequiredLabel }}
-        </mat-hint> -->
+        </mat-hint>
       </mat-form-field>
     </div>
   </div>

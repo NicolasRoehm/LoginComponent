@@ -3,11 +3,8 @@ import { Component }       from '@angular/core';
 import { OnInit }          from '@angular/core';
 import { OnDestroy }       from '@angular/core';
 import { Inject }          from '@angular/core';
-import { Input }           from '@angular/core';
-import { Output }          from '@angular/core';
 import { EventEmitter }    from '@angular/core';
 import { MatDialogRef }    from '@angular/material';
-import { MatDialog }       from '@angular/material';
 import { MAT_DIALOG_DATA } from '@angular/material';
 
 // External modules
@@ -40,18 +37,28 @@ export class ModalWrapperComponent implements OnInit, OnDestroy
   // Labels
   public passLabels    : any;
   public passPolicies  : any;
+  // Display errors on the password form
+  public errOnPassForm : boolean;
+  // Display show/hide button inside password input
+  public btnShowPassOnPassForm  : boolean;
+  // Display clear button inside code input
+  public btnClearCodeOnPassForm : boolean;
   // Event sent from password form
   public relayFirstLog : EventEmitter<any> = new EventEmitter();
   public relayLostPass : EventEmitter<any> = new EventEmitter();
 
   // NOTE: MFA setup
   // MFA secret key
-  public code             : string;
-  public qrCode           : string;
+  public code            : string;
+  public qrCode          : string;
   // Labels
-  public mfaSetupLabels   : any;
+  public mfaSetupLabels  : any;
+  // Display errors on the mfa form
+  public errOnMfaForm    : boolean;
+  // Display clear button inside code input
+  public btnClearCodeOnMfaForm : boolean;
   // Event sent from mfa setup form
-  public relaySaveMfaKey  : EventEmitter<any> = new EventEmitter();
+  public relaySaveMfaKey : EventEmitter<any> = new EventEmitter();
 
   // NOTE: MFA
   // Labels
@@ -107,21 +114,31 @@ export class ModalWrapperComponent implements OnInit, OnDestroy
     {
       this.formType       = data.formType;
 
+      // NOTE: Password
       // First connection or Forgotten password
       this.isFirst        = data.isFirst;
       // Password labels
       this.headerLabels   = data.headerLabels;
       this.passLabels     = data.passLabels;
       this.passPolicies   = data.passPolicies;
+      // Password errors
+      this.errOnPassForm  = data.errOnPassForm;
+      // Password buttons
+      this.btnShowPassOnPassForm  = data.btnShowPassOnPassForm;
+      this.btnClearCodeOnPassForm = data.btnClearCodeOnPassForm;
 
+      // NOTE: MFA
       // Mfa setup labels
       this.mfaSetupLabels = data.mfaSetupLabels;
       // Mfa setupd codes
       this.code           = data.code;
       this.qrCode         = data.qrCode;
-
       // Mfa labels
       this.mfaLabels      = data.mfaLabels;
+      // Mfa errors
+      this.errOnMfaForm   = data.errOnMfaForm;
+      // Mfa button
+      this.btnClearCodeOnMfaForm = data.btnClearCodeOnMfaForm;
 
       // Close dialog event
       this.closeSub = data.closeEvent.subscribe((res) =>

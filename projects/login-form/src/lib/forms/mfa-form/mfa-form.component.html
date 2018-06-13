@@ -3,6 +3,17 @@
     <input matInput formControlName="verifCode" 
       name="verifCode" placeholder="{{ mfaLabels.verifCodeLabel }}" 
       type="text"/>
+    <!-- TODO: Check if non witespace can be applied -->
+    <button *ngIf="formGroup.controls.verifCode.valid && btnClearCode" 
+      mat-button matSuffix mat-icon-button aria-label="Clear" 
+      color="primary" (click)="formGroup.controls.verifCode.setValue('')" 
+      type="button">
+      <mat-icon>close</mat-icon>
+    </button>
+    <!-- NOTE: Error messages -->
+    <mat-hint align="start" *ngIf="formGroup.controls.verifCode.errors?.required && err">
+      {{ mfaLabels.fieldRequiredLabel }}
+    </mat-hint>
   </mat-form-field>
   <div class="row w-100 no-gutters">
     <div class="col text-right">

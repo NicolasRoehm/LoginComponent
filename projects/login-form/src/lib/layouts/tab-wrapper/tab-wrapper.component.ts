@@ -2,13 +2,9 @@
 import { Component }    from '@angular/core';
 import { OnInit }       from '@angular/core';
 import { OnDestroy }    from '@angular/core';
-import { Inject }       from '@angular/core';
 import { Input }        from '@angular/core';
 import { Output }       from '@angular/core';
 import { EventEmitter } from '@angular/core';
-
-// External modules
-import { Subscription } from 'rxjs/Subscription';
 
 // Enum
 import { Forms }        from '../../enums/forms.enum';
@@ -37,18 +33,28 @@ export class TabWrapperComponent implements OnInit, OnDestroy
   // Password labels
   @Input()  passLabels    : any;
   @Input()  passPolicies  : any;
+  // Display errors on the password form
+  @Input()  errOnPassForm : boolean;
+  // Display show/hide button inside password input
+  @Input()  btnShowPassOnPassForm  : boolean;
+  // Display clear button inside code input
+  @Input()  btnClearCodeOnPassForm : boolean;
   // Event sent from password form
   @Output() relayFirstLog : EventEmitter<any> = new EventEmitter();
   @Output() relayLostPass : EventEmitter<any> = new EventEmitter();
 
   // NOTE: MFA setup
   // MFA secret key
-  @Input()  code             : string;
-  @Input()  qrCode           : string;
+  @Input()  code            : string;
+  @Input()  qrCode          : string;
   // Labels
-  @Input()  mfaSetupLabels   : any;
+  @Input()  mfaSetupLabels  : any;
+  // Display errors on the mfa form
+  @Input()  errOnMfaForm    : boolean;
+  // Display clear button inside code input
+  @Input()  btnClearCodeOnMfaForm : boolean;
   // Event sent from mfa setup form
-  @Output() relaySaveMfaKey  : EventEmitter<any> = new EventEmitter();
+  @Output() relaySaveMfaKey : EventEmitter<any> = new EventEmitter();
 
   // NOTE: MFA
   // Labels

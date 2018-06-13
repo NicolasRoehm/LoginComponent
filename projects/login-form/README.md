@@ -40,6 +40,12 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
   mfaSetup : 'tab',
   mfa      : 'tab'
 }
+// Display Google button with the supplied theme : light (by default) / dark 
+@Input() customTheme : string = null;
+
+// Optional policy applied on the username field : email / phone / regex
+// Be careful, you must double all the backslashes used in the supplied regex
+@Input() customUserPolicy : string = null;
 // Policies applied on the password field
 @Input() customPolicies : any = {
   range : {
@@ -51,61 +57,82 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
   lower  : true,
   upper  : true
 }
+
 // Social buttons displayed on the login form
 @Input() customSocialButtons : any = {
   google   : true,
   facebook : true
 }
-// Dislay user icon inside login input
-@Input() inputLoginWithIcon   : boolean = true;
-// Display clear button on login input
-@Input() inputLoginWithButton : boolean = true;
-// Display lock icon inside password input
-@Input() inputPassWithIcon    : boolean = true;
-// Display show/hide button on password input
-@Input() inputPassWithButton  : boolean = true;
+
+// Dislay user icon inside login input on the login form
+@Input() iconUserOnLoginForm     : boolean = true;
+// Dislay lock icon inside password input on the login form
+@Input() iconPassOnLoginForm     : boolean = true;
+
+// Display clear button inside login input on the login form
+@Input() btnClearUserOnLoginForm : boolean = true;
+// Display show/hide button inside password input on the login form
+@Input() btnShowPassOnLoginForm  : boolean = true;
+// Display clear button inside code input on the password form
+@Input() btnClearCodeOnPassForm  : boolean = true;
+// Display show/hide button inside password input on the password form
+@Input() btnShowPassOnPassForm   : boolean = true;
+// Display clear button inside code input on the mfa form
+@Input() btnClearCodeOnMfaForm   : boolean = true;
+
+// Display errors on the login form
+@Input() errOnLoginForm          : boolean = true;
+// Display errors on the password form
+@Input() errOnPassForm           : boolean = true;
+// Display errors on the mfa form
+@Input() errOnMfaForm            : boolean = true;
+
 // Labels of the login form
 @Input() customLoginLabels : any = {
-  loginLabel                 : 'Login',
-  passwordLabel              : 'Password',
-  forgottenPasswordLabel     : 'Forgotten password',
-  signInLabel                : 'Sign in',
-  googleSignInLabel          : 'Sign in with Google',
-  facebookSignInLabel        : 'Sign in with Facebook',
-  fieldRequiredLabel         : 'This field is required',
-  fieldEmailLabel            : 'This value must be an email'
-};
+  loginLabel             : 'Login',
+  passwordLabel          : 'Password',
+  forgottenPasswordLabel : 'Forgotten password',
+  signInLabel            : 'Sign in',
+  googleSignInLabel      : 'Sign in with Google',
+  facebookSignInLabel    : 'Sign in with Facebook',
+  fieldRequiredLabel     : 'This field is required',
+  fieldEmailLabel        : 'This value must be an email',
+  fieldPhoneLabel        : 'This value must be a phone number',
+  fieldCustomLabel       : 'This value must match the custom regex provided'
+}
 // Labels of the password form
 @Input() customPassLabels : any = {
-  verifCodeMessageLabel      : 'Please enter the confirmation code you will receive by email',
-  verifCodeLabel             : 'Verification code',
-  newPasswordLabel           : 'New password',
-  sendLabel                  : 'Send',
-  policyPassword1Label       : 'Minimum password length (6 to 128)',
-  policyPassword2Label       : 'Require at least one uppercase letter (A to Z)',
-  policyPassword3Label       : 'Require at least one lowercase letter (a to z)',
-  policyPassword4Label       : 'Require at least one number (0 to 9)',
-  policyPassword5Label       : 'Require at least one nonalphanumeric character ! @ # $ % ^ & * ( ) _ + - = [ ] { } | \'',
-  fieldRequiredLabel         : 'This field is required',
-  fieldNonWhitespaceLabel    : 'This value must not contain any spaces'
-};
+  verifCodeMessageLabel   : 'Please enter the confirmation code you will receive by email',
+  verifCodeLabel          : 'Verification code',
+  newPasswordLabel        : 'New password',
+  sendLabel               : 'Send',
+  policyPassword1Label    : 'Minimum password length (6 to 128)',
+  policyPassword2Label    : 'Require at least one uppercase letter (A to Z)',
+  policyPassword3Label    : 'Require at least one lowercase letter (a to z)',
+  policyPassword4Label    : 'Require at least one number (0 to 9)',
+  policyPassword5Label    : 'Require at least one nonalphanumeric character ! @ # $ % ^ & * ( ) _ + - = [ ] { } | \'',
+  fieldRequiredLabel      : 'This field is required',
+  fieldNonWhitespaceLabel : 'This value must not contain any spaces'
+}
 // Labels on top of the password form
 @Input() customHeaderLabels : any = {
   mfaCodeLabel               : 'MFA Code',
   lostPasswordLabel          : 'Lost password',
   updatePasswordLabel        : 'Update password',
   updatePasswordMessageLabel : 'Please enter a new password',
-};
+}
 // Labels of the mfa setup form
 @Input() customMfaSetupLabels : any = {
-  verifCodeLabel : 'Verification code',
-  saveLabel      : 'Save',
-  description    : 'Save this secret key for future connection'
+  verifCodeLabel     : 'Verification code',
+  saveLabel          : 'Save',
+  description        : 'Save this secret key for future connection',
+  fieldRequiredLabel : 'This field is required'
 }
 // Labels of the mfa form
 @Input() customMfaLabels : any = {
-  verifCodeLabel : 'Verification code',
-  sendLabel      : 'Send'
+  verifCodeLabel     : 'Verification code',
+  sendLabel          : 'Send',
+  fieldRequiredLabel : 'This field is required'
 }
 ```
 
@@ -121,11 +148,11 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
 @Output() forgottenPass : EventEmitter<any>;
 /* login    : string
 *  password : string */
-@Output() sendFirstPass : EventEmitter<string>;
-/* password : string */
-@Output() sendResetPass : EventEmitter<string>;
+@Output() sendResetPass : EventEmitter<any>;
 /* password : string
 *  code     : string */
+@Output() sendFirstPass : EventEmitter<string>;
+/* password : string */
 @Output() saveMfaKey    : EventEmitter<string>;
 /* code     : string */
 @Output() sendMfaCode   : EventEmitter<string>;
@@ -151,15 +178,13 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
 
 ### In Progress
 - Captcha
-- Optional error messages
 - Inline layout
-- Show password button on Password setup field
 
 ### Planning
 - Deploy with [Travis](https://travis-ci.org/) & Test Coverage with [Coveralls](https://coveralls.io/)
 - Remove Bootstrap 4 dependency
-- Sign up button
-- Let you choose your verification pattern / regex (for login input)
+- Dissociate forgot password from setup password ? -> Optional forgot password button
+- Optional sign up button
 - Update screenshot
 - Fix Angular 6 Library assets
 - Create an Online example with [StackBlitz](https://stackblitz.com)

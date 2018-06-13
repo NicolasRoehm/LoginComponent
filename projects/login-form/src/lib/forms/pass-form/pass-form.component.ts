@@ -2,7 +2,6 @@
 import { OnInit }       from '@angular/core';
 import { Component }    from '@angular/core';
 import { OnDestroy }    from '@angular/core';
-import { Inject }       from '@angular/core';
 import { Input }        from '@angular/core';
 import { Output }       from '@angular/core';
 import { EventEmitter } from '@angular/core';
@@ -10,9 +9,6 @@ import { FormControl }  from '@angular/forms';
 import { FormGroup }    from '@angular/forms';
 import { FormBuilder }  from '@angular/forms';
 import { Validators }   from '@angular/forms';
-
-// External modules
-import { Subscription } from 'rxjs/Subscription';
 
 // Internal modules
 import { PasswordValidator } from './password.validator';
@@ -25,12 +21,19 @@ import { PasswordValidator } from './password.validator';
 export class PassFormComponent implements OnInit, OnDestroy
 {
   public    formGroup    : FormGroup;
+  public    showPassword : boolean = false;
   // public captchaToken : string; // TODO:
   // First connection or Forgotten password
   @Input()  isFirst      : boolean;
   // Labels
   @Input()  passLabels   : any;
   @Input()  passPolicies : any;
+  // Display show/hide button inside password input
+  @Input()  btnShowPass  : boolean;
+  // Display clear button inside code input
+  @Input()  btnClearCode : boolean;
+  // Display errors
+  @Input()  err          : boolean;
   // Event sent to login-form and relayed parents (modal & tab)
   @Output() firstConnection : EventEmitter<any> = new EventEmitter();
   @Output() lostPassword    : EventEmitter<any> = new EventEmitter();

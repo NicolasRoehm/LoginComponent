@@ -1,4 +1,4 @@
-<div class="header py-2 px-4 mb-3">
+<div class="header py-2 px-4">
   <div class="row align-items-center">
     <div class="col">
       <div *ngIf="!isFirst && formType === forms.PASSWORD">
@@ -21,23 +21,30 @@
 </div>
 <mat-dialog-content class="py-4">
   <!-- NOTE: Pass Form -->
-  <cal-pass-form *ngIf="formType === forms.PASSWORD"
+  <cal-pass-form *ngIf="formType === forms.PASSWORD" 
+    [btnShowPass]="btnShowPassOnPassForm" 
+    [btnClearCode]="btnClearCodeOnPassForm" 
     [isFirst]="isFirst" 
     [passLabels]="passLabels" 
     [passPolicies]="passPolicies" 
+    [err]="errOnPassForm" 
     (firstConnection)="relayFirstLogEvent($event)" 
     (lostPassword)="relayLostPassEvent($event)">
   </cal-pass-form>
   <!-- NOTE: MFA form -->
-  <cal-mfa-setup-form *ngIf="formType === forms.MFA_SETUP"
-    [mfaSetupLabels]="mfaSetupLabels"
+  <cal-mfa-setup-form *ngIf="formType === forms.MFA_SETUP" 
+    [btnClearCode]="btnClearCodeOnMfaForm" 
+    [mfaSetupLabels]="mfaSetupLabels" 
     [qrCode]="qrCode" 
     [code]="code" 
+    [err]="errOnMfaForm" 
     (saveMfa)="relaySaveMfaKeyEvent($event)">
   </cal-mfa-setup-form>
   <!-- NOTE: MFA form -->
-  <cal-mfa-form *ngIf="formType === forms.MFA"
-    [mfaLabels]="mfaLabels"
+  <cal-mfa-form *ngIf="formType === forms.MFA" 
+    [btnClearCode]="btnClearCodeOnMfaForm" 
+    [mfaLabels]="mfaLabels" 
+    [err]="errOnMfaForm" 
     (sendMfa)="relaySendMfaCodeEvent($event)">
   </cal-mfa-form>
 </mat-dialog-content>

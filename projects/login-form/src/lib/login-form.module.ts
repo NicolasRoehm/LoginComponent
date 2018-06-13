@@ -34,9 +34,6 @@ import { MatDialogModule }          from '@angular/material';
 // import { MatSnackBarModule }        from '@angular/material';
 // import { MatExpansionModule }       from '@angular/material';
 
-
-import { QRCodeModule }             from 'angularx-qrcode';
-
 // Internal modules
 import { LoginFormComponent }       from './login-form.component';
 import { PassFormComponent }        from './forms/pass-form/pass-form.component';
@@ -45,6 +42,9 @@ import { TabWrapperComponent }      from './layouts/tab-wrapper/tab-wrapper.comp
 import { MfaSetupFormComponent }    from './forms/mfa-setup-form/mfa-setup-form.component';
 import { MfaFormComponent }         from './forms/mfa-form/mfa-form.component';
 import { ExistsLayoutPipe }         from './pipes/existsLayout.pipe';
+
+// External modules
+import { QRCodeModule }             from 'angularx-qrcode';
 
 // NgModule that includes all Material modules that are required to serve the app.
 @NgModule({

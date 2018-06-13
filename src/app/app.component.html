@@ -41,6 +41,7 @@
         <div class="row my-5">
           <div class="col">
             <cal-login-form #loginForm 
+              [customUserPolicy]="'email'" 
               (login)="login($event)" 
               (forgottenPass)="forgottenPassword($event)" 
               (sendFirstPass)="firstPassword($event)" 

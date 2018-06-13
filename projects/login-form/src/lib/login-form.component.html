@@ -7,26 +7,32 @@
             <div class="col">
               <!-- NOTE: Login -->
               <mat-form-field class="w-100">
-                <div matPrefix class="mr-2" *ngIf="inputLoginWithIcon">
+                <div matPrefix class="mr-2" *ngIf="iconUserOnLoginForm">
                   <mat-icon class="align-bottom">person</mat-icon>
                 </div>
                 <input matInput formControlName="login" 
-                  name="email" autocomplete="email" 
+                  name="username" autocomplete="username" 
                   placeholder="{{ loginLabels.loginLabel }}" 
-                  type="text"/>
-                <button *ngIf="formGroup.controls.login.valid && inputLoginWithButton" 
+                  type="text"/> <!-- TODO: switch / case : email, phone, none -->
+                <button *ngIf="formGroup.controls.login.valid && btnClearUserOnLoginForm" 
                   mat-button matSuffix mat-icon-button aria-label="Clear" 
                   color="primary" (click)="formGroup.controls.login.setValue('')" 
                   type="button">
                   <mat-icon>close</mat-icon>
                 </button>
-                <!-- NOTE: Error messages can be displayed -->
-                <!-- <mat-hint align="start" *ngIf="formGroup.controls.login.errors?.required">
-                  {{ loginLabels.fieldRequiredLabel | translate }}
+                <!-- NOTE: Error message(s) -->
+                <mat-hint align="start" *ngIf="formGroup.controls.login.errors?.required && errOnLoginForm">
+                  {{ loginLabels.fieldRequiredLabel }}
                 </mat-hint>
-                <mat-hint align="start" *ngIf="formGroup.controls.login.errors?.pattern">
-                  {{ loginLabels.fieldEmailLabel | translate }}
-                </mat-hint> -->
+                <mat-hint align="start" *ngIf="formGroup.controls.login.errors?.pattern && errOnLoginForm && userPolicy === userPolicies.EMAIL">
+                  {{ loginLabels.fieldEmailLabel }}
+                </mat-hint>
+                <mat-hint align="start" *ngIf="formGroup.controls.login.errors?.pattern && errOnLoginForm && userPolicy === userPolicies.PHONE">
+                  {{ loginLabels.fieldPhoneLabel }}
+                </mat-hint>
+                <mat-hint align="start" *ngIf="formGroup.controls.login.errors?.pattern && errOnLoginForm && userPolicy && userPolicy !== userPolicies.EMAIL && userPolicy !== userPolicies.PHONE">
+                  {{ loginLabels.fieldCustomLabel }}
+                </mat-hint>
               </mat-form-field>
             </div>
           </div>
@@ -34,23 +40,23 @@
             <div class="col">
               <!-- NOTE: Password -->
               <mat-form-field class="w-100">
-                <div matPrefix class="mr-2" *ngIf="inputPassWithIcon">
+                <div matPrefix class="mr-2" *ngIf="iconPassOnLoginForm">
                   <mat-icon class="align-bottom">lock</mat-icon>
                 </div>
                 <input matInput formControlName="password" 
                   name="password" autocomplete="password" 
                   placeholder="{{ loginLabels.passwordLabel }}" 
                   type="{{ showPassword ? 'text' : 'password' }}"/>
-                <button *ngIf="inputPassWithButton" 
+                <button *ngIf="btnShowPassOnLoginForm" 
                   mat-button matSuffix mat-icon-button aria-label="Clear" 
                   color="primary" (click)="showPassword=!showPassword" 
                   type="button">
                   <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
                 </button>
-                <!-- NOTE: Error messages can be displayed -->
-                <!-- <mat-hint align="end" *ngIf="formGroup.controls.password.errors?.required">
-                  {{ loginLabels.fieldRequiredLabel | translate }}
-                </mat-hint> -->
+                <!-- NOTE: Error message -->
+                <mat-hint align="start" *ngIf="formGroup.controls.password.errors?.required && errOnLoginForm">
+                  {{ loginLabels.fieldRequiredLabel }}
+                </mat-hint>
               </mat-form-field>
             </div> 
           </div>
@@ -94,20 +100,25 @@
   </mat-tab>
   <mat-tab label="pass-form" *ngIf="formLayouts | existsLayout: layouts.TAB">
     <!-- NOTE: Tab form -->
-    <cal-tab-wrapper
-      [formType]="formType"
+    <cal-tab-wrapper 
+      [formType]="formType" 
       [isFirst]="isFirst" 
-      [code]   = "code"
-      [qrCode] = "qrCode"
+      [code]   = "code" 
+      [qrCode] = "qrCode" 
       [headerLabels]="headerLabels" 
       [passLabels]="passLabels" 
-      [passPolicies]="passPolicies"
-      [mfaSetupLabels]="mfaSetupLabels"
-      [mfaLabels]="mfaLabels"
+      [passPolicies]="passPolicies" 
+      [errOnPassForm]="errOnPassForm" 
+      [errOnMfaForm]="errOnMfaForm" 
+      [btnShowPassOnPassForm]="btnShowPassOnPassForm" 
+      [btnClearCodeOnPassForm]="btnClearCodeOnPassForm" 
+      [mfaSetupLabels]="mfaSetupLabels" 
+      [mfaLabels]="mfaLabels" 
+      [btnClearCodeOnMfaForm]="btnClearCodeOnMfaForm" 
       (sendCloseTab)="onClickCloseTab($event)" 
       (relayFirstLog)="tabFirstLog($event)" 
-      (relayLostPass)="tabLostPass($event)"
-      (relaySaveMfaKey)="tabSaveMfaKey($event)"
+      (relayLostPass)="tabLostPass($event)" 
+      (relaySaveMfaKey)="tabSaveMfaKey($event)" 
       (relaySendMfaCode)="tabSendMfaCode($event)">
     </cal-tab-wrapper>
   </mat-tab>
