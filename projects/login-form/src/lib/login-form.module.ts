@@ -36,12 +36,12 @@ import { MatDialogModule }          from '@angular/material';
 
 // Internal modules
 import { LoginFormComponent }       from './login-form.component';
-import { PassFormComponent }        from './forms/pass-form/pass-form.component';
 import { ModalWrapperComponent }    from './layouts/modal-wrapper/modal-wrapper.component';
 import { TabWrapperComponent }      from './layouts/tab-wrapper/tab-wrapper.component';
+import { PwdFormComponent }         from './forms/pwd-form/pwd-form.component';
 import { MfaSetupFormComponent }    from './forms/mfa-setup-form/mfa-setup-form.component';
 import { MfaFormComponent }         from './forms/mfa-form/mfa-form.component';
-import { ExistsLayoutPipe }         from './pipes/existsLayout.pipe';
+import { ExistsLayoutPipe }         from './pipes/exists-layout.pipe';
 
 // External modules
 import { QRCodeModule }             from 'angularx-qrcode';
@@ -90,7 +90,7 @@ export class MaterialModule {}
   ],
   declarations: [
     LoginFormComponent,
-    PassFormComponent,
+    PwdFormComponent,
     ModalWrapperComponent,
     TabWrapperComponent,
     MfaSetupFormComponent,
@@ -102,7 +102,7 @@ export class MaterialModule {}
   entryComponents: [ ModalWrapperComponent ],
   exports: [
     LoginFormComponent,
-    PassFormComponent,
+    PwdFormComponent,
     ModalWrapperComponent,
     TabWrapperComponent,
     MfaSetupFormComponent,

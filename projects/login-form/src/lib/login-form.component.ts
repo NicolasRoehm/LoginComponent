@@ -1,5 +1,6 @@
 // Angular modules
 import { OnInit }          from '@angular/core';
+import { AfterViewInit }   from '@angular/core';
 import { OnDestroy }       from '@angular/core';
 import { Input }           from '@angular/core';
 import { Output }          from '@angular/core';
@@ -17,7 +18,7 @@ import { Validators }      from '@angular/forms';
 import { Subscription }    from 'rxjs/Subscription';
 
 // Internal modules
-import { LoginValidator }  from './login.validator';
+import { UsrValidator }    from './validators/usr.validator';
 
 // Enums
 import { Layouts }         from './enums/layouts.enum';
@@ -33,23 +34,24 @@ import { ModalWrapperComponent } from './layouts/modal-wrapper/modal-wrapper.com
   templateUrl : './login-form.component.html',
   styleUrls   : ['./login-form.component.scss']
 })
-export class LoginFormComponent implements OnInit, OnDestroy
+export class LoginFormComponent implements OnInit, AfterViewInit, OnDestroy
 {
   public    formLayouts    : any;
   public    theme          : string;
 
   public    loginLabels    : any;
-  public    passLabels     : any;
+  public    pwdLabels      : any;
   public    headerLabels   : any;
   public    mfaSetupLabels : any;
   public    mfaLabels      : any;
 
-  public    userPolicy     : string;
-  public    passPolicies   : any;
+  public    usrPolicy      : string;
+  public    pwdPolicies    : any;
 
   public    socialButtons  : any;
 
-  // Display forms inside a modal or a tab
+  // Display forms inside a layout : tab (by default) / modal / inline
+  // The inline layout is only available for the MFA form
   @Input()  customFormLayouts    : any;
   // Display Google button with the supplied theme : light / dark
   @Input()  customTheme          : string = null;
@@ -57,7 +59,7 @@ export class LoginFormComponent implements OnInit, OnDestroy
   // Labels of the login form
   @Input()  customLoginLabels    : any;
   // Labels of the password form
-  @Input()  customPassLabels     : any;
+  @Input()  customPwdLabels      : any;
   // Labels on top of the password form
   @Input()  customHeaderLabels   : any;
   // Labels of the mfa setup form
@@ -65,48 +67,57 @@ export class LoginFormComponent implements OnInit, OnDestroy
   // Labels of the mfa form
   @Input()  customMfaLabels      : any;
 
-  // Optional policy applied on the username field : email / phone / regex
+  // Optional policy applied on the username input : email / phone / regex
   // Be careful, you must double all the backslashes used in the supplied regex
-  @Input()  customUserPolicy     : string = null;
-  // Policies applied on the password field
-  @Input()  customPassPolicies   : any;
+  @Input()  customUsrPolicy      : string = null;
+  // Policies applied on the password input
+  @Input()  customPwdPolicies    : any;
 
   // Social buttons displayed on the login form
   @Input()  customSocialButtons  : any;
 
-  // Dislay user icon inside login input on the login form
+  // Dislay user icon inside username input on the login form
   @Input()  iconUserOnLoginForm     : boolean = true;
   // Dislay lock icon inside password input on the login form
-  @Input()  iconPassOnLoginForm     : boolean = true;
+  @Input()  iconPwdOnLoginForm      : boolean = true;
 
-  // Display clear button inside login input on the login form
+  // Display clear button inside username input on the login form
   @Input()  btnClearUserOnLoginForm : boolean = true;
   // Display show/hide button inside password input on the login form
-  @Input()  btnShowPassOnLoginForm  : boolean = true;
+  @Input()  btnShowPwdOnLoginForm   : boolean = true;
   // Display clear button inside code input on the password form
-  @Input()  btnClearCodeOnPassForm  : boolean = true;
+  @Input()  btnClearCodeOnPwdForm   : boolean = true;
   // Display show/hide button inside password input on the password form
-  @Input()  btnShowPassOnPassForm   : boolean = true;
+  @Input()  btnShowPwdOnPwdForm     : boolean = true;
   // Display clear button inside code input on the mfa form
   @Input()  btnClearCodeOnMfaForm   : boolean = true;
+
+  // Display forgot password button on the login form
+  @Input()  btnForgotPwdOnLoginForm : boolean = true;
+  // Display sign up button on the login form
+  @Input()  btnSignUpOnLoginForm    : boolean = true;
 
   // Display errors on the login form
   @Input()  errOnLoginForm          : boolean = true;
   // Display errors on the password form
-  @Input()  errOnPassForm           : boolean = true;
+  @Input()  errOnPwdForm            : boolean = true;
   // Display errors on the mfa form
   @Input()  errOnMfaForm            : boolean = true;
 
-  // Event object containing login and password properties
+  // Event triggered after creating the login form (AfterViewInit)
+  @Output() initialized   : EventEmitter<any>    = new EventEmitter();
+  // Event object containing username and password properties
   @Output() login         : EventEmitter<any>    = new EventEmitter();
-  // Event object containing login, password and social properties
+  // Event object containing username, password and social properties
   @Output() loginSocial   : EventEmitter<any>    = new EventEmitter();
-  // Event object containing login and password properties
-  @Output() forgottenPass : EventEmitter<any>    = new EventEmitter();
+  // Event object containing username and password properties
+  @Output() forgotPwd     : EventEmitter<any>    = new EventEmitter();
+  // Event triggered after clicking on the sign up button.
+  @Output() signUp        : EventEmitter<any>    = new EventEmitter();
   // Event object containing password and code properties
-  @Output() sendResetPass : EventEmitter<any>    = new EventEmitter();
+  @Output() sendResetPwd  : EventEmitter<any>    = new EventEmitter();
   // Event object containing password property
-  @Output() sendFirstPass : EventEmitter<string> = new EventEmitter();
+  @Output() sendFirstPwd  : EventEmitter<string> = new EventEmitter();
   // Event object containing code property
   @Output() saveMfaKey    : EventEmitter<string> = new EventEmitter();
   // Event object containing code property
@@ -117,6 +128,7 @@ export class LoginFormComponent implements OnInit, OnDestroy
   public    showPassword  : boolean = false;
   public    formType      : string;
   public    userPolicies = UserPolicies;
+  public    forms = Forms;
 
   // NOTE: Password
   public    isFirst       : boolean = false;
@@ -164,6 +176,11 @@ export class LoginFormComponent implements OnInit, OnDestroy
     this.initSocialButtons();
   }
 
+  public ngAfterViewInit() : void
+  {
+    this.initialized.emit();
+  }
+
   public ngOnDestroy() : void
   {
     if(this.modalFirstSub)
@@ -172,7 +189,7 @@ export class LoginFormComponent implements OnInit, OnDestroy
       this.modalLostSub.unsubscribe();
     if(this.modalSaveMfaKeySub)
       this.modalSaveMfaKeySub.unsubscribe();
-    if(this.modalSendMfaCode)
+    if(this.modalSendMfaCodeSub)
       this.modalSendMfaCodeSub.unsubscribe();
   }
 
@@ -180,11 +197,11 @@ export class LoginFormComponent implements OnInit, OnDestroy
   // NOTE: Event -------------------------------------------------------------------------------
   // -------------------------------------------------------------------------------------------
 
-  /** Emit `$event` object containing login and password properties.
+  /** Emit `$event` object containing username and password properties.
   *
   * @example
-  * var login    : string = $event.login;
-  * var password : string = $event.login;
+  * var username : string = $event.username;
+  * var password : string = $event.password;
   */
   public onClickLogin() : void
   {
@@ -193,11 +210,11 @@ export class LoginFormComponent implements OnInit, OnDestroy
     this.login.emit(event);
   }
 
-  /** Emit `$event` object containing login, password and social properties.
+  /** Emit `$event` object containing username, password and social properties.
   *
   * @param social Name of the social provider
   * @example
-  * var login    : string = $event.login;
+  * var username : string = $event.username;
   * var password : string = $event.password;
   * var social   : string = $event.social;
   */
@@ -209,33 +226,39 @@ export class LoginFormComponent implements OnInit, OnDestroy
     this.loginSocial.emit(event);
   }
 
-  /** Emit `$event` object containing login and password properties.
+  /** Emit a click event on the sign up button. */
+  public onClickSignUp() : void
+  {
+    this.signUp.emit();
+  }
+
+  /** Emit `$event` object containing username and password properties.
   *
   * @example
-  * var login    : string = $event.login;
+  * var username : string = $event.username;
   * var password : string = $event.password;
   */
-  public forgottenPassword() : void
+  public forgotPassword() : void
   {
     let event : any = {};
     event = this.initEvent();
-    this.forgottenPass.emit(event);
+    this.forgotPwd.emit(event);
   }
 
-  /** Show password form either to initialize first password or to reset forgotten password.
+  /** Show password form either to initialize first password or to reset forgot password.
   *
-  * @param isFirst Initialize first password or reset forgotten password
+  * @param isFirst Initialize first password or reset forgot password
   */
-  public showPassForm(isFirst : boolean) : void
+  public showPwdForm(isFirst : boolean) : void
   {
     this.isFirst  = isFirst;
-    this.formType = Forms.PASSWORD;
-    this.showLayout(this.formLayouts.password);
+    this.formType = Forms.PWD;
+    this.showLayout(this.formLayouts.pwd);
   }
 
   /** Show MFA setup form to initialize first TOTP (Time-based One-time Password).
   *
-  * @param code  
+  * @param code   
   * @param qrCode 
   */
   public showMfaSetupForm(code : string, qrCode : string) : void
@@ -253,19 +276,19 @@ export class LoginFormComponent implements OnInit, OnDestroy
     this.showLayout(this.formLayouts.mfa);
   }
 
-  /** Hide password form */
-  public hidePassForm() : void
+  /** Hide password form. */
+  public hidePwdForm() : void
   {
     this.closeLayout(this.formLayouts.password);
   }
 
-  /** Hide MFA setup form */
+  /** Hide MFA setup form. */
   public hideMfaSetupForm() : void
   {
     this.closeLayout(this.formLayouts.mfaSetup);
   }
 
-  /** Hide MFA form */
+  /** Hide MFA form. */
   public hideMfaForm() : void
   {
     this.closeLayout(this.formLayouts.mfa);
@@ -282,7 +305,7 @@ export class LoginFormComponent implements OnInit, OnDestroy
   */
   public tabFirstLog($event : any) : void
   {
-    this.sendFirstPass.emit($event);
+    this.sendFirstPwd.emit($event);
   }
 
   /** Emit `$event` object containing password and code properties.
@@ -291,9 +314,9 @@ export class LoginFormComponent implements OnInit, OnDestroy
   * var newPassword      : string = $event.password;
   * var verificationCode : string = $event.code;
   */
-  public tabLostPass($event : any) : void
+  public tabLostPwd($event : any) : void
   {
-    this.sendResetPass.emit($event);
+    this.sendResetPwd.emit($event);
   }
 
   /** Emit `$event` object containing code property.
@@ -329,7 +352,7 @@ export class LoginFormComponent implements OnInit, OnDestroy
   {
     this.modalFirstSub = dialogRef.componentInstance.relayFirstLog.subscribe((event) =>
     {
-      this.sendFirstPass.emit(event);
+      this.sendFirstPwd.emit(event);
     });
   }
 
@@ -339,11 +362,11 @@ export class LoginFormComponent implements OnInit, OnDestroy
   * var newPassword      : string = $event.password;
   * var verificationCode : string = $event.code;
   */
-  public modalLostPass(dialogRef : any) : void
+  public modalLostPwd(dialogRef : any) : void
   {
-    this.modalLostSub = dialogRef.componentInstance.relayLostPass.subscribe((event) =>
+    this.modalLostSub = dialogRef.componentInstance.relayLostPwd.subscribe((event) =>
     {
-      this.sendResetPass.emit(event);
+      this.sendResetPwd.emit(event);
     });
   }
 
@@ -390,31 +413,31 @@ export class LoginFormComponent implements OnInit, OnDestroy
   {
     let params : any = {
       // Common
-      formType               : this.formType,
-      headerLabels           : this.headerLabels,
-      closeEvent             : this.closeModalEvent,
+      formType              : this.formType,
+      headerLabels          : this.headerLabels,
+      closeEvent            : this.closeModalEvent,
       // Password form
-      isFirst                : this.isFirst,
-      passLabels             : this.passLabels,
-      passPolicies           : this.passPolicies,
-      errOnPassForm          : this.errOnPassForm,
-      btnShowPassOnPassForm  : this.btnShowPassOnPassForm,
-      btnClearCodeOnPassForm : this.btnClearCodeOnPassForm,
+      isFirst               : this.isFirst,
+      pwdLabels             : this.pwdLabels,
+      pwdPolicies           : this.pwdPolicies,
+      errOnPwdForm          : this.errOnPwdForm,
+      btnShowPwdOnPwdForm   : this.btnShowPwdOnPwdForm,
+      btnClearCodeOnPwdForm : this.btnClearCodeOnPwdForm,
       // Mfa form
-      code                   : this.code,
-      qrCode                 : this.qrCode,
-      mfaLabels              : this.mfaLabels,
-      mfaSetupLabels         : this.mfaSetupLabels,
-      errOnMfaForm           : this.errOnMfaForm,
-      btnClearCodeOnMfaForm  : this.btnClearCodeOnMfaForm
+      code                  : this.code,
+      qrCode                : this.qrCode,
+      mfaLabels             : this.mfaLabels,
+      mfaSetupLabels        : this.mfaSetupLabels,
+      errOnMfaForm          : this.errOnMfaForm,
+      btnClearCodeOnMfaForm : this.btnClearCodeOnMfaForm
     };
 
     let dialogRef = this.dialog.open(ModalWrapperComponent, { data : params });
 
-    if(this.formType === Forms.PASSWORD)
+    if(this.formType === Forms.PWD)
     {
       this.modalFirstLog(dialogRef);
-      this.modalLostPass(dialogRef);
+      this.modalLostPwd(dialogRef);
     }
 
     if(this.formType === Forms.MFA_SETUP)
@@ -425,6 +448,7 @@ export class LoginFormComponent implements OnInit, OnDestroy
 
     dialogRef.afterClosed().subscribe(result =>
     {
+      this.formType = null;
       if(result)
         this.formGroup.controls.password.setValue(result); // Set password
     });
@@ -445,7 +469,8 @@ export class LoginFormComponent implements OnInit, OnDestroy
         this.openModal();
         break;
       case Layouts.INLINE :
-        // TODO:
+        this.formGroup.controls.username.disable();
+        this.formGroup.controls.password.disable();
         break;
       default :
         this.openTab();
@@ -455,6 +480,8 @@ export class LoginFormComponent implements OnInit, OnDestroy
 
   private closeLayout(formLayout : string) : void
   {
+    this.formType = null;
+
     switch(formLayout)
     {
       case Layouts.TAB    :
@@ -464,7 +491,8 @@ export class LoginFormComponent implements OnInit, OnDestroy
         this.closeModal();
         break;
       case Layouts.INLINE :
-        // TODO:
+        this.formGroup.controls.username.enable();
+        this.formGroup.controls.password.enable();
         break;
       default :
         this.closeTab();
@@ -494,7 +522,7 @@ export class LoginFormComponent implements OnInit, OnDestroy
 
     // Form layouts
     defaultFormLayouts = {
-      password : Layouts.TAB,
+      pwd      : Layouts.TAB,
       mfaSetup : Layouts.TAB,
       mfa      : Layouts.TAB,
     };
@@ -542,13 +570,13 @@ export class LoginFormComponent implements OnInit, OnDestroy
   private initPolicies() : void
   {
     // NOTE: Password
-    let defaultPassPolicies : any    = null;
-    let passPolicies        : any    = null;
+    let defaultPwdPolicies : any    = null;
+    let pwdPolicies        : any    = null;
     let defaultMin          : number = 8;
     let defaultMax          : number = 128;
 
     // Password policies
-    defaultPassPolicies = {
+    defaultPwdPolicies = {
       range : {
         min : defaultMin,
         max : defaultMax,
@@ -559,61 +587,62 @@ export class LoginFormComponent implements OnInit, OnDestroy
       upper  : true
     };
 
-    passPolicies = Object.assign(defaultPassPolicies, this.customPassPolicies);
+    pwdPolicies = Object.assign(defaultPwdPolicies, this.customPwdPolicies);
 
-    if(passPolicies.range.min > passPolicies.range.max)
+    if(pwdPolicies.range.min > pwdPolicies.range.max)
     {
-      passPolicies.range.min = defaultMin;
-      passPolicies.range.max = defaultMax;
+      pwdPolicies.range.min = defaultMin;
+      pwdPolicies.range.max = defaultMax;
     }
 
-    this.passPolicies = passPolicies;
+    this.pwdPolicies = pwdPolicies;
 
     // NOTE: Username
-    if(!this.customUserPolicy)
+    if(!this.customUsrPolicy)
       return;
 
     let validators : any = [];
 
-    switch(this.customUserPolicy)
+    switch(this.customUsrPolicy)
     {
       case UserPolicies.EMAIL :
-        validators.push(LoginValidator.email);
+        validators.push(UsrValidator.email);
         break;
       case UserPolicies.PHONE :
-        validators.push(LoginValidator.phone);
+        validators.push(UsrValidator.phone);
         break;
       default :
         let regExp : RegExp = null;
-        regExp = new RegExp(this.customUserPolicy);
-        validators.push(LoginValidator.custom(regExp));
+        regExp = new RegExp(this.customUsrPolicy);
+        validators.push(UsrValidator.custom(regExp));
         break;
     }
 
     validators.push(Validators.required);
-    this.formGroup.controls.login.setValidators(validators);
+    this.formGroup.controls.username.setValidators(validators);
   }
 
   private initLabels() : void
   {
     let defaultLoginLabels    : any = null;
-    let defaultPassLabels     : any = null;
+    let defaultPwdLabels      : any = null;
     let defaultHeaderLabels   : any = null;
     let defaultMfaSetupLabels : any = null;
     let defaultMfaLabels      : any = null;
 
     let loginLabels           : any = null;
-    let passLabels            : any = null;
+    let pwdLabels             : any = null;
     let headerLabels          : any = null;
     let mfaSetupLabels        : any = null;
     let mfaLabels             : any = null;
 
     // Login labels
     defaultLoginLabels = {
-      loginLabel                 : 'Login',
+      usernameLabel              : 'Username',
       passwordLabel              : 'Password',
-      forgottenPasswordLabel     : 'Forgotten password',
+      forgotPasswordLabel        : 'Forgot password',
       signInLabel                : 'Sign in',
+      signUpLabel                : 'Sign up',
       googleSignInLabel          : 'Sign in with Google',
       facebookSignInLabel        : 'Sign in with Facebook',
       fieldRequiredLabel         : 'This field is required',
@@ -622,7 +651,7 @@ export class LoginFormComponent implements OnInit, OnDestroy
       fieldCustomLabel           : 'This value must match the custom regex provided'
     };
     // Pass labels
-    defaultPassLabels = {
+    defaultPwdLabels = {
       verifCodeMessageLabel      : 'Please enter the confirmation code you will receive by email', // TODO: check if it can be send to a phone number
       verifCodeLabel             : 'Verification code',
       newPasswordLabel           : 'New password',
@@ -657,13 +686,13 @@ export class LoginFormComponent implements OnInit, OnDestroy
     };
 
     loginLabels    = Object.assign(defaultLoginLabels, this.customLoginLabels);
-    passLabels     = Object.assign(defaultPassLabels, this.customPassLabels);
+    pwdLabels      = Object.assign(defaultPwdLabels, this.customPwdLabels);
     headerLabels   = Object.assign(defaultHeaderLabels, this.customHeaderLabels);
     mfaSetupLabels = Object.assign(defaultMfaSetupLabels, this.customMfaSetupLabels);
     mfaLabels      = Object.assign(defaultMfaLabels, this.customMfaLabels);
 
     this.loginLabels    = loginLabels;
-    this.passLabels     = passLabels;
+    this.pwdLabels      = pwdLabels;
     this.headerLabels   = headerLabels;
     this.mfaSetupLabels = mfaSetupLabels;
     this.mfaLabels      = mfaLabels;
@@ -673,10 +702,10 @@ export class LoginFormComponent implements OnInit, OnDestroy
   {
     let event : any = {};
 
-    let login    : string = this.formGroup.controls.login.value;
+    let username : string = this.formGroup.controls.username.value;
     let password : string = this.formGroup.controls.password.value;
 
-    event.login    = login;
+    event.username = username;
     event.password = password;
 
     return event;
@@ -685,7 +714,7 @@ export class LoginFormComponent implements OnInit, OnDestroy
   private initFormsGroups() : void
   {
     this.formGroup = this.builder.group({
-      login        : new FormControl({
+      username     : new FormControl({
         value      : null,
         disabled   : false
       },[Validators.required]),

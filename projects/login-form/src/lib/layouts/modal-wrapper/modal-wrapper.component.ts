@@ -32,20 +32,20 @@ export class ModalWrapperComponent implements OnInit, OnDestroy
   public closeSub        : Subscription;
 
   // NOTE: Password
-  // First connection or Forgotten password
+  // First connection or Forgot password
   public isFirst       : boolean;
   // Labels
-  public passLabels    : any;
-  public passPolicies  : any;
+  public pwdLabels     : any;
+  public pwdPolicies   : any;
   // Display errors on the password form
-  public errOnPassForm : boolean;
+  public errOnPwdForm  : boolean;
   // Display show/hide button inside password input
-  public btnShowPassOnPassForm  : boolean;
+  public btnShowPwdOnPwdForm   : boolean;
   // Display clear button inside code input
-  public btnClearCodeOnPassForm : boolean;
+  public btnClearCodeOnPwdForm : boolean;
   // Event sent from password form
   public relayFirstLog : EventEmitter<any> = new EventEmitter();
-  public relayLostPass : EventEmitter<any> = new EventEmitter();
+  public relayLostPwd  : EventEmitter<any> = new EventEmitter();
 
   // NOTE: MFA setup
   // MFA secret key
@@ -90,9 +90,9 @@ export class ModalWrapperComponent implements OnInit, OnDestroy
     this.relayFirstLog.emit($event);
   }
 
-  public relayLostPassEvent($event : any) : void
+  public relayLostPwdEvent($event : any) : void
   {
-    this.relayLostPass.emit($event);
+    this.relayLostPwd.emit($event);
   }
 
   public relaySaveMfaKeyEvent($event : any) : void
@@ -115,17 +115,17 @@ export class ModalWrapperComponent implements OnInit, OnDestroy
       this.formType       = data.formType;
 
       // NOTE: Password
-      // First connection or Forgotten password
+      // First connection or Forgot password
       this.isFirst        = data.isFirst;
       // Password labels
       this.headerLabels   = data.headerLabels;
-      this.passLabels     = data.passLabels;
-      this.passPolicies   = data.passPolicies;
+      this.pwdLabels      = data.pwdLabels;
+      this.pwdPolicies    = data.pwdPolicies;
       // Password errors
-      this.errOnPassForm  = data.errOnPassForm;
+      this.errOnPwdForm   = data.errOnPwdForm;
       // Password buttons
-      this.btnShowPassOnPassForm  = data.btnShowPassOnPassForm;
-      this.btnClearCodeOnPassForm = data.btnClearCodeOnPassForm;
+      this.btnShowPwdOnPwdForm   = data.btnShowPwdOnPwdForm;
+      this.btnClearCodeOnPwdForm = data.btnClearCodeOnPwdForm;
 
       // NOTE: MFA
       // Mfa setup labels

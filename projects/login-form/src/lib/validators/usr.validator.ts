@@ -7,7 +7,7 @@ export interface ValidationResult
   [key : string] : boolean;
 }
 
-export class LoginValidator
+export class UsrValidator
 {
   public static custom(regexp : RegExp) : ValidatorFn
   {

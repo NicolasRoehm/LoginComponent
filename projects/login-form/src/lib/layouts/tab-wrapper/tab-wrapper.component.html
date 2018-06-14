@@ -6,30 +6,30 @@
       </button>
     </div>
     <div class="col text-right">
-      <div *ngIf="!isFirst && formType === forms.PASSWORD">
+      <div *ngIf="!isFirst && formType === forms.PWD">
         <span class="h5 font-weight-light">{{ headerLabels.lostPasswordLabel }}</span>
       </div>
-      <div *ngIf="isFirst && formType === forms.PASSWORD">
+      <div *ngIf="isFirst && formType === forms.PWD">
         <span class="d-block h5 mb-0 font-weight-light">{{ headerLabels.updatePasswordLabel }}</span>
         <span class="d-block font-weight-light small">{{ headerLabels.updatePasswordMessageLabel }}</span>
       </div>
-      <div *ngIf="formType === forms.MFA">
+      <div *ngIf="formType === forms.MFA || formType === forms.MFA_SETUP">
         <span class="h5 font-weight-light">{{ headerLabels.mfaCodeLabel }}</span>
       </div>
     </div>
   </div>
 </div>
-<!-- NOTE: Pass Form -->
-<cal-pass-form *ngIf="formType === forms.PASSWORD" 
-  [btnShowPass]="btnShowPassOnPassForm" 
-  [btnClearCode]="btnClearCodeOnPassForm" 
+<!-- NOTE: Pwd Form -->
+<cal-pwd-form *ngIf="formType === forms.PWD" 
+  [btnShowPwd]="btnShowPwdOnPwdForm" 
+  [btnClearCode]="btnClearCodeOnPwdForm" 
   [isFirst]="isFirst" 
-  [passLabels]="passLabels" 
-  [passPolicies]="passPolicies" 
-  [err]="errOnPassForm" 
+  [pwdLabels]="pwdLabels" 
+  [pwdPolicies]="pwdPolicies" 
+  [err]="errOnPwdForm" 
   (firstConnection)="relayFirstLogEvent($event)" 
-  (lostPassword)="relayLostPassEvent($event)">
-</cal-pass-form>
+  (lostPassword)="relayLostPwdEvent($event)">
+</cal-pwd-form>
 <!-- NOTE: MFA Setup Form -->
 <cal-mfa-setup-form *ngIf="formType === forms.MFA_SETUP" 
   [btnClearCode]="btnClearCodeOnMfaForm" 

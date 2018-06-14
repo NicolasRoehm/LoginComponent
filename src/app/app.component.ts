@@ -2,6 +2,8 @@
 import { Component }          from '@angular/core';
 import { ViewChild }          from '@angular/core';
 import { OnInit }             from '@angular/core';
+import { OnDestroy }          from '@angular/core';
+import { ChangeDetectorRef }  from '@angular/core';
 import { MatSnackBar }        from '@angular/material';
 
 // External modules
@@ -23,19 +25,29 @@ import { Credentials }        from './credentials.enum';
   templateUrl : './app.component.html',
   styleUrls   : ['./app.component.scss']
 })
-export class AppComponent implements OnInit
+export class AppComponent implements OnInit, OnDestroy
 {
-  @ViewChild('loginForm') loginForm : LoginFormComponent;
+  public loginForm : LoginFormComponent;
+  public reset : any[] = [{}];
+
+  @ViewChild('loginForm') set content(content : LoginFormComponent)
+  {
+    this.loginForm = content;
+    this.changeDemo();
+    this.cdRef.detectChanges();
+  }
 
   public demo        = Demo;
   public credentials = Credentials;
+
   public selectedDemo : string = Demo.SIMPLE_CONNECTION;
 
   constructor
   (
     public  snackBar    : MatSnackBar,
     private authService : AuthService,
-    private translate   : TranslateService
+    private translate   : TranslateService,
+    private cdRef       : ChangeDetectorRef
   )
   {
     // NOTE: This language will be used as a fallback when a translation isn't found in the current language
@@ -46,38 +58,55 @@ export class AppComponent implements OnInit
 
   public ngOnInit() : void
   {
-    this.setValues(Credentials.LOGIN_1, Credentials.PASS_1);
+    this.selectedDemo = Demo.SIMPLE_CONNECTION;
+  }
+
+  public ngOnDestroy() : void
+  {
+    this.cdRef.detach();
   }
 
   // -------------------------------------------------------------------------------
   // ---- NOTE: Events -------------------------------------------------------------
   // -------------------------------------------------------------------------------
 
+  public initialized() : void
+  {
+    console.log('initialized');
+  }
+
+  public signUp() : void
+  {
+    console.log('sign up');
+  }
+
   public login($event : any) : void
   { // NOTE: onClickLogin
     if(!$event)
       return;
 
-    let login    : string = null;
+    let username : string = null;
     let password : string = null;
-    login    = $event.login;
+    username = $event.username;
     password = $event.password;
 
     // Show loader
 
-    this.authService.fakeAuth(login, password).subscribe(user =>
+    this.authService.fakeAuth(username, password).subscribe(res =>
     {
-      console.log(user);
-      this.snackBar.open('SUCCESS', 'X');
+      if(res === 1)
+        this.snackBar.open('SUCCESS', 'X');
+
+      if(res === 2)
+        this.loginForm.showMfaForm();
     },
     err =>
     {
-      console.log(err);
       // Hide loader
 
       // First connection
       if(err === 1)
-        this.loginForm.showPassForm(true);
+        this.loginForm.showPwdForm(true);
 
       // Error
       if(err === 2)
@@ -94,37 +123,35 @@ export class AppComponent implements OnInit
     if(!$event)
       return;
 
-    let login    : string = null;
+    let username : string = null;
     let password : string = null;
     let social   : string = null;
-    login    = $event.login;
+    username = $event.username;
     password = $event.password;
     social   = $event.social;
 
     console.log($event);
-
-    // TODO: fakeService
   }
 
-  public forgottenPassword($event : any) : void
-  { // NOTE: onClickForgottenPassword
+  public forgotPassword($event : any) : void
+  { // NOTE: onClickForgotPassword
     if(!$event)
       return;
 
-    let login : string = null;
-    login = $event.login;
+    let username : string = null;
+    username = $event.username;
 
     console.log($event);
 
-    if(!login)
+    if(!username)
     {
-      this.snackBar.open(this.translate.instant('ERROR_LOGIN_REQUIRED'), 'X');
+      this.snackBar.open(this.translate.instant('ERROR_USR_REQUIRED'), 'X');
       return;
     }
 
-    this.authService.fakeResetPassword(login).subscribe((res : any) =>
+    this.authService.fakeResetPassword(username).subscribe((res : any) =>
     {
-      this.loginForm.showPassForm(false);
+      this.loginForm.showPwdForm(false);
     },
     err =>
     {
@@ -134,11 +161,11 @@ export class AppComponent implements OnInit
 
       switch(errorCode)
       { // NOTE: This example use AWS errors
-        case AuthError.FORGOT_PASS_VERIF_USER :
+        case AuthError.FORGOT_PWD_VERIF_USER :
           errorMsg = this.translate.instant('ERROR_INCORRECT_USER');
           break;
-        case AuthError.FORGOT_PASS_VERIF_INIT :
-          errorMsg = this.translate.instant('ERROR_FORGOT_PASS_VERIF_INIT');
+        case AuthError.FORGOT_PWD_VERIF_INIT :
+          errorMsg = this.translate.instant('ERROR_FORGOT_PW_VERIF_INIT');
           break;
         case AuthError.VERIF_LIMIT :
           errorMsg = this.translate.instant('ERROR_VERIF_LIMIT');
@@ -167,7 +194,7 @@ export class AppComponent implements OnInit
 
     this.authService.fakeInitPassword(newPassword).subscribe(res =>
     {
-      this.loginForm.hidePassForm();
+      this.loginForm.hidePwdForm();
       this.snackBar.open(this.translate.instant('SUCCESS_UPDATE_PWD'), 'x');
     },
     err =>
@@ -190,7 +217,7 @@ export class AppComponent implements OnInit
 
     this.authService.fakeConfirmPassword(newPassword, verifCode).subscribe(res =>
     {
-      this.loginForm.hidePassForm();
+      this.loginForm.hidePwdForm();
       this.snackBar.open(this.translate.instant('SUCCESS_UPDATE_PWD'), 'x');
     },
     err =>
@@ -234,50 +261,54 @@ export class AppComponent implements OnInit
     if(!$event)
       return;
 
-    console.log($event);
-
     let verifCode : string = null;
     verifCode = $event.code;
 
     console.log(verifCode);
+
+    this.loginForm.hideMfaForm();
   }
 
   // -------------------------------------------------------------------------------
   // ---- NOTE: Demo ---------------------------------------------------------------
   // -------------------------------------------------------------------------------
 
+  public onRecreate() : void
+  {
+    this.reset[0] = {};
+  }
+
   public onClickChangeDemo(demo : string) : void
   {
+    this.onRecreate();
     this.selectedDemo = demo;
-    switch(demo)
+  }
+
+  public changeDemo() : void
+  {
+    switch(this.selectedDemo)
     {
       case Demo.SIMPLE_CONNECTION :
-        this.setValues(Credentials.LOGIN_1, Credentials.PASS_1);
+        this.setValues(Credentials.USR_1, Credentials.PWD_1);
         break;
       case Demo.MFA_CONNECTION :
-        this.setValues(Credentials.LOGIN_2, Credentials.PASS_2);
+        this.setValues(Credentials.USR_2, Credentials.PWD_2);
         break;
-      case Demo.PASSWORD_SETUP :
-        this.setValues(Credentials.LOGIN_3, Credentials.PASS_3);
+      case Demo.PWD_SETUP :
+        this.setValues(Credentials.USR_3, Credentials.PWD_3);
         break;
       case Demo.MFA_SETUP :
-        this.setValues(Credentials.LOGIN_4, Credentials.PASS_4);
-        break;
-      case Demo.GOOGLE :
-        this.setValues(Credentials.LOGIN_5, Credentials.PASS_5);
-        break;
-      case Demo.FACEBOOK :
-        this.setValues(Credentials.LOGIN_6, Credentials.PASS_6);
+        this.setValues(Credentials.USR_4, Credentials.PWD_4);
         break;
       default :
-        this.setValues(Credentials.LOGIN_1, Credentials.PASS_1);
+        this.setValues(Credentials.USR_1, Credentials.PWD_1);
         break;
     }
   }
 
-  public setValues(login : string, password: string) : void
+  public setValues(username : string, password: string) : void
   {
-    this.loginForm.formGroup.controls.login.setValue(login);
+    this.loginForm.formGroup.controls.username.setValue(username);
     this.loginForm.formGroup.controls.password.setValue(password);
   }
 }

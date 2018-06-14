@@ -25,7 +25,7 @@ export class MfaFormComponent implements OnInit, OnDestroy
   @Input()  btnClearCode : boolean;
   // Display errors
   @Input()  err          : boolean;
-  // Event sent to login-form and relayed parents (modal & tab)
+  // Event sent to the login form and relayed parents (modal & tab)
   @Output() sendMfa      : EventEmitter<any> = new EventEmitter();
 
   constructor

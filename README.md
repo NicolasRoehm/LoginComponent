@@ -30,9 +30,9 @@ Use the `cal-login-form` component inside a `login.component.html`:
 <cal-login-form #loginForm 
   (login)="login($event)" 
   (loginSocial)="loginSocial($event)" 
-  (forgottenPass)="forgottenPassword($event)" 
-  (sendFirstPass)="firstPassword($event)" 
-  (sendResetPass)="lostPassword($event)">
+  (forgotPwd)="forgotPassword($event)" 
+  (sendFirstPwd)="firstPassword($event)" 
+  (sendResetPwd)="lostPassword($event)">
 </cal-login-form>
 ```
 
@@ -40,20 +40,21 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
 
 #### Inputs
 ```typescript
-// Display forms inside a modal or a tab
+// Display forms inside a layout : tab (by default) / modal / inline
+// The inline layout is only available for the MFA form
 @Input() customFormLayouts : any = {
-  password : 'modal',
+  pwd      : 'modal',
   mfaSetup : 'tab',
-  mfa      : 'tab'
+  mfa      : 'inline'
 }
 // Display Google button with the supplied theme : light (by default) / dark 
 @Input() customTheme : string = null;
 
-// Optional policy applied on the username field : email / phone / regex
+// Optional policy applied on the username input : email / phone / regex
 // Be careful, you must double all the backslashes used in the supplied regex
-@Input() customUserPolicy : string = null;
-// Policies applied on the password field
-@Input() customPolicies : any = {
+@Input() customUsrPolicy   : string = null;
+// Policies applied on the password input
+@Input() customPwdPolicies : any = {
   range : {
     min : 8,
     max : 128,
@@ -70,35 +71,41 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
   facebook : true
 }
 
-// Dislay user icon inside login input on the login form
-@Input() iconUserOnLoginForm     : boolean = true;
+// Dislay user icon inside username input on the login form
+@Input() iconUsrOnLoginForm     : boolean = true;
 // Dislay lock icon inside password input on the login form
-@Input() iconPassOnLoginForm     : boolean = true;
+@Input() iconPwdOnLoginForm     : boolean = true;
 
-// Display clear button inside login input on the login form
-@Input() btnClearUserOnLoginForm : boolean = true;
+// Display clear button inside username input on the login form
+@Input() btnClearUsrOnLoginForm : boolean = true;
 // Display show/hide button inside password input on the login form
-@Input() btnShowPassOnLoginForm  : boolean = true;
+@Input() btnShowPwdOnLoginForm  : boolean = true;
 // Display clear button inside code input on the password form
-@Input() btnClearCodeOnPassForm  : boolean = true;
+@Input() btnClearCodeOnPwdForm  : boolean = true;
 // Display show/hide button inside password input on the password form
-@Input() btnShowPassOnPassForm   : boolean = true;
+@Input() btnShowPwdOnPwdForm    : boolean = true;
 // Display clear button inside code input on the mfa form
-@Input() btnClearCodeOnMfaForm   : boolean = true;
+@Input() btnClearCodeOnMfaForm  : boolean = true;
+
+// Display forgot password button on the login form
+@Input() btnForgotPwdOnLoginForm : boolean = true;
+// Display sign up button on the login form
+@Input() btnSignUpOnLoginForm    : boolean = true;
 
 // Display errors on the login form
-@Input() errOnLoginForm          : boolean = true;
+@Input() errOnLoginForm         : boolean = true;
 // Display errors on the password form
-@Input() errOnPassForm           : boolean = true;
+@Input() errOnPwdForm           : boolean = true;
 // Display errors on the mfa form
-@Input() errOnMfaForm            : boolean = true;
+@Input() errOnMfaForm           : boolean = true;
 
 // Labels of the login form
 @Input() customLoginLabels : any = {
-  loginLabel             : 'Login',
+  usernameLabel          : 'Username',
   passwordLabel          : 'Password',
-  forgottenPasswordLabel : 'Forgotten password',
+  forgotPasswordLabel    : 'Forgot password',
   signInLabel            : 'Sign in',
+  signUpLabel            : 'Sign up',
   googleSignInLabel      : 'Sign in with Google',
   facebookSignInLabel    : 'Sign in with Facebook',
   fieldRequiredLabel     : 'This field is required',
@@ -107,7 +114,7 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
   fieldCustomLabel       : 'This value must match the custom regex provided'
 }
 // Labels of the password form
-@Input() customPassLabels : any = {
+@Input() customPwdLabels : any = {
   verifCodeMessageLabel   : 'Please enter the confirmation code you will receive by email',
   verifCodeLabel          : 'Verification code',
   newPasswordLabel        : 'New password',
@@ -144,24 +151,26 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
 
 #### Outputs
 ```typescript
-@Output() login         : EventEmitter<any>;
-/* login    : string
+@Output() initialized  : EventEmitter<any>;
+@Output() signUp       : EventEmitter<any>;
+@Output() login        : EventEmitter<any>;
+/* username : string
 *  password : string */
-@Output() loginSocial   : EventEmitter<any>;
-/* login    : string
+@Output() loginSocial  : EventEmitter<any>;
+/* username : string
 *  password : string
 *  social   : string */
-@Output() forgottenPass : EventEmitter<any>;
-/* login    : string
+@Output() forgotPwd    : EventEmitter<any>;
+/* username : string
 *  password : string */
-@Output() sendResetPass : EventEmitter<any>;
+@Output() sendResetPwd : EventEmitter<any>;
 /* password : string
 *  code     : string */
-@Output() sendFirstPass : EventEmitter<string>;
+@Output() sendFirstPwd : EventEmitter<string>;
 /* password : string */
-@Output() saveMfaKey    : EventEmitter<string>;
+@Output() saveMfaKey   : EventEmitter<string>;
 /* code     : string */
-@Output() sendMfaCode   : EventEmitter<string>;
+@Output() sendMfaCode  : EventEmitter<string>;
 /* code     : string */
 ```
 
@@ -183,17 +192,17 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
 ## Roadmap
 
 ### In Progress
-- Captcha
-- Inline layout
+- Update screenshot
+- Verification MFA
+- Login system as Google / Microsoft
 
 ### Planning
-- Deploy with [Travis](https://travis-ci.org/) & Test Coverage with [Coveralls](https://coveralls.io/)
+- Captcha
 - Remove Bootstrap 4 dependency
-- Dissociate forgot password from setup password ? -> Optional forgot password button
-- Optional sign up button
-- Update screenshot
-- Fix Angular 6 Library assets
+- Dissociate forgot password from setup password ?
 - Create an Online example with [StackBlitz](https://stackblitz.com)
+- Fix Angular 6 Library assets
+- Deploy with [Travis](https://travis-ci.org/) & Test Coverage with [Coveralls](https://coveralls.io/)
 
 ### Contributions
 

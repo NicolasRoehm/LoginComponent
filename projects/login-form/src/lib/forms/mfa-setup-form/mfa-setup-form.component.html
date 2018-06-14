@@ -1,9 +1,7 @@
-<div class="desc">
-  {{ mfaSetupLabels.description }}
-</div>
-<div class="codes">
+<p class="small">{{ mfaSetupLabels.description }}</p>
+<div class="code text-center">
   <qrcode [qrdata]="qrCode" [size]="100" [level]="'L'"></qrcode>
-  <span class="code">{{ code }}</span>
+  <p class="my-3">{{ code }}</p>
 </div>
 <form (ngSubmit)="send()" [formGroup]="formGroup" autocomplete="off">
   <mat-form-field class="w-100">

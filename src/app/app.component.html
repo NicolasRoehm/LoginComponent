@@ -1,6 +1,6 @@
 <div class="container-fluid">
   <div class="row">
-    <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+    <nav class="col-12 col-md-2 bg-light sidebar">
       <div class="sidebar-sticky">
         <ul class="nav flex-column">
           <li class="nav-item" (click)="onClickChangeDemo(demo.SIMPLE_CONNECTION)">
@@ -13,8 +13,8 @@
               MFA connection
             </a>
           </li>
-          <li class="nav-item" (click)="onClickChangeDemo(demo.PASSWORD_SETUP)">
-            <a class="nav-link" [class.active]="selectedDemo === demo.PASSWORD_SETUP">
+          <li class="nav-item" (click)="onClickChangeDemo(demo.PWD_SETUP)">
+            <a class="nav-link" [class.active]="selectedDemo === demo.PWD_SETUP">
               Password setup
             </a>
           </li>
@@ -23,29 +23,26 @@
               MFA setup
             </a>
           </li>
-          <li class="nav-item" (click)="onClickChangeDemo(demo.GOOGLE)">
-            <a class="nav-link" [class.active]="selectedDemo === demo.GOOGLE">
-              Google
-            </a>
-          </li>
-          <li class="nav-item" (click)="onClickChangeDemo(demo.FACEBOOK)">
-            <a class="nav-link" [class.active]="selectedDemo === demo.FACEBOOK">
-              Facebook
-            </a>
-          </li>
         </ul>
       </div>
     </nav>
-    <div class="col-md-9 ml-sm-auto col-lg-10 px-4">
+    <div class="col-12 col-md-9 ml-sm-auto col-lg-10 px-4">
       <div class="container">
         <div class="row my-5">
           <div class="col">
-            <cal-login-form #loginForm 
-              [customUserPolicy]="'email'" 
+            <cal-login-form #loginForm *ngFor="let r of reset" 
+              [customFormLayouts]="{ pwd : 'tab', mfaSetup : 'modal', mfa : 'inline' }" 
+              [customUsrPolicy]="'email'" 
+              [errOnLoginForm]="false" 
+              [errOnMfaForm]="false" 
+              [errOnPwdForm]="false" 
+              (initialized)="initialized()" 
               (login)="login($event)" 
-              (forgottenPass)="forgottenPassword($event)" 
-              (sendFirstPass)="firstPassword($event)" 
-              (sendResetPass)="lostPassword($event)" 
+              (signUp)="signUp()" 
+              (loginSocial)="loginSocial($event)" 
+              (forgotPwd)="forgotPassword($event)" 
+              (sendFirstPwd)="firstPassword($event)" 
+              (sendResetPwd)="lostPassword($event)" 
               (saveMfaKey)="saveMfaKey($event)" 
               (sendMfaCode)="sendMfaCode($event)">
             </cal-login-form>
