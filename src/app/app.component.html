@@ -31,7 +31,7 @@
         <div class="row my-5">
           <div class="col">
             <cal-login-form #loginForm *ngFor="let r of reset" 
-              [customFormLayouts]="{ pwd : 'tab', mfaSetup : 'modal', mfa : 'inline' }" 
+              [customFormLayouts]="{ pwd : 'tab', mfaSetup : 'tab', mfa : 'inline' }" 
               [customUsrPolicy]="'email'" 
               [errOnLoginForm]="false" 
               [errOnMfaForm]="false" 
@@ -44,7 +44,9 @@
               (sendFirstPwd)="firstPassword($event)" 
               (sendResetPwd)="lostPassword($event)" 
               (saveMfaKey)="saveMfaKey($event)" 
-              (sendMfaCode)="sendMfaCode($event)">
+              (sendMfaCode)="sendMfaCode($event)" 
+              (stepUsr)="stepUsr($event)" 
+              (stepPwd)="stepPwd($event)">
             </cal-login-form>
           </div>
         </div>

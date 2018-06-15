@@ -28,11 +28,17 @@ export class LoginModule { }
 Use the `cal-login-form` component inside a `login.component.html`:
 ```html
 <cal-login-form #loginForm 
+  (initialized)="initialized()" 
+  (signUp)="signUp()" 
   (login)="login($event)" 
   (loginSocial)="loginSocial($event)" 
   (forgotPwd)="forgotPassword($event)" 
   (sendFirstPwd)="firstPassword($event)" 
-  (sendResetPwd)="lostPassword($event)">
+  (sendResetPwd)="lostPassword($event)" 
+  (saveMfaKey)="saveMfaKey($event)" 
+  (sendMfaCode)="sendMfaCode($event)" 
+  (stepUsr)="stepUsr($event)" 
+  (stepPwd)="stepPwd($event)">
 </cal-login-form>
 ```
 
@@ -40,6 +46,8 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
 
 #### Inputs
 ```typescript
+// Display login form like Google & Microsoft (step by step)
+@Input() loginBySteps      : boolean = false;
 // Display forms inside a layout : tab (by default) / modal / inline
 // The inline layout is only available for the MFA form
 @Input() customFormLayouts : any = {
@@ -48,7 +56,9 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
   mfa      : 'inline'
 }
 // Display Google button with the supplied theme : light (by default) / dark 
-@Input() customTheme : string = null;
+@Input() customTheme : string  = null;
+// Display login form inside a container
+@Input() container   : boolean = false;
 
 // Optional policy applied on the username input : email / phone / regex
 // Be careful, you must double all the backslashes used in the supplied regex
@@ -106,6 +116,8 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
   forgotPasswordLabel    : 'Forgot password',
   signInLabel            : 'Sign in',
   signUpLabel            : 'Sign up',
+  nextLabel              : 'Next',
+  backLabel              : 'Back',
   googleSignInLabel      : 'Sign in with Google',
   facebookSignInLabel    : 'Sign in with Facebook',
   fieldRequiredLabel     : 'This field is required',
@@ -136,16 +148,18 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
 }
 // Labels of the mfa setup form
 @Input() customMfaSetupLabels : any = {
-  verifCodeLabel     : 'Verification code',
-  saveLabel          : 'Save',
-  description        : 'Save this secret key for future connection',
-  fieldRequiredLabel : 'This field is required'
+  verifCodeLabel      : 'Verification code',
+  saveLabel           : 'Save',
+  description         : 'Save this secret key for future connection',
+  fieldRequiredLabel  : 'This field is required',
+  fieldSixDigitsLabel : 'This value must contains six digits'
 }
 // Labels of the mfa form
 @Input() customMfaLabels : any = {
-  verifCodeLabel     : 'Verification code',
-  sendLabel          : 'Send',
-  fieldRequiredLabel : 'This field is required'
+  verifCodeLabel      : 'Verification code',
+  sendLabel           : 'Send',
+  fieldRequiredLabel  : 'This field is required',
+  fieldSixDigitsLabel : 'This value must contains six digits'
 }
 ```
 
@@ -161,17 +175,20 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
 *  password : string
 *  social   : string */
 @Output() forgotPwd    : EventEmitter<any>;
-/* username : string
-*  password : string */
+/* username : string */
 @Output() sendResetPwd : EventEmitter<any>;
 /* password : string
 *  code     : string */
-@Output() sendFirstPwd : EventEmitter<string>;
+@Output() sendFirstPwd : EventEmitter<any>;
 /* password : string */
-@Output() saveMfaKey   : EventEmitter<string>;
+@Output() saveMfaKey   : EventEmitter<any>;
 /* code     : string */
-@Output() sendMfaCode  : EventEmitter<string>;
+@Output() sendMfaCode  : EventEmitter<any>;
 /* code     : string */
+@Output() stepUsr      : EventEmitter<any>;
+/* username : string */
+@Output() stepPwd      : EventEmitter<any>;
+/* password : string */
 ```
 
 **Important Note**: This project uses the following dependencies :
@@ -192,12 +209,10 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
 ## Roadmap
 
 ### In Progress
-- Update screenshot
-- Verification MFA
-- Login system as Google / Microsoft
 
 ### Planning
 - Captcha
+- Test loginBySteps on mobile (1/3)
 - Remove Bootstrap 4 dependency
 - Dissociate forgot password from setup password ?
 - Create an Online example with [StackBlitz](https://stackblitz.com)

@@ -2,8 +2,8 @@
   <mat-form-field class="w-100">
     <input matInput formControlName="verifCode" 
       name="verifCode" placeholder="{{ mfaLabels.verifCodeLabel }}" 
-      type="text"/>
-    <!-- TODO: Check if non witespace can be applied -->
+      pattern="\\d{6}" 
+      type="text"/> <!-- NOTE: Pattern matches 6 digits -->
     <button *ngIf="formGroup.controls.verifCode.valid && btnClearCode" 
       mat-button matSuffix mat-icon-button aria-label="Clear" 
       color="primary" (click)="formGroup.controls.verifCode.setValue('')" 
@@ -13,6 +13,9 @@
     <!-- NOTE: Error messages -->
     <mat-hint align="start" *ngIf="formGroup.controls.verifCode.errors?.required && err">
       {{ mfaLabels.fieldRequiredLabel }}
+    </mat-hint>
+    <mat-hint align="start" *ngIf="formGroup.controls.verifCode.errors?.pattern && err">
+      {{ mfaLabels.fieldSixDigitsLabel }}
     </mat-hint>
   </mat-form-field>
   <div class="row w-100 no-gutters">

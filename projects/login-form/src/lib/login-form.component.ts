@@ -50,22 +50,15 @@ export class LoginFormComponent implements OnInit, AfterViewInit, OnDestroy
 
   public    socialButtons  : any;
 
+  // Display login form like Google & Microsoft (step by step)
+  @Input()  loginBySteps         : boolean = false;
   // Display forms inside a layout : tab (by default) / modal / inline
   // The inline layout is only available for the MFA form
   @Input()  customFormLayouts    : any;
   // Display Google button with the supplied theme : light / dark
-  @Input()  customTheme          : string = null;
-
-  // Labels of the login form
-  @Input()  customLoginLabels    : any;
-  // Labels of the password form
-  @Input()  customPwdLabels      : any;
-  // Labels on top of the password form
-  @Input()  customHeaderLabels   : any;
-  // Labels of the mfa setup form
-  @Input()  customMfaSetupLabels : any;
-  // Labels of the mfa form
-  @Input()  customMfaLabels      : any;
+  @Input()  customTheme          : string  = null;
+  // Display login form inside a container
+  @Input()  container            : boolean = false;
 
   // Optional policy applied on the username input : email / phone / regex
   // Be careful, you must double all the backslashes used in the supplied regex
@@ -104,24 +97,39 @@ export class LoginFormComponent implements OnInit, AfterViewInit, OnDestroy
   // Display errors on the mfa form
   @Input()  errOnMfaForm            : boolean = true;
 
+  // Labels of the login form
+  @Input()  customLoginLabels    : any;
+  // Labels of the password form
+  @Input()  customPwdLabels      : any;
+  // Labels on top of the password form
+  @Input()  customHeaderLabels   : any;
+  // Labels of the mfa setup form
+  @Input()  customMfaSetupLabels : any;
+  // Labels of the mfa form
+  @Input()  customMfaLabels      : any;
+
   // Event triggered after creating the login form (AfterViewInit)
-  @Output() initialized   : EventEmitter<any>    = new EventEmitter();
-  // Event object containing username and password properties
-  @Output() login         : EventEmitter<any>    = new EventEmitter();
-  // Event object containing username, password and social properties
-  @Output() loginSocial   : EventEmitter<any>    = new EventEmitter();
-  // Event object containing username and password properties
-  @Output() forgotPwd     : EventEmitter<any>    = new EventEmitter();
+  @Output() initialized   : EventEmitter<any> = new EventEmitter();
   // Event triggered after clicking on the sign up button.
-  @Output() signUp        : EventEmitter<any>    = new EventEmitter();
+  @Output() signUp        : EventEmitter<any> = new EventEmitter();
+  // Event object containing username and password properties
+  @Output() login         : EventEmitter<any> = new EventEmitter();
+  // Event object containing username, password and social properties
+  @Output() loginSocial   : EventEmitter<any> = new EventEmitter();
+  // Event object containing username property
+  @Output() forgotPwd     : EventEmitter<any> = new EventEmitter();
   // Event object containing password and code properties
-  @Output() sendResetPwd  : EventEmitter<any>    = new EventEmitter();
+  @Output() sendResetPwd  : EventEmitter<any> = new EventEmitter();
   // Event object containing password property
-  @Output() sendFirstPwd  : EventEmitter<string> = new EventEmitter();
+  @Output() sendFirstPwd  : EventEmitter<any> = new EventEmitter();
   // Event object containing code property
-  @Output() saveMfaKey    : EventEmitter<string> = new EventEmitter();
+  @Output() saveMfaKey    : EventEmitter<any> = new EventEmitter();
   // Event object containing code property
-  @Output() sendMfaCode   : EventEmitter<string> = new EventEmitter();
+  @Output() sendMfaCode   : EventEmitter<any> = new EventEmitter();
+  // Event object containing username property
+  @Output() stepUsr       : EventEmitter<any> = new EventEmitter();
+  // Event object containing password property
+  @Output() stepPwd       : EventEmitter<any> = new EventEmitter();
 
   // NOTE: Form
   public    formGroup     : FormGroup;
@@ -136,6 +144,12 @@ export class LoginFormComponent implements OnInit, AfterViewInit, OnDestroy
   // NOTE: MFA
   public    code          : string  = null;
   public    qrCode        : string  = null;
+
+  // NOTE: Steps
+  public    usrFormGroup  : FormGroup;
+  public    pwdFormGroup  : FormGroup;
+  public    userInfo      : string  = null;
+  public    userImage     : string  = null;
 
   // NOTE: Wrapper
   public    layouts = Layouts;
@@ -158,8 +172,6 @@ export class LoginFormComponent implements OnInit, AfterViewInit, OnDestroy
     private builder      : FormBuilder
   )
   {
-    // Login form
-    this.initFormsGroups();
     // Social icons
     // TODO: Fix Angular 6 Library assets : https://github.com/angular/angular-cli/issues/11071
     iconRegistry.addSvgIcon('google',   sanitizer.bypassSecurityTrustResourceUrl('../assets/img/google.svg'));
@@ -168,6 +180,8 @@ export class LoginFormComponent implements OnInit, AfterViewInit, OnDestroy
 
   public ngOnInit() : void
   {
+    // Login form
+    this.initFormsGroups();
     // Inputs
     this.initFormLayouts();
     this.initTheme();
@@ -196,6 +210,8 @@ export class LoginFormComponent implements OnInit, AfterViewInit, OnDestroy
   // -------------------------------------------------------------------------------------------
   // NOTE: Event -------------------------------------------------------------------------------
   // -------------------------------------------------------------------------------------------
+
+  // NOTE: From component to user --------------------------------------------------------------
 
   /** Emit `$event` object containing username and password properties.
   *
@@ -232,18 +248,19 @@ export class LoginFormComponent implements OnInit, AfterViewInit, OnDestroy
     this.signUp.emit();
   }
 
-  /** Emit `$event` object containing username and password properties.
+  /** Emit `$event` object containing username property.
   *
   * @example
   * var username : string = $event.username;
-  * var password : string = $event.password;
   */
-  public forgotPassword() : void
+  public onClickForgotPassword() : void
   {
     let event : any = {};
-    event = this.initEvent();
+    event = this.initEvent('usr');
     this.forgotPwd.emit(event);
   }
+
+  // NOTE: From user to component --------------------------------------------------------------
 
   /** Show password form either to initialize first password or to reset forgot password.
   *
@@ -292,6 +309,57 @@ export class LoginFormComponent implements OnInit, AfterViewInit, OnDestroy
   public hideMfaForm() : void
   {
     this.closeLayout(this.formLayouts.mfa);
+  }
+
+  /** Go password step. */
+  public showPwdStep(userInfo : string = null, userImage : string = null) : void
+  {
+    this.userInfo    = userInfo;
+    this.userImage   = userImage;
+    this.selectedTab = 2;
+  }
+
+  // -------------------------------------------------------------------------------------------
+  // NOTE: Steps events ------------------------------------------------------------------------
+  // -------------------------------------------------------------------------------------------
+
+  public onClickNextStep(currentStep : number) : void
+  {
+    switch(currentStep)
+    {
+      case 0 :
+        this.selectedTab = 1;
+        break;
+      case 1 : // Username
+        let eventUsr : any = null;
+        eventUsr = this.initEvent('usr');
+        this.stepUsr.emit(eventUsr);
+        break;
+      case 2 : // Password
+        let eventPwd : any = null;
+        eventPwd = this.initEvent('pwd');
+        this.stepPwd.emit(eventPwd);
+        break;
+      default:
+        break;
+    }
+  }
+
+  public onClickPrevStep(currentStep : number) : void
+  {
+    switch(currentStep)
+    {
+      case 0 :
+        break;
+      case 1 : // Username
+        this.selectedTab = 0;
+        break;
+      case 2 : // Password
+        this.selectedTab = 1;
+        break;
+      default:
+        break;
+    }
   }
 
   // -------------------------------------------------------------------------------------------
@@ -388,13 +456,13 @@ export class LoginFormComponent implements OnInit, AfterViewInit, OnDestroy
   * @example
   * var verificationCode : string = $event.code;
   */
- public modalSendMfaCode(dialogRef : any) : void
- {
-   this.modalSendMfaCodeSub = dialogRef.componentInstance.relaySendMfaCode.subscribe((event) =>
-   {
-     this.sendMfaCode.emit(event);
-   });
- }
+  public modalSendMfaCode(dialogRef : any) : void
+  {
+    this.modalSendMfaCodeSub = dialogRef.componentInstance.relaySendMfaCode.subscribe((event) =>
+    {
+      this.sendMfaCode.emit(event);
+    });
+  }
 
   // -------------------------------------------------------------------------------------------
   // NOTE: Tab ---------------------------------------------------------------------------------
@@ -507,7 +575,10 @@ export class LoginFormComponent implements OnInit, AfterViewInit, OnDestroy
 
   private openTab() : void
   {
-    this.selectedTab = 1;
+    if(this.loginBySteps)
+      this.selectedTab = 3;
+    else
+      this.selectedTab = 1;
   }
 
   private closeTab() : void
@@ -528,6 +599,15 @@ export class LoginFormComponent implements OnInit, AfterViewInit, OnDestroy
     };
 
     formLayouts = Object.assign(defaultFormLayouts, this.customFormLayouts);
+
+    // Corrections
+    if(formLayouts.pwd === Layouts.INLINE)
+      formLayouts.pwd = Layouts.TAB;
+    if(formLayouts.mfaSetup === Layouts.INLINE)
+      formLayouts.mfaSetup = Layouts.TAB;
+    if(this.loginBySteps && formLayouts.mfa === Layouts.INLINE)
+      formLayouts.mfa = Layouts.TAB;
+
     this.formLayouts = formLayouts;
   }
 
@@ -572,8 +652,8 @@ export class LoginFormComponent implements OnInit, AfterViewInit, OnDestroy
     // NOTE: Password
     let defaultPwdPolicies : any    = null;
     let pwdPolicies        : any    = null;
-    let defaultMin          : number = 8;
-    let defaultMax          : number = 128;
+    let defaultMin         : number = 8;
+    let defaultMax         : number = 128;
 
     // Password policies
     defaultPwdPolicies = {
@@ -619,7 +699,10 @@ export class LoginFormComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     validators.push(Validators.required);
-    this.formGroup.controls.username.setValidators(validators);
+    if(this.loginBySteps)
+      this.usrFormGroup.controls.username.setValidators(validators);
+    else
+      this.formGroup.controls.username.setValidators(validators);
   }
 
   private initLabels() : void
@@ -638,31 +721,33 @@ export class LoginFormComponent implements OnInit, AfterViewInit, OnDestroy
 
     // Login labels
     defaultLoginLabels = {
-      usernameLabel              : 'Username',
-      passwordLabel              : 'Password',
-      forgotPasswordLabel        : 'Forgot password',
-      signInLabel                : 'Sign in',
-      signUpLabel                : 'Sign up',
-      googleSignInLabel          : 'Sign in with Google',
-      facebookSignInLabel        : 'Sign in with Facebook',
-      fieldRequiredLabel         : 'This field is required',
-      fieldEmailLabel            : 'This value must be an email',
-      fieldPhoneLabel            : 'This value must be a phone number',
-      fieldCustomLabel           : 'This value must match the custom regex provided'
+      usernameLabel       : 'Username',
+      passwordLabel       : 'Password',
+      forgotPasswordLabel : 'Forgot password',
+      signInLabel         : 'Sign in',
+      signUpLabel         : 'Sign up',
+      nextLabel           : 'Next',
+      backLabel           : 'Back',
+      googleSignInLabel   : 'Sign in with Google',
+      facebookSignInLabel : 'Sign in with Facebook',
+      fieldRequiredLabel  : 'This field is required',
+      fieldEmailLabel     : 'This value must be an email',
+      fieldPhoneLabel     : 'This value must be a phone number',
+      fieldCustomLabel    : 'This value must match the custom regex provided'
     };
     // Pass labels
     defaultPwdLabels = {
-      verifCodeMessageLabel      : 'Please enter the confirmation code you will receive by email', // TODO: check if it can be send to a phone number
-      verifCodeLabel             : 'Verification code',
-      newPasswordLabel           : 'New password',
-      sendLabel                  : 'Send',
-      policyPassword1Label       : 'Minimum password length (6 to 128)',
-      policyPassword2Label       : 'Require at least one uppercase letter (A to Z)',
-      policyPassword3Label       : 'Require at least one lowercase letter (a to z)',
-      policyPassword4Label       : 'Require at least one number (0 to 9)',
-      policyPassword5Label       : 'Require at least one nonalphanumeric character ! @ # $ % ^ & * ( ) _ + - = [ ] { } | \'',
-      fieldRequiredLabel         : 'This field is required',
-      fieldNonWhitespaceLabel    : 'This value must not contain any spaces'
+      verifCodeMessageLabel   : 'Please enter the confirmation code you will receive by email', // TODO: check if it can be send to a phone number
+      verifCodeLabel          : 'Verification code',
+      newPasswordLabel        : 'New password',
+      sendLabel               : 'Send',
+      policyPassword1Label    : 'Minimum password length (6 to 128)',
+      policyPassword2Label    : 'Require at least one uppercase letter (A to Z)',
+      policyPassword3Label    : 'Require at least one lowercase letter (a to z)',
+      policyPassword4Label    : 'Require at least one number (0 to 9)',
+      policyPassword5Label    : 'Require at least one nonalphanumeric character ! @ # $ % ^ & * ( ) _ + - = [ ] { } | \'',
+      fieldRequiredLabel      : 'This field is required',
+      fieldNonWhitespaceLabel : 'This value must not contain any spaces'
     };
     // Header labels
     defaultHeaderLabels = {
@@ -673,16 +758,18 @@ export class LoginFormComponent implements OnInit, AfterViewInit, OnDestroy
     };
     // Mfa setup labels
     defaultMfaSetupLabels = {
-      verifCodeLabel     : 'Verification code',
-      saveLabel          : 'Save',
-      description        : 'Save this secret key for future connection',
-      fieldRequiredLabel : 'This field is required'
+      verifCodeLabel      : 'Verification code',
+      saveLabel           : 'Save',
+      description         : 'Save this secret key for future connection',
+      fieldRequiredLabel  : 'This field is required',
+      fieldSixDigitsLabel : 'This value must contains six digits'
     };
     // Mfa labels
     defaultMfaLabels = {
-      verifCodeLabel     : 'Verification code',
-      sendLabel          : 'Send',
-      fieldRequiredLabel : 'This field is required'
+      verifCodeLabel      : 'Verification code',
+      sendLabel           : 'Send',
+      fieldRequiredLabel  : 'This field is required',
+      fieldSixDigitsLabel : 'This value must contains six digits'
     };
 
     loginLabels    = Object.assign(defaultLoginLabels, this.customLoginLabels);
@@ -698,30 +785,65 @@ export class LoginFormComponent implements OnInit, AfterViewInit, OnDestroy
     this.mfaLabels      = mfaLabels;
   }
 
-  private initEvent() : any
+  private initEvent(onlyOne : string = null) : any
   {
-    let event : any = {};
+    let event    : any    = {};
+    let username : string = null;
+    let password : string = null;
 
-    let username : string = this.formGroup.controls.username.value;
-    let password : string = this.formGroup.controls.password.value;
+    if(this.loginBySteps)
+    {
+      username = this.usrFormGroup.controls.username.value;
+      password = this.pwdFormGroup.controls.password.value;
+    }
+    else
+    {
+      username = this.formGroup.controls.username.value;
+      password = this.formGroup.controls.password.value;
+    }
 
-    event.username = username;
-    event.password = password;
+    if(!onlyOne)
+    {
+      event.username = username;
+      event.password = password;
+    }
+    if(onlyOne && onlyOne === 'usr')
+      event.username = username;
+    if(onlyOne && onlyOne === 'pwd')
+      event.password = password;
 
     return event;
   }
 
   private initFormsGroups() : void
   {
-    this.formGroup = this.builder.group({
+    if(!this.loginBySteps)
+    {
+      this.formGroup = this.builder.group({
+        username     : new FormControl({
+          value      : null,
+          disabled   : false
+        },[Validators.required]),
+        password     : new FormControl({
+          value      : null,
+          disabled   : false
+        },[Validators.required]),
+      });
+      return;
+    }
+
+    this.usrFormGroup = this.builder.group({
       username     : new FormControl({
         value      : null,
         disabled   : false
-      },[Validators.required]),
+      },[Validators.required])
+    });
+
+    this.pwdFormGroup = this.builder.group({
       password     : new FormControl({
         value      : null,
         disabled   : false
-      },[Validators.required]),
+      },[Validators.required])
     });
   }
 

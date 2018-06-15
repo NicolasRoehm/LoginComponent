@@ -80,6 +80,30 @@ export class AppComponent implements OnInit, OnDestroy
     console.log('sign up');
   }
 
+  public stepUsr($event : any) : void
+  {
+    if(!$event)
+      return;
+
+    let username : string = null;
+    username = $event.username;
+
+    console.log(username);
+    // NextStep
+    this.loginForm.showPwdStep('nicolas roehm');
+  }
+
+  public stepPwd($event : any) : void
+  {
+    if(!$event)
+      return;
+
+    let password : string = null;
+    password = $event.password;
+
+    console.log(password);
+  }
+
   public login($event : any) : void
   { // NOTE: onClickLogin
     if(!$event)
@@ -308,7 +332,15 @@ export class AppComponent implements OnInit, OnDestroy
 
   public setValues(username : string, password: string) : void
   {
-    this.loginForm.formGroup.controls.username.setValue(username);
-    this.loginForm.formGroup.controls.password.setValue(password);
+    if(this.loginForm.formGroup)
+    {
+      this.loginForm.formGroup.controls.username.setValue(username);
+      this.loginForm.formGroup.controls.password.setValue(password);
+    }
+    else
+    {
+      this.loginForm.usrFormGroup.controls.username.setValue(username);
+      this.loginForm.pwdFormGroup.controls.password.setValue(password);
+    }
   }
 }
