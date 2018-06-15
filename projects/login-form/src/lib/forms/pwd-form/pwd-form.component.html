@@ -9,23 +9,29 @@
   <div class="row w-100 no-gutters" *ngIf="!isFirst">
     <div class="col">
       <div class="w-100">
-        <p class="small">{{ passLabels.verifCodeMessageLabel }}</p>
+        <p class="small">{{ pwdLabels.verifCodeMessageLabel }}</p>
       </div>
       <mat-form-field class="w-100">
         <!-- NOTE: <input autocomplete="nope"> turns off autocomplete on many other browsers that don't respect
           the form's "off", but not for "password" inputs. -->
         <input matInput formControlName="verifCode" 
           name="verif-code" autocomplete="nope" 
-          placeholder="{{ passLabels.verifCodeLabel }}" 
+          placeholder="{{ pwdLabels.verifCodeLabel }}" 
           pattern="[\\S]+" 
           type="text"/> <!-- NOTE: Pattern matches any non-whitespace character -->
-        <!-- NOTE: Error messages can be displayed -->
-        <!-- <mat-hint align="start" *ngIf="formGroup.controls.verifCode.errors?.required">
-          {{ passLabels.fieldRequiredLabel }}
+        <button *ngIf="formGroup.controls.verifCode.valid && btnClearCode" 
+          mat-button matSuffix mat-icon-button aria-label="Clear" 
+          color="primary" (click)="formGroup.controls.verifCode.setValue('')" 
+          type="button">
+          <mat-icon>close</mat-icon>
+        </button>
+        <!-- NOTE: Error messages -->
+        <mat-hint align="start" *ngIf="formGroup.controls.verifCode.errors?.required && err">
+          {{ pwdLabels.fieldRequiredLabel }}
         </mat-hint>
-        <mat-hint align="start" *ngIf="formGroup.controls.verifCode.errors?.pattern">
-          {{ passLabels.fieldNonWhitespaceLabel }}
-        </mat-hint> -->
+        <mat-hint align="start" *ngIf="formGroup.controls.verifCode.errors?.pattern && err">
+          {{ pwdLabels.fieldNonWhitespaceLabel }}
+        </mat-hint>
       </mat-form-field>
     </div>
   </div>
@@ -35,12 +41,18 @@
       <mat-form-field class="w-100">
         <input matInput formControlName="newPassword" 
           name="new-password" autocomplete="new-password" 
-          placeholder="{{ passLabels.newPasswordLabel }}" 
-          type="password"/>
-        <!-- NOTE: Error messages can be displayed -->
-        <!-- <mat-hint align="start" *ngIf="formGroup.controls.newPassword.errors?.required">
-          {{ passLabels.fieldRequiredLabel }}
-        </mat-hint> -->
+          placeholder="{{ pwdLabels.newPasswordLabel }}" 
+          type="{{ showPassword ? 'text' : 'password' }}"/>
+        <button *ngIf="btnShowPwd" 
+          mat-button matSuffix mat-icon-button aria-label="Clear" 
+          color="primary" (click)="showPassword=!showPassword" 
+          type="button">
+          <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        <!-- NOTE: Error message -->
+        <mat-hint align="start" *ngIf="formGroup.controls.newPassword.errors?.required && err">
+          {{ pwdLabels.fieldRequiredLabel }}
+        </mat-hint>
       </mat-form-field>
     </div>
   </div>
@@ -50,27 +62,27 @@
         <li class="check-policy">
           <mat-icon class="red-policy" *ngIf="formGroup.controls.newPassword.errors && formGroup.controls.newPassword.errors.longEnough">close</mat-icon>
           <mat-icon class="green-policy" *ngIf="!formGroup.controls.newPassword.errors || !formGroup.controls.newPassword.errors.longEnough">check</mat-icon>
-          {{ passLabels.policyPassword1Label }}
+          {{ pwdLabels.policyPassword1Label }}
         </li>
-        <li class="check-policy" *ngIf="passPolicies.upper">
+        <li class="check-policy" *ngIf="pwdPolicies.upper">
           <mat-icon class="red-policy" *ngIf="formGroup.controls.newPassword.errors && formGroup.controls.newPassword.errors.upper">close</mat-icon>
           <mat-icon class="green-policy" *ngIf="!formGroup.controls.newPassword.errors || !formGroup.controls.newPassword.errors.upper">check</mat-icon>
-          {{ passLabels.policyPassword2Label }}
+          {{ pwdLabels.policyPassword2Label }}
         </li>
-        <li class="check-policy" *ngIf="passPolicies.lower">
+        <li class="check-policy" *ngIf="pwdPolicies.lower">
           <mat-icon class="red-policy" *ngIf="formGroup.controls.newPassword.errors && formGroup.controls.newPassword.errors.lower">close</mat-icon>
           <mat-icon class="green-policy" *ngIf="!formGroup.controls.newPassword.errors || !formGroup.controls.newPassword.errors.lower">check</mat-icon>
-          {{ passLabels.policyPassword3Label }}
+          {{ pwdLabels.policyPassword3Label }}
         </li>
-        <li class="check-policy" *ngIf="passPolicies.number">
+        <li class="check-policy" *ngIf="pwdPolicies.number">
           <mat-icon class="red-policy" *ngIf="formGroup.controls.newPassword.errors && formGroup.controls.newPassword.errors.number">close</mat-icon>
           <mat-icon class="green-policy" *ngIf="!formGroup.controls.newPassword.errors || !formGroup.controls.newPassword.errors.number">check</mat-icon>
-          {{ passLabels.policyPassword4Label }}
+          {{ pwdLabels.policyPassword4Label }}
         </li>
-        <li class="check-policy" *ngIf="passPolicies.char">
+        <li class="check-policy" *ngIf="pwdPolicies.char">
           <mat-icon class="red-policy" *ngIf="formGroup.controls.newPassword.errors && formGroup.controls.newPassword.errors.char">close</mat-icon>
           <mat-icon class="green-policy" *ngIf="!formGroup.controls.newPassword.errors || !formGroup.controls.newPassword.errors.char">check</mat-icon>
-          {{ passLabels.policyPassword5Label }}
+          {{ pwdLabels.policyPassword5Label }}
         </li>
       </ul>
     </div>
@@ -87,7 +99,7 @@
     <div class="row w-100 no-gutters">
       <div class="col text-right">
         <button color="primary" mat-raised-button class="small text-uppercase" type="submit" [disabled]="!formGroup.valid">
-          {{ passLabels.sendLabel }}
+          {{ pwdLabels.sendLabel }}
         </button>
       </div>
     </div>

@@ -24,17 +24,19 @@ export class AuthService
     if(!response)
       response = this.getResponseByCredentials(username, password);
 
-    let user : any = {};
-
     return Observable.fromPromise(new Promise((resolve, reject) =>
     {
       switch(response)
       {
+        case 'onSuccess' :
+          resolve(1);
+          break;
+        case 'mfaRequired' :
+          resolve(2);
+          break;
+
         case 'newPasswordRequired' :
           reject(1);
-          break;
-        case 'onSuccess' :
-          resolve(user);
           break;
         case 'onFailure' :
           reject(2);
@@ -114,13 +116,16 @@ export class AuthService
 
     switch(username)
     {
-      case Credentials.LOGIN_1 :
+      case Credentials.USR_1 :
         response = 'onSuccess';
         break;
-      case Credentials.LOGIN_3 :
+      case Credentials.USR_2 :
+        response = 'mfaRequired';
+        break;
+      case Credentials.USR_3 :
         response = 'newPasswordRequired';
         break;
-      case Credentials.LOGIN_4 :
+      case Credentials.USR_4 :
         response = 'mfaSetup';
         break;
     }

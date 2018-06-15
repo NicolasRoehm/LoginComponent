@@ -1,8 +1,6 @@
 # Login Form Component
 > Angular component providing login and password management using [Angular Material](https://material.angular.io) library.
 
-![Example](https://github.com/Caliatys/LoginComponent/blob/master/src/assets/img/example.png)
-
 ## Installation
 Install `@caliatys/login-form` in your project:
 ```sh
@@ -24,11 +22,17 @@ export class LoginModule { }
 Use the `cal-login-form` component inside a `login.component.html`:
 ```html
 <cal-login-form #loginForm 
+  (initialized)="initialized()" 
+  (signUp)="signUp()" 
   (login)="login($event)" 
   (loginSocial)="loginSocial($event)" 
-  (forgottenPass)="forgottenPassword($event)" 
-  (sendFirstPass)="firstPassword($event)" 
-  (sendResetPass)="lostPassword($event)">
+  (forgotPwd)="forgotPassword($event)" 
+  (sendFirstPwd)="firstPassword($event)" 
+  (sendResetPwd)="lostPassword($event)" 
+  (saveMfaKey)="saveMfaKey($event)" 
+  (sendMfaCode)="sendMfaCode($event)" 
+  (stepUsr)="stepUsr($event)" 
+  (stepPwd)="stepPwd($event)">
 </cal-login-form>
 ```
 
@@ -36,8 +40,25 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
 
 #### Inputs
 ```typescript
-// Policies applied on the password field
-@Input() customPolicies : any = {
+// Display login form like Google & Microsoft (step by step)
+@Input() loginBySteps      : boolean = false;
+// Display forms inside a layout : tab (by default) / modal / inline
+// The inline layout is only available for the MFA form
+@Input() customFormLayouts : any = {
+  pwd      : 'modal',
+  mfaSetup : 'tab',
+  mfa      : 'inline'
+}
+// Display Google button with the supplied theme : light (by default) / dark 
+@Input() customTheme : string  = null;
+// Display login form inside a container
+@Input() container   : boolean = false;
+
+// Optional policy applied on the username input : email / phone / regex
+// Be careful, you must double all the backslashes used in the supplied regex
+@Input() customUsrPolicy   : string = null;
+// Policies applied on the password input
+@Input() customPwdPolicies : any = {
   range : {
     min : 8,
     max : 128,
@@ -47,34 +68,59 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
   lower  : true,
   upper  : true
 }
+
 // Social buttons displayed on the login form
 @Input() customSocialButtons : any = {
   google   : true,
   facebook : true
 }
-// Dislay user icon inside login input
-@Input() inputLoginWithIcon   : boolean = true;
-// Display clear button on login input
-@Input() inputLoginWithButton : boolean = true;
-// Display lock icon inside password input
-@Input() inputPassWithIcon    : boolean = true;
-// Display show/hide button on password input
-@Input() inputPassWithButton  : boolean = true;
-// Display password form inside modal or tab
-@Input() modalTemplate : boolean = true;
+
+// Dislay user icon inside username input on the login form
+@Input() iconUsrOnLoginForm     : boolean = true;
+// Dislay lock icon inside password input on the login form
+@Input() iconPwdOnLoginForm     : boolean = true;
+
+// Display clear button inside username input on the login form
+@Input() btnClearUsrOnLoginForm : boolean = true;
+// Display show/hide button inside password input on the login form
+@Input() btnShowPwdOnLoginForm  : boolean = true;
+// Display clear button inside code input on the password form
+@Input() btnClearCodeOnPwdForm  : boolean = true;
+// Display show/hide button inside password input on the password form
+@Input() btnShowPwdOnPwdForm    : boolean = true;
+// Display clear button inside code input on the mfa form
+@Input() btnClearCodeOnMfaForm  : boolean = true;
+
+// Display forgot password button on the login form
+@Input() btnForgotPwdOnLoginForm : boolean = true;
+// Display sign up button on the login form
+@Input() btnSignUpOnLoginForm    : boolean = true;
+
+// Display errors on the login form
+@Input() errOnLoginForm         : boolean = true;
+// Display errors on the password form
+@Input() errOnPwdForm           : boolean = true;
+// Display errors on the mfa form
+@Input() errOnMfaForm           : boolean = true;
+
 // Labels of the login form
 @Input() customLoginLabels : any = {
-  loginLabel             : 'Login',
+  usernameLabel          : 'Username',
   passwordLabel          : 'Password',
-  forgottenPasswordLabel : 'Forgotten password',
+  forgotPasswordLabel    : 'Forgot password',
   signInLabel            : 'Sign in',
+  signUpLabel            : 'Sign up',
+  nextLabel              : 'Next',
+  backLabel              : 'Back',
   googleSignInLabel      : 'Sign in with Google',
   facebookSignInLabel    : 'Sign in with Facebook',
   fieldRequiredLabel     : 'This field is required',
-  fieldEmailLabel        : 'This value must be an email'
-};
+  fieldEmailLabel        : 'This value must be an email',
+  fieldPhoneLabel        : 'This value must be a phone number',
+  fieldCustomLabel       : 'This value must match the custom regex provided'
+}
 // Labels of the password form
-@Input() customPassLabels : any = {
+@Input() customPwdLabels : any = {
   verifCodeMessageLabel   : 'Please enter the confirmation code you will receive by email',
   verifCodeLabel          : 'Verification code',
   newPasswordLabel        : 'New password',
@@ -86,42 +132,72 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
   policyPassword5Label    : 'Require at least one nonalphanumeric character ! @ # $ % ^ & * ( ) _ + - = [ ] { } | \'',
   fieldRequiredLabel      : 'This field is required',
   fieldNonWhitespaceLabel : 'This value must not contain any spaces'
-};
+}
 // Labels on top of the password form
 @Input() customHeaderLabels : any = {
+  mfaCodeLabel               : 'MFA Code',
   lostPasswordLabel          : 'Lost password',
   updatePasswordLabel        : 'Update password',
   updatePasswordMessageLabel : 'Please enter a new password',
-};
+}
+// Labels of the mfa setup form
+@Input() customMfaSetupLabels : any = {
+  verifCodeLabel      : 'Verification code',
+  saveLabel           : 'Save',
+  description         : 'Save this secret key for future connection',
+  fieldRequiredLabel  : 'This field is required',
+  fieldSixDigitsLabel : 'This value must contains six digits'
+}
+// Labels of the mfa form
+@Input() customMfaLabels : any = {
+  verifCodeLabel      : 'Verification code',
+  sendLabel           : 'Send',
+  fieldRequiredLabel  : 'This field is required',
+  fieldSixDigitsLabel : 'This value must contains six digits'
+}
 ```
 
 #### Outputs
 ```typescript
-@Output() login         : EventEmitter<any>;
-/* login    : string
+@Output() initialized  : EventEmitter<any>;
+@Output() signUp       : EventEmitter<any>;
+@Output() login        : EventEmitter<any>;
+/* username : string
 *  password : string */
-@Output() loginSocial   : EventEmitter<any>;
-/* login    : string
+@Output() loginSocial  : EventEmitter<any>;
+/* username : string
 *  password : string
 *  social   : string */
-@Output() forgottenPass : EventEmitter<any>;
-/* login    : string
-*  password : string */
-@Output() sendFirstPass : EventEmitter<string>;
-/* password : string */
-@Output() sendResetPass : EventEmitter<string>;
+@Output() forgotPwd    : EventEmitter<any>;
+/* username : string */
+@Output() sendResetPwd : EventEmitter<any>;
 /* password : string
 *  code     : string */
+@Output() sendFirstPwd : EventEmitter<any>;
+/* password : string */
+@Output() saveMfaKey   : EventEmitter<any>;
+/* code     : string */
+@Output() sendMfaCode  : EventEmitter<any>;
+/* code     : string */
+@Output() stepUsr      : EventEmitter<any>;
+/* username : string */
+@Output() stepPwd      : EventEmitter<any>;
+/* password : string */
 ```
 
 **Important Note**: This project uses the following dependencies :
 ```json
-"@angular/common": "^6.0.0-rc.0 || ^6.0.0",
-"@angular/core": "^6.0.0-rc.0 || ^6.0.0",
-"@angular/material": "^6.0.0-rc.0 || ^6.0.0",
-"rxjs": "^6.0.0",
-"rxjs-compat": "^6.0.0",
-"bootstrap": "^4.0.0"
+"peerDependencies": {
+  "@angular/common": "^6.0.0-rc.0 || ^6.0.0",
+  "@angular/core": "^6.0.0-rc.0 || ^6.0.0",
+  "@angular/material": "^6.0.0-rc.0 || ^6.0.0",
+  "rxjs": "^6.0.0",
+  "rxjs-compat": "^6.0.0",
+  "bootstrap": "^4.0.0"
+},
+"optionalDependencies": {
+  "angularx-qrcode": "^1.1.7"
+}
 ```
 
 ## Roadmap
@@ -129,17 +205,13 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
 ### In Progress
 
 ### Planning
-- Deploy with [Travis](https://travis-ci.org/) & Test Coverage with [Coveralls](https://coveralls.io/)
-- Remove Bootstrap 4 dependency
-- Sign up button
-- Optional error messages (on login form)
-- Let you choose your verification pattern / regex (for login input)
 - Captcha
-- Update screenshot
-- MFA
-- Change google button to the official one
+- Test loginBySteps on mobile (1/3)
+- Remove Bootstrap 4 dependency
+- Dissociate forgot password from setup password ?
 - Create an Online example with [StackBlitz](https://stackblitz.com)
-- Upgrade fake service (add fake credentials)
+- Fix Angular 6 Library assets
+- Deploy with [Travis](https://travis-ci.org/) & Test Coverage with [Coveralls](https://coveralls.io/)
 
 ### Contributions
 

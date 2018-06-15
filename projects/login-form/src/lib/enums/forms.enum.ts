@@ -1,6 +1,6 @@
 export enum Forms
 {
-  PASSWORD  = 'password',
+  PWD       = 'pwd',
   MFA_SETUP = 'mfaSetup',
   MFA       = 'mfa'
 }

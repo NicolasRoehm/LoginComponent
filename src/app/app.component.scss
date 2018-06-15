@@ -1,5 +1,11 @@
+@import '../../node_modules/bootstrap/scss/functions.scss';
+@import '../../node_modules/bootstrap/scss/variables.scss';
+@import '../../node_modules/bootstrap/scss/mixins.scss';
+
 .sidebar {
-  position: fixed;
+  @include media-breakpoint-up(md) {
+    position: fixed;
+  }
   top: 0;
   bottom: 0;
   left: 0;
@@ -11,15 +17,19 @@
 .sidebar-sticky {
   position: relative;
   top: 0;
-  height: calc(100vh - 48px);
+  @include media-breakpoint-up(md) {
+    height: calc(100vh - 48px);
+  }
   padding-top: .5rem;
   overflow-x: hidden;
   overflow-y: auto;
 }
 
 .sidebar-sticky {
-  position: -webkit-sticky;
-  position: sticky;
+  @include media-breakpoint-up(md) {
+    position: -webkit-sticky;
+    position: sticky;
+  }
 }
 
 .sidebar .nav-link {

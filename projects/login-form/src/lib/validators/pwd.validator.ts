@@ -7,7 +7,7 @@ export interface ValidationResult
   [key : string] : boolean;
 }
 
-export class PasswordValidator
+export class PwdValidator
 {
   public static longEnough(min : number, max : number) : ValidatorFn
   {

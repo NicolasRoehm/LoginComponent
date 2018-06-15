@@ -2,7 +2,6 @@
 import { OnInit }       from '@angular/core';
 import { Component }    from '@angular/core';
 import { OnDestroy }    from '@angular/core';
-import { Inject }       from '@angular/core';
 import { Input }        from '@angular/core';
 import { Output }       from '@angular/core';
 import { EventEmitter } from '@angular/core';
@@ -11,27 +10,31 @@ import { FormGroup }    from '@angular/forms';
 import { FormBuilder }  from '@angular/forms';
 import { Validators }   from '@angular/forms';
 
-// External modules
-import { Subscription } from 'rxjs/Subscription';
-
 // Internal modules
-import { PasswordValidator } from './password.validator';
+import { PwdValidator } from '../../validators/pwd.validator';
 
 @Component({
-  selector    : 'cal-pass-form',
-  templateUrl : './pass-form.component.html',
-  styleUrls   : ['./pass-form.component.scss']
+  selector    : 'cal-pwd-form',
+  templateUrl : './pwd-form.component.html',
+  styleUrls   : ['./pwd-form.component.scss']
 })
-export class PassFormComponent implements OnInit, OnDestroy
+export class PwdFormComponent implements OnInit, OnDestroy
 {
   public    formGroup    : FormGroup;
+  public    showPassword : boolean = false;
   // public captchaToken : string; // TODO:
-  // First connection or Forgotten password
+  // First connection or Forgot password
   @Input()  isFirst      : boolean;
   // Labels
-  @Input()  passLabels   : any;
-  @Input()  passPolicies : any;
-  // Event sent to login-form and relayed parents (modal & tab)
+  @Input()  pwdLabels    : any;
+  @Input()  pwdPolicies  : any;
+  // Display show/hide button inside password input
+  @Input()  btnShowPwd   : boolean;
+  // Display clear button inside code input
+  @Input()  btnClearCode : boolean;
+  // Display errors
+  @Input()  err          : boolean;
+  // Event sent to the login form and relayed parents (modal & tab)
   @Output() firstConnection : EventEmitter<any> = new EventEmitter();
   @Output() lostPassword    : EventEmitter<any> = new EventEmitter();
 
@@ -79,17 +82,17 @@ export class PassFormComponent implements OnInit, OnDestroy
   {
     let validators : any = [];
 
-    if(this.passPolicies.char)
-      validators.push(PasswordValidator.char);
-    if(this.passPolicies.number)
-      validators.push(PasswordValidator.number);
-    if(this.passPolicies.upper)
-      validators.push(PasswordValidator.upper);
-    if(this.passPolicies.lower)
-      validators.push(PasswordValidator.lower);
+    if(this.pwdPolicies.char)
+      validators.push(PwdValidator.char);
+    if(this.pwdPolicies.number)
+      validators.push(PwdValidator.number);
+    if(this.pwdPolicies.upper)
+      validators.push(PwdValidator.upper);
+    if(this.pwdPolicies.lower)
+      validators.push(PwdValidator.lower);
 
     validators.push(Validators.required);
-    validators.push(PasswordValidator.longEnough(this.passPolicies.range.min, this.passPolicies.range.max));
+    validators.push(PwdValidator.longEnough(this.pwdPolicies.range.min, this.pwdPolicies.range.max));
 
     this.formGroup = this.builder.group({
       verifCode    : new FormControl({

@@ -1,15 +1,27 @@
-<div class="desc">
-  {{ mfaSetupLabels.description }}
-</div>
-<div class="codes">
+<p class="small">{{ mfaSetupLabels.description }}</p>
+<div class="code text-center">
   <qrcode [qrdata]="qrCode" [size]="100" [level]="'L'"></qrcode>
-  <span class="code">{{ code }}</span>
+  <p class="my-3">{{ code }}</p>
 </div>
 <form (ngSubmit)="send()" [formGroup]="formGroup" autocomplete="off">
   <mat-form-field class="w-100">
     <input matInput formControlName="verifCode" 
       name="verifCode" placeholder="{{ mfaSetupLabels.verifCodeLabel }}" 
-      type="text"/>
+      pattern="\\d{6}" 
+      type="text"/> <!-- NOTE: Pattern matches 6 digits -->
+    <button *ngIf="formGroup.controls.verifCode.valid && btnClearCode" 
+      mat-button matSuffix mat-icon-button aria-label="Clear" 
+      color="primary" (click)="formGroup.controls.verifCode.setValue('')" 
+      type="button">
+      <mat-icon>close</mat-icon>
+    </button>
+    <!-- NOTE: Error messages -->
+    <mat-hint align="start" *ngIf="formGroup.controls.verifCode.errors?.required && err">
+      {{ mfaSetupLabels.fieldRequiredLabel }}
+    </mat-hint>
+    <mat-hint align="start" *ngIf="formGroup.controls.verifCode.errors?.pattern && err">
+      {{ mfaSetupLabels.fieldSixDigitsLabel }}
+    </mat-hint>
   </mat-form-field>
   <div class="row w-100 no-gutters">
     <div class="col text-right">
