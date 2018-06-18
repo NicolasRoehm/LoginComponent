@@ -1,4 +1,4 @@
-<div class="{{ container ? 'login-wrapper' : '' }}">
+<div class="{{ container ? 'login-wrapper' : '' }}" id="debug-login-form">
   <mat-tab-group id="caliatys-login-form" [selectedIndex]="selectedTab">
     <mat-tab label="login-form">
       <!-- NOTE: Login form -->
@@ -9,14 +9,14 @@
               <div class="col">
                 <!-- NOTE: Username -->
                 <mat-form-field class="w-100">
-                  <div matPrefix class="mr-2" *ngIf="iconUserOnLoginForm">
+                  <div matPrefix class="mr-2" *ngIf="iconUsrOnLoginForm">
                     <mat-icon class="align-bottom">person</mat-icon>
                   </div>
                   <input matInput formControlName="username" 
                     name="username" autocomplete="username" 
                     placeholder="{{ loginLabels.usernameLabel }}" 
-                    type="text"/> <!-- TODO: switch / case : email, phone, none -->
-                  <button *ngIf="formGroup.controls.username.value?.length > 0 && btnClearUserOnLoginForm" 
+                    type="text"/>
+                  <button *ngIf="formGroup.controls.username.value?.length > 0 && btnClearUsrOnLoginForm" 
                     mat-button matSuffix mat-icon-button aria-label="Clear" 
                     color="primary" (click)="formGroup.controls.username.setValue('')" 
                     [disabled]="formType === forms.MFA && formLayouts.mfa === layouts.INLINE ? true : false" 
@@ -101,7 +101,7 @@
             {{ loginLabels.signUpLabel }}
           </button>
         </div>
-        <div class="col text-left">
+        <div class="col {{ btnSignUpOnLoginForm ? 'text-left' : 'text-center'}}">
           <!-- NOTE: Sign in -->
           <button mat-raised-button (click)="onClickNextStep(0)" type="button" color="primary" class="small text-uppercase ml-2">
             {{ loginLabels.signInLabel }}
@@ -158,14 +158,14 @@
       <form (ngSubmit)="onClickNextStep(1)" [formGroup]="usrFormGroup">
         <!-- NOTE: Username -->
         <mat-form-field class="w-100">
-          <div matPrefix class="mr-2" *ngIf="iconUserOnLoginForm">
+          <div matPrefix class="mr-2" *ngIf="iconUsrOnLoginForm">
             <mat-icon class="align-bottom">person</mat-icon>
           </div>
           <input matInput formControlName="username" 
             name="username" autocomplete="username" 
             placeholder="{{ loginLabels.usernameLabel }}" 
-            type="text"/> <!-- TODO: switch / case : email, phone, none -->
-          <button *ngIf="usrFormGroup.controls.username.value?.length > 0 && btnClearUserOnLoginForm" 
+            type="text"/>
+          <button *ngIf="usrFormGroup.controls.username.value?.length > 0 && btnClearUsrOnLoginForm" 
             mat-button matSuffix mat-icon-button aria-label="Clear" 
             color="primary" (click)="usrFormGroup.controls.username.setValue('')" 
             [disabled]="formType === forms.MFA && formLayouts.mfa === layouts.INLINE ? true : false" 

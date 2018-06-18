@@ -1,6 +1,8 @@
 // Angular modules
 import { OnInit }          from '@angular/core';
 import { AfterViewInit }   from '@angular/core';
+import { OnChanges }       from '@angular/core';
+import { SimpleChanges }   from '@angular/core';
 import { OnDestroy }       from '@angular/core';
 import { Input }           from '@angular/core';
 import { Output }          from '@angular/core';
@@ -34,7 +36,7 @@ import { ModalWrapperComponent } from './layouts/modal-wrapper/modal-wrapper.com
   templateUrl : './login-form.component.html',
   styleUrls   : ['./login-form.component.scss']
 })
-export class LoginFormComponent implements OnInit, AfterViewInit, OnDestroy
+export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy
 {
   public    formLayouts    : any;
   public    theme          : string;
@@ -70,12 +72,12 @@ export class LoginFormComponent implements OnInit, AfterViewInit, OnDestroy
   @Input()  customSocialButtons  : any;
 
   // Dislay user icon inside username input on the login form
-  @Input()  iconUserOnLoginForm     : boolean = true;
+  @Input()  iconUsrOnLoginForm      : boolean = true;
   // Dislay lock icon inside password input on the login form
   @Input()  iconPwdOnLoginForm      : boolean = true;
 
   // Display clear button inside username input on the login form
-  @Input()  btnClearUserOnLoginForm : boolean = true;
+  @Input()  btnClearUsrOnLoginForm  : boolean = true;
   // Display show/hide button inside password input on the login form
   @Input()  btnShowPwdOnLoginForm   : boolean = true;
   // Display clear button inside code input on the password form
@@ -193,6 +195,20 @@ export class LoginFormComponent implements OnInit, AfterViewInit, OnDestroy
   public ngAfterViewInit() : void
   {
     this.initialized.emit();
+  }
+
+  public ngOnChanges(changes : SimpleChanges) : void
+  {
+    if(changes.loginBySteps)
+      this.initFormsGroups();
+    if(changes.customFormLayouts)
+      this.initFormLayouts();
+    if(changes.customTheme)
+      this.initTheme();
+    if(changes.customPwdPolicies || changes.customUsrPolicy)
+      this.initPolicies();
+    if(changes.customSocialButtons)
+      this.initSocialButtons();
   }
 
   public ngOnDestroy() : void
@@ -741,7 +757,7 @@ export class LoginFormComponent implements OnInit, AfterViewInit, OnDestroy
       verifCodeLabel          : 'Verification code',
       newPasswordLabel        : 'New password',
       sendLabel               : 'Send',
-      policyPassword1Label    : 'Minimum password length (6 to 128)',
+      policyPassword1Label    : 'Minimum password length ({{min}} to {{max}})',
       policyPassword2Label    : 'Require at least one uppercase letter (A to Z)',
       policyPassword3Label    : 'Require at least one lowercase letter (a to z)',
       policyPassword4Label    : 'Require at least one number (0 to 9)',

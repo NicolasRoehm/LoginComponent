@@ -62,7 +62,7 @@
         <li class="check-policy">
           <mat-icon class="red-policy" *ngIf="formGroup.controls.newPassword.errors && formGroup.controls.newPassword.errors.longEnough">close</mat-icon>
           <mat-icon class="green-policy" *ngIf="!formGroup.controls.newPassword.errors || !formGroup.controls.newPassword.errors.longEnough">check</mat-icon>
-          {{ pwdLabels.policyPassword1Label }}
+          {{ pwdLabels.policyPassword1LabelReplaced }}
         </li>
         <li class="check-policy" *ngIf="pwdPolicies.upper">
           <mat-icon class="red-policy" *ngIf="formGroup.controls.newPassword.errors && formGroup.controls.newPassword.errors.upper">close</mat-icon>

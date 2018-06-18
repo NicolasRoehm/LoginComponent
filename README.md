@@ -131,7 +131,7 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
   verifCodeLabel          : 'Verification code',
   newPasswordLabel        : 'New password',
   sendLabel               : 'Send',
-  policyPassword1Label    : 'Minimum password length (6 to 128)',
+  policyPassword1Label    : 'Minimum password length ({{min}} to {{max}})',
   policyPassword2Label    : 'Require at least one uppercase letter (A to Z)',
   policyPassword3Label    : 'Require at least one lowercase letter (a to z)',
   policyPassword4Label    : 'Require at least one number (0 to 9)',

@@ -7,6 +7,9 @@ import { ChangeDetectorRef }  from '@angular/core';
 import { MatSnackBar }        from '@angular/material';
 
 // External modules
+import * as dat               from 'dat.gui';
+// import * as cssdebug          from 'debugcss';
+declare var CssDebug : any;
 import { TranslateService }   from '@ngx-translate/core';
 
 // Services
@@ -29,7 +32,6 @@ export class AppComponent implements OnInit, OnDestroy
 {
   public loginForm : LoginFormComponent;
   public reset : any[] = [{}];
-
   @ViewChild('loginForm') set content(content : LoginFormComponent)
   {
     this.loginForm = content;
@@ -41,6 +43,48 @@ export class AppComponent implements OnInit, OnDestroy
   public credentials = Credentials;
 
   public selectedDemo : string = Demo.SIMPLE_CONNECTION;
+
+  public toggleNavbar : string = '';
+
+  // NOTE: Dynamic demo
+  public gui      : dat.GUI;
+  public settings : any = {
+    // NOTE: Style
+    container    : false,
+    loginBySteps : false,
+    customTheme  : 'light',
+    // NOTE: Layouts (customFormLayouts)
+    pwd      : 'modal',
+    mfaSetup : 'tab',
+    mfa      : 'inline',
+    // NOTE: Policies (customUsrPolicy & customPwdPolicies)
+    usrPolicy   : 'email', // email / phone / regex
+    pwdRangeMin : 8,
+    pwdRangeMax : 128,
+    pwdChar     : true,
+    pwdNumber   : true,
+    pwdLower    : true,
+    pwdUpper    : true,
+    // NOTE: Social buttons (customSocialButtons)
+    google   : true,
+    facebook : true,
+    // NOTE: Icons
+    iconUsrOnLoginForm : true,
+    iconPwdOnLoginForm : true,
+    // NOTE: Buttons
+    btnClearUsrOnLoginForm  : true,
+    btnShowPwdOnLoginForm   : true,
+    btnClearCodeOnPwdForm   : true,
+    btnShowPwdOnPwdForm     : true,
+    btnClearCodeOnMfaForm   : true,
+    btnForgotPwdOnLoginForm : true,
+    btnSignUpOnLoginForm    : true,
+    // NOTE: Errors
+    errOnLoginForm : true,
+    errOnPwdForm : true,
+    errOnMfaForm : true,
+    // NOTE: Translation
+  };
 
   constructor
   (
@@ -58,12 +102,81 @@ export class AppComponent implements OnInit, OnDestroy
 
   public ngOnInit() : void
   {
+    this.gui = new dat.GUI({
+      width: 300,
+      autoPlace: false
+    });
+    this.gui.useLocalStorage = true;
+    this.gui.remember(this.settings);
+
+    var stepSize = 1; // NOTE: Precision level of our gui
+
+    this.gui.styleFolder = this.gui.addFolder('Style');
+    this.gui.styleFolder.add(this.settings, 'container').name('Fixed width');
+    this.gui.styleFolder.add(this.settings, 'loginBySteps').name('Google style');
+    this.gui.styleFolder.add(this.settings, 'customTheme', [ 'light', 'dark' ]).name('Theme');
+
+    this.gui.layoutsFolder = this.gui.addFolder('Layouts');
+    this.gui.layoutsFolder.add(this.settings, 'pwd', [ 'modal', 'tab' ] ).name('Password + setup');
+    this.gui.layoutsFolder.add(this.settings, 'mfaSetup', [ 'modal', 'tab' ] ).name('MFA setup');
+    this.gui.layoutsFolder.add(this.settings, 'mfa', [ 'modal', 'tab', 'inline' ] ).name('MFA');
+
+    this.gui.policiesFolder = this.gui.addFolder('Policies');
+    this.gui.policiesFolder.add(this.settings, 'usrPolicy').name('Username policy');
+    this.gui.policiesFolder.add(this.settings, 'pwdRangeMin').min(0).max(255).step(stepSize).name('Password min length');
+    this.gui.policiesFolder.add(this.settings, 'pwdRangeMax').min(0).max(255).step(stepSize).name('Password max length');
+    this.gui.policiesFolder.add(this.settings, 'pwdChar').name('Password character');
+    this.gui.policiesFolder.add(this.settings, 'pwdNumber').name('Password number');
+    this.gui.policiesFolder.add(this.settings, 'pwdLower').name('Password lowercase');
+    this.gui.policiesFolder.add(this.settings, 'pwdUpper').name('Password uppercase');
+
+    this.gui.iconsFolder = this.gui.addFolder('Icons');
+    this.gui.iconsFolder.add(this.settings, 'iconUsrOnLoginForm').name('User icon');
+    this.gui.iconsFolder.add(this.settings, 'iconPwdOnLoginForm').name('Lock icon');
+
+    this.gui.buttonsFolder = this.gui.addFolder('Buttons');
+    this.gui.buttonsFolder.add(this.settings, 'btnForgotPwdOnLoginForm').name('Forgot password');
+    this.gui.buttonsFolder.add(this.settings, 'btnSignUpOnLoginForm').name('Sign up');
+    this.gui.buttonsFolder.add(this.settings, 'google').name('Sign in with Google');
+    this.gui.buttonsFolder.add(this.settings, 'facebook').name('Sign in with Facebook');
+
+    this.gui.inputsFolder = this.gui.addFolder('Inputs');
+    this.gui.inputsFolder.add(this.settings, 'btnClearUsrOnLoginForm').name('Clear username');
+    this.gui.inputsFolder.add(this.settings, 'btnShowPwdOnLoginForm').name('Show password');
+    this.gui.inputsFolder.add(this.settings, 'btnShowPwdOnPwdForm').name('Show password (pwd)');
+    this.gui.inputsFolder.add(this.settings, 'btnClearCodeOnPwdForm').name('Clear code (pwd)');
+    this.gui.inputsFolder.add(this.settings, 'btnClearCodeOnMfaForm').name('Clear code (MFA)');
+
+    this.gui.errorsFolder = this.gui.addFolder('Errors');
+    this.gui.errorsFolder.add(this.settings, 'errOnLoginForm').name('Login form');
+    this.gui.errorsFolder.add(this.settings, 'errOnPwdForm').name('Password form');
+    this.gui.errorsFolder.add(this.settings, 'errOnMfaForm').name('MFA form');
+
+    var customContainer = document.getElementById('gui-container');
+    customContainer.appendChild(this.gui.domElement);
+
     this.selectedDemo = Demo.SIMPLE_CONNECTION;
   }
 
   public ngOnDestroy() : void
   {
     this.cdRef.detach();
+  }
+
+  public debugCss() : void
+  {
+    // var form = document.getElementById('debug-login-form');
+    // form.addEventListener('click', (event) => {
+    //   CssDebug.readQueryString();
+    //   CssDebug.AddOutliners();
+    //   CssDebug.mouseHandler(event);
+    // }, true);
+    // form.click();
+    // console.log(form);
+    // console.log(CssDebug);
+    
+    // var test = new cssdebug();
+    // cssdebug.mouseHandler(form);
   }
 
   // -------------------------------------------------------------------------------
@@ -73,6 +186,7 @@ export class AppComponent implements OnInit, OnDestroy
   public initialized() : void
   {
     console.log('initialized');
+    this.debugCss();
   }
 
   public signUp() : void
@@ -296,6 +410,14 @@ export class AppComponent implements OnInit, OnDestroy
   // -------------------------------------------------------------------------------
   // ---- NOTE: Demo ---------------------------------------------------------------
   // -------------------------------------------------------------------------------
+
+  public onClickNavbar() : void
+  {
+    if(!this.toggleNavbar.length)
+      this.toggleNavbar = 'open';
+    else
+      this.toggleNavbar = '';
+  }
 
   public onRecreate() : void
   {

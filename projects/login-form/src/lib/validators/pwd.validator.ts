@@ -13,7 +13,7 @@ export class PwdValidator
   {
     let func = (control : AbstractControl) : { [key : string] : boolean } | null =>
     {
-      let isLongEnough = control.value !== null && control.value.length >= 8 && control.value.length <= 128;
+      let isLongEnough = control.value !== null && control.value.length >= min && control.value.length <= max;
       if ( !isLongEnough )
         return { longEnough: true };
 

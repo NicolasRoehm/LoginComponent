@@ -1,24 +1,26 @@
 // Angular modules
-import { OnInit }       from '@angular/core';
-import { Component }    from '@angular/core';
-import { OnDestroy }    from '@angular/core';
-import { Input }        from '@angular/core';
-import { Output }       from '@angular/core';
-import { EventEmitter } from '@angular/core';
-import { FormControl }  from '@angular/forms';
-import { FormGroup }    from '@angular/forms';
-import { FormBuilder }  from '@angular/forms';
-import { Validators }   from '@angular/forms';
+import { OnInit }        from '@angular/core';
+import { OnChanges }     from '@angular/core';
+import { SimpleChanges } from '@angular/core';
+import { Component }     from '@angular/core';
+import { OnDestroy }     from '@angular/core';
+import { Input }         from '@angular/core';
+import { Output }        from '@angular/core';
+import { EventEmitter }  from '@angular/core';
+import { FormControl }   from '@angular/forms';
+import { FormGroup }     from '@angular/forms';
+import { FormBuilder }   from '@angular/forms';
+import { Validators }    from '@angular/forms';
 
 // Internal modules
-import { PwdValidator } from '../../validators/pwd.validator';
+import { PwdValidator }  from '../../validators/pwd.validator';
 
 @Component({
   selector    : 'cal-pwd-form',
   templateUrl : './pwd-form.component.html',
   styleUrls   : ['./pwd-form.component.scss']
 })
-export class PwdFormComponent implements OnInit, OnDestroy
+export class PwdFormComponent implements OnInit, OnChanges, OnDestroy
 {
   public    formGroup    : FormGroup;
   public    showPassword : boolean = false;
@@ -50,6 +52,12 @@ export class PwdFormComponent implements OnInit, OnDestroy
     this.initFormsGroups();
   }
 
+  public ngOnChanges(changes : SimpleChanges) : void
+  {
+    if(changes.pwdPolicies)
+      this.initFormsGroups(true);
+  }
+
   public ngOnDestroy() : void
   {
   }
@@ -78,8 +86,17 @@ export class PwdFormComponent implements OnInit, OnDestroy
     this.lostPassword.emit(event);
   }
 
-  private initFormsGroups() : void
+  private initFormsGroups(refresh : boolean = false) : void
   {
+    let verifCode   : string = null;
+    let newPassword : string = null;
+
+    if(refresh && this.formGroup)
+    {
+      verifCode   = this.formGroup.controls.verifCode.value;
+      newPassword = this.formGroup.controls.newPassword.value;
+    }
+
     let validators : any = [];
 
     if(this.pwdPolicies.char)
@@ -94,13 +111,20 @@ export class PwdFormComponent implements OnInit, OnDestroy
     validators.push(Validators.required);
     validators.push(PwdValidator.longEnough(this.pwdPolicies.range.min, this.pwdPolicies.range.max));
 
+    // Refresh min max label
+    let rangeLabel : string = null;
+    rangeLabel = this.pwdLabels.policyPassword1Label;
+    rangeLabel = rangeLabel.replace(/{{min}}/, this.pwdPolicies.range.min);
+    rangeLabel = rangeLabel.replace(/{{max}}/, this.pwdPolicies.range.max);
+    this.pwdLabels.policyPassword1LabelReplaced = rangeLabel;
+
     this.formGroup = this.builder.group({
       verifCode    : new FormControl({
-        value      : null,
+        value      : verifCode,
         disabled   : false
       }),
       newPassword  : new FormControl({
-        value      : null,
+        value      : newPassword,
         disabled   : false
       }, validators),
     });

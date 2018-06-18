@@ -125,7 +125,7 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
   verifCodeLabel          : 'Verification code',
   newPasswordLabel        : 'New password',
   sendLabel               : 'Send',
-  policyPassword1Label    : 'Minimum password length (6 to 128)',
+  policyPassword1Label    : 'Minimum password length ({{min}} to {{max}})',
   policyPassword2Label    : 'Require at least one uppercase letter (A to Z)',
   policyPassword3Label    : 'Require at least one lowercase letter (a to z)',
   policyPassword4Label    : 'Require at least one number (0 to 9)',
@@ -203,11 +203,13 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
 ## Roadmap
 
 ### In Progress
+- add data.ui to configure the demo
 
 ### Planning
 - Captcha
 - Test loginBySteps on mobile (1/3)
 - Remove Bootstrap 4 dependency
+- Add optional validator on password input
 - Dissociate forgot password from setup password ?
 - Create an Online example with [StackBlitz](https://stackblitz.com)
 - Fix Angular 6 Library assets
