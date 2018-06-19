@@ -1,0 +1,32 @@
+import { OnInit } from '@angular/core';
+import { OnDestroy } from '@angular/core';
+import { EventEmitter } from '@angular/core';
+import { MatDialogRef } from '@angular/material';
+import { Subscription } from 'rxjs/Subscription';
+import { Forms } from '../../enums/forms.enum';
+export declare class ModalWrapperComponent implements OnInit, OnDestroy {
+    dialogRef: MatDialogRef<ModalWrapperComponent>;
+    data: any;
+    forms: typeof Forms;
+    formType: string;
+    labels: any;
+    errors: any;
+    inputs: any;
+    closeSub: Subscription;
+    isFirst: boolean;
+    pwdPolicies: any;
+    relayFirstLog: EventEmitter<any>;
+    relayLostPwd: EventEmitter<any>;
+    code: string;
+    qrCode: string;
+    relaySaveMfaKey: EventEmitter<any>;
+    relaySendMfaCode: EventEmitter<any>;
+    constructor(dialogRef: MatDialogRef<ModalWrapperComponent>, data: any);
+    ngOnInit(): void;
+    ngOnDestroy(): void;
+    relayFirstLogEvent($event: any): void;
+    relayLostPwdEvent($event: any): void;
+    relaySaveMfaKeyEvent($event: any): void;
+    relaySendMfaCodeEvent($event: any): void;
+    private loadParams();
+}
