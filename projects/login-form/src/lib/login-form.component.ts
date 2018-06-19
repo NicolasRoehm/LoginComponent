@@ -41,74 +41,45 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
   public    formLayouts    : any;
   public    theme          : string;
 
-  public    loginLabels    : any;
-  public    pwdLabels      : any;
-  public    headerLabels   : any;
-  public    mfaSetupLabels : any;
-  public    mfaLabels      : any;
-
   public    usrPolicy      : string;
   public    pwdPolicies    : any;
 
-  public    socialButtons  : any;
+  public    icons          : any;
+  public    buttons        : any;
+  public    inputs         : any;
+  public    errors         : any;
+  public    labels         : any;
 
+  // Display login form inside a container
+  @Input()  fixedWidth        : boolean = false;
   // Display login form like Google & Microsoft (step by step)
-  @Input()  loginBySteps         : boolean = false;
+  @Input()  googleStyle       : boolean = false;
+  // Display Google button with the supplied theme : light / dark
+  @Input()  googleTheme       : string  = null;
   // Display forms inside a layout : tab (by default) / modal / inline
   // The inline layout is only available for the MFA form
-  @Input()  customFormLayouts    : any;
-  // Display Google button with the supplied theme : light / dark
-  @Input()  customTheme          : string  = null;
-  // Display login form inside a container
-  @Input()  container            : boolean = false;
+  @Input()  customFormLayouts : any;
 
   // Optional policy applied on the username input : email / phone / regex
   // Be careful, you must double all the backslashes used in the supplied regex
-  @Input()  customUsrPolicy      : string = null;
+  @Input()  customUsrPolicy   : string = null;
   // Policies applied on the password input
-  @Input()  customPwdPolicies    : any;
+  @Input()  customPwdPolicies : any;
 
-  // Social buttons displayed on the login form
-  @Input()  customSocialButtons  : any;
+  // Dislay icon inside inputs on the login form
+  @Input()  customIcons   : any;
 
-  // Dislay user icon inside username input on the login form
-  @Input()  iconUsrOnLoginForm      : boolean = true;
-  // Dislay lock icon inside password input on the login form
-  @Input()  iconPwdOnLoginForm      : boolean = true;
+  // Display buttons with events
+  @Input()  customButtons : any;
 
-  // Display clear button inside username input on the login form
-  @Input()  btnClearUsrOnLoginForm  : boolean = true;
-  // Display show/hide button inside password input on the login form
-  @Input()  btnShowPwdOnLoginForm   : boolean = true;
-  // Display clear button inside code input on the password form
-  @Input()  btnClearCodeOnPwdForm   : boolean = true;
-  // Display show/hide button inside password input on the password form
-  @Input()  btnShowPwdOnPwdForm     : boolean = true;
-  // Display clear button inside code input on the mfa form
-  @Input()  btnClearCodeOnMfaForm   : boolean = true;
+  // Display clear & show/hide buttons inside inputs
+  @Input()  customInputs  : any;
 
-  // Display forgot password button on the login form
-  @Input()  btnForgotPwdOnLoginForm : boolean = true;
-  // Display sign up button on the login form
-  @Input()  btnSignUpOnLoginForm    : boolean = true;
+  // Display error messages
+  @Input()  customErrors  : any;
 
-  // Display errors on the login form
-  @Input()  errOnLoginForm          : boolean = true;
-  // Display errors on the password form
-  @Input()  errOnPwdForm            : boolean = true;
-  // Display errors on the mfa form
-  @Input()  errOnMfaForm            : boolean = true;
-
-  // Labels of the login form
-  @Input()  customLoginLabels    : any;
-  // Labels of the password form
-  @Input()  customPwdLabels      : any;
-  // Labels on top of the password form
-  @Input()  customHeaderLabels   : any;
-  // Labels of the mfa setup form
-  @Input()  customMfaSetupLabels : any;
-  // Labels of the mfa form
-  @Input()  customMfaLabels      : any;
+  // Labels
+  @Input()  customLabels  : any;
 
   // Event triggered after creating the login form (AfterViewInit)
   @Output() initialized   : EventEmitter<any> = new EventEmitter();
@@ -130,7 +101,7 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
   @Output() sendMfaCode   : EventEmitter<any> = new EventEmitter();
   // Event object containing username property
   @Output() stepUsr       : EventEmitter<any> = new EventEmitter();
-  // Event object containing password property
+  // Event object containing username and password property
   @Output() stepPwd       : EventEmitter<any> = new EventEmitter();
 
   // NOTE: Form
@@ -183,13 +154,17 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
   public ngOnInit() : void
   {
     // Login form
-    this.initFormsGroups();
-    // Inputs
+    this.initFormGroups();
+    // Style (container, step, theme & layout)
     this.initFormLayouts();
     this.initTheme();
-    this.initLabels();
+
     this.initPolicies();
-    this.initSocialButtons();
+    this.initIcons();
+    this.initButtons();
+    this.initInputs();
+    this.initErrors();
+    this.initLabels();
   }
 
   public ngAfterViewInit() : void
@@ -199,16 +174,25 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
 
   public ngOnChanges(changes : SimpleChanges) : void
   {
-    if(changes.loginBySteps)
-      this.initFormsGroups();
+    if(changes.googleStyle)
+      this.initFormGroups();
     if(changes.customFormLayouts)
       this.initFormLayouts();
-    if(changes.customTheme)
+    if(changes.googleTheme)
       this.initTheme();
+
     if(changes.customPwdPolicies || changes.customUsrPolicy)
       this.initPolicies();
-    if(changes.customSocialButtons)
-      this.initSocialButtons();
+    if(changes.customIcons)
+      this.initIcons();
+    if(changes.customButtons)
+      this.initButtons();
+    if(changes.customInputs)
+      this.initInputs();
+    if(changes.customErrors)
+      this.initErrors();
+    if(changes.customLabels)
+      this.initLabels();
   }
 
   public ngOnDestroy() : void
@@ -238,7 +222,7 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
   public onClickLogin() : void
   {
     let event : any = {};
-    event = this.initEvent();
+    event = this.getEventResponse();
     this.login.emit(event);
   }
 
@@ -253,7 +237,7 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
   public onClickLoginSocial(social : string) : void
   {
     let event : any = {};
-    event = this.initEvent();
+    event = this.getEventResponse();
     event.social = social;
     this.loginSocial.emit(event);
   }
@@ -272,7 +256,7 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
   public onClickForgotPassword() : void
   {
     let event : any = {};
-    event = this.initEvent('usr');
+    event = this.getEventResponse('usr');
     this.forgotPwd.emit(event);
   }
 
@@ -348,12 +332,12 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
         break;
       case 1 : // Username
         let eventUsr : any = null;
-        eventUsr = this.initEvent('usr');
+        eventUsr = this.getEventResponse('usr');
         this.stepUsr.emit(eventUsr);
         break;
       case 2 : // Password
         let eventPwd : any = null;
-        eventPwd = this.initEvent('pwd');
+        eventPwd = this.getEventResponse();
         this.stepPwd.emit(eventPwd);
         break;
       default:
@@ -498,22 +482,16 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
     let params : any = {
       // Common
       formType              : this.formType,
-      headerLabels          : this.headerLabels,
+      labels                : this.labels,
       closeEvent            : this.closeModalEvent,
+      errors                : this.errors,
+      inputs                : this.inputs,
       // Password form
       isFirst               : this.isFirst,
-      pwdLabels             : this.pwdLabels,
       pwdPolicies           : this.pwdPolicies,
-      errOnPwdForm          : this.errOnPwdForm,
-      btnShowPwdOnPwdForm   : this.btnShowPwdOnPwdForm,
-      btnClearCodeOnPwdForm : this.btnClearCodeOnPwdForm,
       // Mfa form
       code                  : this.code,
-      qrCode                : this.qrCode,
-      mfaLabels             : this.mfaLabels,
-      mfaSetupLabels        : this.mfaSetupLabels,
-      errOnMfaForm          : this.errOnMfaForm,
-      btnClearCodeOnMfaForm : this.btnClearCodeOnMfaForm
+      qrCode                : this.qrCode
     };
 
     let dialogRef = this.dialog.open(ModalWrapperComponent, { data : params });
@@ -591,7 +569,7 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
 
   private openTab() : void
   {
-    if(this.loginBySteps)
+    if(this.googleStyle)
       this.selectedTab = 3;
     else
       this.selectedTab = 1;
@@ -601,6 +579,40 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
   {
     this.selectedTab = 0;
   }
+
+  private getEventResponse(onlyOne : string = null) : any
+  {
+    let event    : any    = {};
+    let username : string = null;
+    let password : string = null;
+
+    if(this.googleStyle)
+    {
+      username = this.usrFormGroup.controls.username.value;
+      password = this.pwdFormGroup.controls.password.value;
+    }
+    else
+    {
+      username = this.formGroup.controls.username.value;
+      password = this.formGroup.controls.password.value;
+    }
+
+    if(!onlyOne)
+    {
+      event.username = username;
+      event.password = password;
+    }
+    if(onlyOne && onlyOne === 'usr')
+      event.username = username;
+    if(onlyOne && onlyOne === 'pwd')
+      event.password = password;
+
+    return event;
+  }
+
+  // -------------------------------------------------------------------------------------------
+  // NOTE: Init --------------------------------------------------------------------------------
+  // -------------------------------------------------------------------------------------------
 
   private initFormLayouts() : void
   {
@@ -621,7 +633,7 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
       formLayouts.pwd = Layouts.TAB;
     if(formLayouts.mfaSetup === Layouts.INLINE)
       formLayouts.mfaSetup = Layouts.TAB;
-    if(this.loginBySteps && formLayouts.mfa === Layouts.INLINE)
+    if(this.googleStyle && formLayouts.mfa === Layouts.INLINE)
       formLayouts.mfa = Layouts.TAB;
 
     this.formLayouts = formLayouts;
@@ -632,13 +644,13 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
     let theme : string = null;
 
     // Theme
-    switch(this.customTheme)
+    switch(this.googleTheme)
     {
       case Themes.LIGHT :
-        theme = this.customTheme;
+        theme = this.googleTheme;
         break;
       case Themes.DARK :
-        theme = this.customTheme;
+        theme = this.googleTheme;
         break;
       default :
         theme = Themes.LIGHT;
@@ -648,19 +660,70 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
     this.theme = theme;
   }
 
-  private initSocialButtons() : void
+  private initIcons() : void
+  {
+    let defaultIcons : any = null;
+    let icons        : any = null;
+
+    // Icons
+    defaultIcons = {
+      iconUsrOnLoginForm : true,
+      iconPwdOnLoginForm : true,
+    };
+
+    icons = Object.assign(defaultIcons, this.customIcons);
+    this.icons = icons;
+  }
+
+  private initButtons() : void
   {
     let defaultButons : any = null;
     let buttons       : any = null;
 
-    // Social buttons
+    // Buttons
     defaultButons = {
-      google   : true,
-      facebook : true
+      forgotPassword : true,
+      signUp         : true,
+      google         : true,
+      facebook       : true
     };
 
-    buttons = Object.assign(defaultButons, this.customSocialButtons);
-    this.socialButtons = buttons;
+    buttons = Object.assign(defaultButons, this.customButtons);
+    this.buttons = buttons;
+  }
+
+  private initInputs() : void
+  {
+    let defaultInputs : any = null;
+    let inputs        : any = null;
+
+    // Inputs
+    defaultInputs = {
+      clearUsrOnLoginForm : true,
+      showPwdOnLoginForm  : true,
+      showPwdOnPwdForm    : true,
+      clearCodeOnPwdForm  : true,
+      clearCodeOnMfaForm  : true
+    };
+
+    inputs = Object.assign(defaultInputs, this.customInputs);
+    this.inputs = inputs;
+  }
+
+  private initErrors() : void
+  {
+    let defaultErrors : any = null;
+    let errors        : any = null;
+
+    // Errors
+    defaultErrors = {
+      login : true,
+      pwd   : true,
+      mfa   : true
+    };
+
+    errors = Object.assign(defaultErrors, this.customErrors);
+    this.errors = errors;
   }
 
   private initPolicies() : void
@@ -715,7 +778,7 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
     }
 
     validators.push(Validators.required);
-    if(this.loginBySteps)
+    if(this.googleStyle)
       this.usrFormGroup.controls.username.setValidators(validators);
     else
       this.formGroup.controls.username.setValidators(validators);
@@ -723,117 +786,58 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
 
   private initLabels() : void
   {
-    let defaultLoginLabels    : any = null;
-    let defaultPwdLabels      : any = null;
-    let defaultHeaderLabels   : any = null;
-    let defaultMfaSetupLabels : any = null;
-    let defaultMfaLabels      : any = null;
+    let defaultLabels : any = {};
+    let labels        : any = {};
 
-    let loginLabels           : any = null;
-    let pwdLabels             : any = null;
-    let headerLabels          : any = null;
-    let mfaSetupLabels        : any = null;
-    let mfaLabels             : any = null;
-
-    // Login labels
-    defaultLoginLabels = {
-      usernameLabel       : 'Username',
-      passwordLabel       : 'Password',
-      forgotPasswordLabel : 'Forgot password',
-      signInLabel         : 'Sign in',
-      signUpLabel         : 'Sign up',
-      nextLabel           : 'Next',
-      backLabel           : 'Back',
-      googleSignInLabel   : 'Sign in with Google',
-      facebookSignInLabel : 'Sign in with Facebook',
-      fieldRequiredLabel  : 'This field is required',
-      fieldEmailLabel     : 'This value must be an email',
-      fieldPhoneLabel     : 'This value must be a phone number',
-      fieldCustomLabel    : 'This value must match the custom regex provided'
+    defaultLabels.header = {
+      titlePwd         : 'Lost password',
+      subtitlePwd      : 'Please enter the confirmation code',
+      titlePwdSetup    : 'Password setup',
+      subtitlePwdSetup : 'Please enter a new password',
+      titleMfa         : 'MFA',
+      subtitleMfa      : 'Please enter the confirmation code',
+      titleMfaSetup    : 'MFA setup',
+      subtitleMfaSetup : 'Save this secret key for future connection'
     };
-    // Pass labels
-    defaultPwdLabels = {
-      verifCodeMessageLabel   : 'Please enter the confirmation code you will receive by email', // TODO: check if it can be send to a phone number
-      verifCodeLabel          : 'Verification code',
-      newPasswordLabel        : 'New password',
-      sendLabel               : 'Send',
-      policyPassword1Label    : 'Minimum password length ({{min}} to {{max}})',
-      policyPassword2Label    : 'Require at least one uppercase letter (A to Z)',
-      policyPassword3Label    : 'Require at least one lowercase letter (a to z)',
-      policyPassword4Label    : 'Require at least one number (0 to 9)',
-      policyPassword5Label    : 'Require at least one nonalphanumeric character ! @ # $ % ^ & * ( ) _ + - = [ ] { } | \'',
-      fieldRequiredLabel      : 'This field is required',
-      fieldNonWhitespaceLabel : 'This value must not contain any spaces'
+    defaultLabels.input = {
+      username    : 'Username',
+      password    : 'Password',
+      verifCode   : 'Verification code',
+      newPassword : 'New password'
     };
-    // Header labels
-    defaultHeaderLabels = {
-      mfaCodeLabel               : 'MFA Code',
-      lostPasswordLabel          : 'Lost password',
-      updatePasswordLabel        : 'Update password',
-      updatePasswordMessageLabel : 'Please enter a new password'
+    defaultLabels.button = {
+      signIn         : 'Sign in',
+      signUp         : 'Sign up',
+      next           : 'Next',
+      back           : 'Back',
+      send           : 'Send',
+      save           : 'Save',
+      forgotPassword : 'Forgot password',
+      googleSignIn   : 'Sign in with Google',
+      facebookSignIn : 'Sign in with Facebook'
     };
-    // Mfa setup labels
-    defaultMfaSetupLabels = {
-      verifCodeLabel      : 'Verification code',
-      saveLabel           : 'Save',
-      description         : 'Save this secret key for future connection',
-      fieldRequiredLabel  : 'This field is required',
-      fieldSixDigitsLabel : 'This value must contains six digits'
-    };
-    // Mfa labels
-    defaultMfaLabels = {
-      verifCodeLabel      : 'Verification code',
-      sendLabel           : 'Send',
-      fieldRequiredLabel  : 'This field is required',
-      fieldSixDigitsLabel : 'This value must contains six digits'
+    defaultLabels.policy = {
+      required      : 'This field is required',
+      nonWhitespace : 'This value must not contain any spaces',
+      email         : 'This value must be an email',
+      phone         : 'This value must be a phone number',
+      sixDigits     : 'This value must contains six digits',
+      customRegex   : 'This value must match the custom regex provided',
+      pwdLength     : 'Minimum password length ({{min}} to {{max}})',
+      pwdUppercase  : 'Require at least one uppercase letter (A to Z)',
+      pwdLowercase  : 'Require at least one lowercase letter (a to z)',
+      pwdNumber     : 'Require at least one number (0 to 9)',
+      pwdSpecial    : 'Require at least one nonalphanumeric character ! @ # $ % ^ & * ( ) _ + - = [ ] { } | \''
     };
 
-    loginLabels    = Object.assign(defaultLoginLabels, this.customLoginLabels);
-    pwdLabels      = Object.assign(defaultPwdLabels, this.customPwdLabels);
-    headerLabels   = Object.assign(defaultHeaderLabels, this.customHeaderLabels);
-    mfaSetupLabels = Object.assign(defaultMfaSetupLabels, this.customMfaSetupLabels);
-    mfaLabels      = Object.assign(defaultMfaLabels, this.customMfaLabels);
+    labels = Object.assign(defaultLabels, this.customLabels);
 
-    this.loginLabels    = loginLabels;
-    this.pwdLabels      = pwdLabels;
-    this.headerLabels   = headerLabels;
-    this.mfaSetupLabels = mfaSetupLabels;
-    this.mfaLabels      = mfaLabels;
+    this.labels = labels;
   }
 
-  private initEvent(onlyOne : string = null) : any
+  private initFormGroups() : void
   {
-    let event    : any    = {};
-    let username : string = null;
-    let password : string = null;
-
-    if(this.loginBySteps)
-    {
-      username = this.usrFormGroup.controls.username.value;
-      password = this.pwdFormGroup.controls.password.value;
-    }
-    else
-    {
-      username = this.formGroup.controls.username.value;
-      password = this.formGroup.controls.password.value;
-    }
-
-    if(!onlyOne)
-    {
-      event.username = username;
-      event.password = password;
-    }
-    if(onlyOne && onlyOne === 'usr')
-      event.username = username;
-    if(onlyOne && onlyOne === 'pwd')
-      event.password = password;
-
-    return event;
-  }
-
-  private initFormsGroups() : void
-  {
-    if(!this.loginBySteps)
+    if(!this.googleStyle)
     {
       this.formGroup = this.builder.group({
         username     : new FormControl({

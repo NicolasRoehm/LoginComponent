@@ -27,7 +27,7 @@
             ],
             "scripts": [
               "./node_modules/dat.gui/build/dat.gui.js",
-              "./src/assets/js/debugcss.js"
+              "./src/assets/js/css-debug.js"
             ]
           },
           "configurations": {
@@ -79,7 +79,7 @@
             ],
             "scripts": [
               "./node_modules/dat.gui/build/dat.gui.js",
-              "./src/assets/js/debugcss.js"
+              "./src/assets/js/css-debug.js"
             ],
             "assets": [
               "src/favicon.ico",

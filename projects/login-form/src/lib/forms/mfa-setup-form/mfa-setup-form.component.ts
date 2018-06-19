@@ -19,15 +19,16 @@ export class MfaSetupFormComponent implements OnInit, OnDestroy
 {
   public    formGroup      : FormGroup;
 
+  // Labels
+  @Input()  labels         : any;
+  // Errors
+  @Input()  errors         : any;
+  // Inputs
+  @Input()  inputs         : any;
+
   // MFA secret key
   @Input()  qrCode         : string;
   @Input()  code           : string;
-  // Labels
-  @Input()  mfaSetupLabels : any;
-  // Display clear button inside code input
-  @Input()  btnClearCode   : boolean;
-  // Display errors
-  @Input()  err            : boolean;
   // Event sent to the login form and relayed parents (modal & tab)
   @Output() saveMfa        : EventEmitter<any> = new EventEmitter();
 
@@ -40,7 +41,7 @@ export class MfaSetupFormComponent implements OnInit, OnDestroy
 
   public ngOnInit() : void
   {
-    this.initFormsGroups();
+    this.initFormGroups();
   }
 
   public ngOnDestroy() : void
@@ -60,7 +61,7 @@ export class MfaSetupFormComponent implements OnInit, OnDestroy
     this.saveMfa.emit(event);
   }
 
-  private initFormsGroups() : void
+  private initFormGroups() : void
   {
     this.formGroup = this.builder.group({
       verifCode : new FormControl({

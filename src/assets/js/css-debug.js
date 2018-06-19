@@ -64,51 +64,54 @@ var CssDebug = (function() {
   CssDebug.getElementInfo = function (element) {
     var styles = window.getComputedStyle(element);
 
+    var className = "";
+    if(!(typeof SVGAnimatedString) && element.className)
+      className = "." + element.className.replace(/\s/g, '.');
+
     return {
       element: element,
       tagName: element.tagName,
       selectors: {
         id: element.id ? "#" + element.id : "",
-        className: element.className ? "." + element.className.replace(/\s/g, '.') : ""
+        className: className
       },
       box: element.getBoundingClientRect(),
       margin: {
-        top: this.getStyleValue(styles, 'margin-top'),
-        right: this.getStyleValue(styles, 'margin-right'),
-        bottom: this.getStyleValue(styles, 'margin-bottom'),
-        left: this.getStyleValue(styles, 'margin-left')
+        top: CssDebug.getStyleValue(styles, 'margin-top'),
+        right: CssDebug.getStyleValue(styles, 'margin-right'),
+        bottom: CssDebug.getStyleValue(styles, 'margin-bottom'),
+        left: CssDebug.getStyleValue(styles, 'margin-left')
       },
       border: {
-        top: this.getStyleValue(styles, 'border-top-width'),
-        right: this.getStyleValue(styles, 'border-right-width'),
-        bottom: this.getStyleValue(styles, 'border-bottom-width'),
-        left: this.getStyleValue(styles, 'border-left-width')
+        top: CssDebug.getStyleValue(styles, 'border-top-width'),
+        right: CssDebug.getStyleValue(styles, 'border-right-width'),
+        bottom: CssDebug.getStyleValue(styles, 'border-bottom-width'),
+        left: CssDebug.getStyleValue(styles, 'border-left-width')
       },
       padding: {
-        top: this.getStyleValue(styles, 'padding-top'),
-        right: this.getStyleValue(styles, 'padding-right'),
-        bottom: this.getStyleValue(styles, 'padding-bottom'),
-        left: this.getStyleValue(styles, 'padding-left')
+        top: CssDebug.getStyleValue(styles, 'padding-top'),
+        right: CssDebug.getStyleValue(styles, 'padding-right'),
+        bottom: CssDebug.getStyleValue(styles, 'padding-bottom'),
+        left: CssDebug.getStyleValue(styles, 'padding-left')
       }
     };
   }
 
   CssDebug.mouseHandler = function (e) {
-    this.clearScrollTimer();
+    CssDebug.clearScrollTimer();
 
-    var info = this.getElementInfo(e.target);
+    var info = CssDebug.getElementInfo(e.target);
     CssDebug.latestInfo = info;
-    this.showInfo(info);
+    CssDebug.showInfo(info);
   }
 
   CssDebug.mouseOutHandler = function (e) {
-    this.hideBoxVis();
+    CssDebug.hideBoxVis();
   }
-
 
   CssDebug.scrollHandler = function (e) {
     if (!CssDebug.scrollTimeout) {
-      this.onScrollStart();
+      CssDebug.onScrollStart();
     }
 
     CssDebug.scrollTimeout = setTimeout(onScrollEnd, CssDebug.scrollendDelay);
@@ -120,14 +123,14 @@ var CssDebug = (function() {
   }
 
   CssDebug.onScrollStart = function () {
-    this.hideBoxVis();
+    CssDebug.hideBoxVis();
   }
 
   CssDebug.onScrollEnd = function () {
-    this.clearScrollTimer();
+    CssDebug.clearScrollTimer();
     if (CssDebug.latestInfo) {
       CssDebug.latestInfo.box = CssDebug.latestInfo.element.getBoundingClientRect();
-      this.showInfo(CssDebug.latestInfo);
+      CssDebug.showInfo(CssDebug.latestInfo);
     }
   }
 
@@ -251,7 +254,7 @@ var CssDebug = (function() {
 
   CssDebug.AddOutliners = function () {
     var styles = '.boxvis > div > div{pointer-events:none;position:fixed;z-index:2147483637;top:-10px;bottom:-10px;left:-10px;right:-10px}.boxvis:not(.noln) > div > div{border-width:1px;border-style:dashed}.boxvis > .mg > div{border-color:#e67700}.boxvis > .bd > div{border-color:#dcdc40}.boxvis > .pd > div{border-color:#00bb20}.boxvis > .bx > div{border-color:#0000e6}.boxvis > div > .o{z-index:2147483638;border:none;display:none}.boxvis:not(.nobg) > .mg > .o{background-color:rgba(255,153,0,0.125)}.boxvis:not(.nobg) > .pd > .o{background-color:rgba(0,140,64,0.125)}.boxvis:not(.nobg) > .bd > .o{background-color:rgba(255,255,0,0.125)}.boxvis:not(.nobg) > .bx > .o{background-color:rgba(0,100,255,0.35)}.boxvis > .i{box-shadow:0 0 4px -1px rgba(255,255,255,1);pointer-events:none;position:fixed;z-index:2147483638;background-color:#000;font-size:12px;padding:3px 8px 5px 10px;border-radius:4px;white-space:nowrap;display:none}.boxvis > .i:before{content:"";position:absolute;top:100%;left:10px;border:solid 6px transparent;border-top-color:#000}.boxvis > .i.top:before{top:-12px;border:solid 6px transparent;border-top-color:transparent;border-bottom-color:#000}.boxvis > .i.right:before{left:auto;right:10px}.boxvis > .i > .t{color:#FF74FF;font-weight:700}.boxvis > .i > .i{color:#FFB952}.boxvis > .i > .c{color:#75CFFF}.boxvis > .i > .d{font-size:10px;margin-left:3px;color:#CCC}';
-    this.addStyleElement(styles);
+    CssDebug.addStyleElement(styles);
 
     var html = '<div class="mg"><div class="h"></div><div class="v"></div><div class="o"></div></div><div class="bd"><div class="h"></div><div class="v"></div><div class="o"></div></div><div class="pd"><div class="h"></div><div class="v"></div><div class="o"></div></div><div class="bx"><div class="h"></div><div class="v"></div><div class="o"></div></div><div class="i"></div>';
 

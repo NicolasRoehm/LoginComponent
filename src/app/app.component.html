@@ -35,31 +35,23 @@
         </a>
       </li>
     </ul>
-    <div class="form-inline my-2 my-lg-0 p-absolute" id="gui-container">
+    <div class="form-inline my-2 my-lg-0" id="gui-container">
     </div>
   </div>
 </nav>
 <!-- NOTE: LoginComponent -->
 <cal-login-form #loginForm *ngFor="let r of reset" 
-  [container]="settings.container" 
-  [customTheme]="settings.customTheme" 
-  [loginBySteps]="settings.loginBySteps" 
-  [customFormLayouts]="{ pwd : settings.pwd, mfaSetup : settings.mfaSetup, mfa : settings.mfa }" 
+  [fixedWidth]="settings.fixedWidth" 
+  [googleStyle]="settings.googleStyle" 
+  [googleTheme]="settings.googleTheme" 
+  [customFormLayouts]="layouts" 
   [customUsrPolicy]="settings.usrPolicy" 
-  [customPwdPolicies]="{ range: { min: settings.pwdRangeMin, max: settings.pwdRangeMax }, char: settings.pwdChar, number: settings.pwdNumber, lower: settings.pwdLower, upper: settings.pwdUpper }"
-  [customSocialButtons]="{ google: settings.google, facebook: settings.facebook }" 
-  [iconUsrOnLoginForm]="settings.iconUsrOnLoginForm" 
-  [iconPwdOnLoginForm]="settings.iconPwdOnLoginForm" 
-  [btnClearUsrOnLoginForm]="settings.btnClearUsrOnLoginForm" 
-  [btnShowPwdOnLoginForm]="settings.btnShowPwdOnLoginForm" 
-  [btnClearCodeOnPwdForm]="settings.btnClearCodeOnPwdForm" 
-  [btnShowPwdOnPwdForm]="settings.btnShowPwdOnPwdForm" 
-  [btnClearCodeOnMfaForm]="settings.btnClearCodeOnMfaForm" 
-  [btnForgotPwdOnLoginForm]="settings.btnForgotPwdOnLoginForm" 
-  [btnSignUpOnLoginForm]="settings.btnSignUpOnLoginForm" 
-  [errOnLoginForm]="settings.errOnLoginForm" 
-  [errOnMfaForm]="settings.errOnMfaForm" 
-  [errOnPwdForm]="settings.errOnPwdForm" 
+  [customPwdPolicies]="pwdPolicies" 
+  [customIcons]="icons" 
+  [customButtons]="buttons" 
+  [customInputs]="inputs" 
+  [customErrors]="errors" 
+  [customLabels]="labels" 
   (initialized)="initialized()" 
   (login)="login($event)" 
   (signUp)="signUp()" 

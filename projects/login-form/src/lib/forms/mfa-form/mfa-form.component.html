@@ -1,27 +1,27 @@
 <form (ngSubmit)="send()" [formGroup]="formGroup" autocomplete="off">
   <mat-form-field class="w-100">
     <input matInput formControlName="verifCode" 
-      name="verifCode" placeholder="{{ mfaLabels.verifCodeLabel }}" 
+      name="verifCode" placeholder="{{ labels.input.verifCode }}" 
       pattern="\\d{6}" 
       type="text"/> <!-- NOTE: Pattern matches 6 digits -->
-    <button *ngIf="formGroup.controls.verifCode.valid && btnClearCode" 
+    <button *ngIf="formGroup.controls.verifCode.valid && inputs.clearCodeOnMfaForm" 
       mat-button matSuffix mat-icon-button aria-label="Clear" 
       color="primary" (click)="formGroup.controls.verifCode.setValue('')" 
       type="button">
       <mat-icon>close</mat-icon>
     </button>
     <!-- NOTE: Error messages -->
-    <mat-hint align="start" *ngIf="formGroup.controls.verifCode.errors?.required && err">
-      {{ mfaLabels.fieldRequiredLabel }}
+    <mat-hint align="start" *ngIf="formGroup.controls.verifCode.errors?.required && errors.mfa">
+      {{ labels.policy.required }}
     </mat-hint>
-    <mat-hint align="start" *ngIf="formGroup.controls.verifCode.errors?.pattern && err">
-      {{ mfaLabels.fieldSixDigitsLabel }}
+    <mat-hint align="start" *ngIf="formGroup.controls.verifCode.errors?.pattern && errors.mfa">
+      {{ labels.policy.sixDigits }}
     </mat-hint>
   </mat-form-field>
   <div class="row w-100 no-gutters">
     <div class="col text-right">
       <button color="primary" mat-raised-button class="small text-uppercase" type="submit" [disabled]="!formGroup.valid">
-        {{ mfaLabels.sendLabel }}
+        {{ labels.button.send }}
       </button>
     </div>
   </div>

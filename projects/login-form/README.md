@@ -40,19 +40,19 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
 
 #### Inputs
 ```typescript
+// Wrap the component inside a container
+@Input() fixedWidth        : boolean = false;
 // Display login form like Google & Microsoft (step by step)
-@Input() loginBySteps      : boolean = false;
+@Input() googleStyle       : boolean = false;
+// Display Google button with the supplied theme : light (by default) / dark 
+@Input() googleTheme       : string  = null;
 // Display forms inside a layout : tab (by default) / modal / inline
 // The inline layout is only available for the MFA form
 @Input() customFormLayouts : any = {
   pwd      : 'modal',
   mfaSetup : 'tab',
   mfa      : 'inline'
-}
-// Display Google button with the supplied theme : light (by default) / dark 
-@Input() customTheme : string  = null;
-// Display login form inside a container
-@Input() container   : boolean = false;
+};
 
 // Optional policy applied on the username input : email / phone / regex
 // Be careful, you must double all the backslashes used in the supplied regex
@@ -67,94 +67,76 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
   number : true,
   lower  : true,
   upper  : true
-}
-
-// Social buttons displayed on the login form
-@Input() customSocialButtons : any = {
-  google   : true,
-  facebook : true
-}
-
-// Dislay user icon inside username input on the login form
-@Input() iconUsrOnLoginForm     : boolean = true;
-// Dislay lock icon inside password input on the login form
-@Input() iconPwdOnLoginForm     : boolean = true;
-
-// Display clear button inside username input on the login form
-@Input() btnClearUsrOnLoginForm : boolean = true;
-// Display show/hide button inside password input on the login form
-@Input() btnShowPwdOnLoginForm  : boolean = true;
-// Display clear button inside code input on the password form
-@Input() btnClearCodeOnPwdForm  : boolean = true;
-// Display show/hide button inside password input on the password form
-@Input() btnShowPwdOnPwdForm    : boolean = true;
-// Display clear button inside code input on the mfa form
-@Input() btnClearCodeOnMfaForm  : boolean = true;
-
-// Display forgot password button on the login form
-@Input() btnForgotPwdOnLoginForm : boolean = true;
-// Display sign up button on the login form
-@Input() btnSignUpOnLoginForm    : boolean = true;
-
-// Display errors on the login form
-@Input() errOnLoginForm         : boolean = true;
-// Display errors on the password form
-@Input() errOnPwdForm           : boolean = true;
-// Display errors on the mfa form
-@Input() errOnMfaForm           : boolean = true;
-
-// Labels of the login form
-@Input() customLoginLabels : any = {
-  usernameLabel          : 'Username',
-  passwordLabel          : 'Password',
-  forgotPasswordLabel    : 'Forgot password',
-  signInLabel            : 'Sign in',
-  signUpLabel            : 'Sign up',
-  nextLabel              : 'Next',
-  backLabel              : 'Back',
-  googleSignInLabel      : 'Sign in with Google',
-  facebookSignInLabel    : 'Sign in with Facebook',
-  fieldRequiredLabel     : 'This field is required',
-  fieldEmailLabel        : 'This value must be an email',
-  fieldPhoneLabel        : 'This value must be a phone number',
-  fieldCustomLabel       : 'This value must match the custom regex provided'
-}
-// Labels of the password form
-@Input() customPwdLabels : any = {
-  verifCodeMessageLabel   : 'Please enter the confirmation code you will receive by email',
-  verifCodeLabel          : 'Verification code',
-  newPasswordLabel        : 'New password',
-  sendLabel               : 'Send',
-  policyPassword1Label    : 'Minimum password length ({{min}} to {{max}})',
-  policyPassword2Label    : 'Require at least one uppercase letter (A to Z)',
-  policyPassword3Label    : 'Require at least one lowercase letter (a to z)',
-  policyPassword4Label    : 'Require at least one number (0 to 9)',
-  policyPassword5Label    : 'Require at least one nonalphanumeric character ! @ # $ % ^ & * ( ) _ + - = [ ] { } | \'',
-  fieldRequiredLabel      : 'This field is required',
-  fieldNonWhitespaceLabel : 'This value must not contain any spaces'
-}
-// Labels on top of the password form
-@Input() customHeaderLabels : any = {
-  mfaCodeLabel               : 'MFA Code',
-  lostPasswordLabel          : 'Lost password',
-  updatePasswordLabel        : 'Update password',
-  updatePasswordMessageLabel : 'Please enter a new password',
-}
-// Labels of the mfa setup form
-@Input() customMfaSetupLabels : any = {
-  verifCodeLabel      : 'Verification code',
-  saveLabel           : 'Save',
-  description         : 'Save this secret key for future connection',
-  fieldRequiredLabel  : 'This field is required',
-  fieldSixDigitsLabel : 'This value must contains six digits'
-}
-// Labels of the mfa form
-@Input() customMfaLabels : any = {
-  verifCodeLabel      : 'Verification code',
-  sendLabel           : 'Send',
-  fieldRequiredLabel  : 'This field is required',
-  fieldSixDigitsLabel : 'This value must contains six digits'
-}
+};
+// Dislay icon inside inputs on the login form
+@Input() customIcons : any = {
+  iconUsrOnLoginForm : true,
+  iconPwdOnLoginForm : true
+};
+// Display buttons with events
+@Input() customButtons : any = {
+  forgotPassword : true,
+  signUp         : true,
+  google         : true,
+  facebook       : true
+};
+// Display clear & show/hide buttons inside inputs
+@Input() customInputs : any = {
+  clearUsrOnLoginForm : true,
+  showPwdOnLoginForm  : true,
+  showPwdOnPwdForm    : true,
+  clearCodeOnPwdForm  : true,
+  clearCodeOnMfaForm  : true
+};
+// Display error messages
+@Input() customErrors : any = {
+  login : true,
+  pwd   : true,
+  mfa   : true
+};
+// Labels
+@Input() customLabels : any = {
+  header : {
+    titlePwd         : 'Lost password',
+    subtitlePwd      : 'Please enter the confirmation code',
+    titlePwdSetup    : 'Password setup',
+    subtitlePwdSetup : 'Please enter a new password',
+    titleMfa         : 'MFA',
+    subtitleMfa      : 'Please enter the confirmation code',
+    titleMfaSetup    : 'MFA setup',
+    subtitleMfaSetup : 'Save this secret key for future connection'
+  },
+  input : {
+    username    : 'Username',
+    password    : 'Password',
+    verifCode   : 'Verification code',
+    newPassword : 'New password'
+  },
+  button : {
+    signIn         : 'Sign in',
+    signUp         : 'Sign up',
+    next           : 'Next',
+    back           : 'Back',
+    send           : 'Send',
+    save           : 'Save',
+    forgotPassword : 'Forgot password',
+    googleSignIn   : 'Sign in with Google',
+    facebookSignIn : 'Sign in with Facebook'
+  },
+  policy : {
+    required      : 'This field is required',
+    nonWhitespace : 'This value must not contain any spaces',
+    email         : 'This value must be an email',
+    phone         : 'This value must be a phone number',
+    sixDigits     : 'This value must contains six digits',
+    customRegex   : 'This value must match the custom regex provided',
+    pwdLength     : 'Minimum password length ({{min}} to {{max}})',
+    pwdUppercase  : 'Require at least one uppercase letter (A to Z)',
+    pwdLowercase  : 'Require at least one lowercase letter (a to z)',
+    pwdNumber     : 'Require at least one number (0 to 9)',
+    pwdSpecial    : 'Require at least one nonalphanumeric character ! @ # $ % ^ & * ( ) _ + - = [ ] { } | \''
+  }
+};
 ```
 
 #### Outputs
@@ -182,7 +164,8 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
 @Output() stepUsr      : EventEmitter<any>;
 /* username : string */
 @Output() stepPwd      : EventEmitter<any>;
-/* password : string */
+/* username : string
+*  password : string */
 ```
 
 **Important Note**: This project uses the following dependencies :
@@ -203,13 +186,12 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
 ## Roadmap
 
 ### In Progress
-- add data.ui to configure the demo
+- List of functions (for user)
 
 ### Planning
 - Captcha
-- Test loginBySteps on mobile (1/3)
+- Test GoogleStyle on mobile (1/3)
 - Remove Bootstrap 4 dependency
-- Add optional validator on password input
 - Dissociate forgot password from setup password ?
 - Create an Online example with [StackBlitz](https://stackblitz.com)
 - Fix Angular 6 Library assets

@@ -2,14 +2,36 @@
   <div class="row align-items-center">
     <div class="col">
       <div *ngIf="!isFirst && formType === forms.PWD">
-        <span class="h5 font-weight-light">{{ headerLabels.lostPasswordLabel }}</span>
+        <span class="h5 font-weight-light {{ labels.header.subtitlePwd ? 'd-block mb-0' : '' }}">
+          {{ labels.header.titlePwd }}
+        </span>
+        <span *ngIf="labels.header.subtitlePwd" class="d-block font-weight-light small">
+          {{ labels.header.subtitlePwd }}
+        </span>
       </div>
       <div *ngIf="isFirst && formType === forms.PWD">
-        <span class="d-block h5 mb-0 font-weight-light">{{ headerLabels.updatePasswordLabel }}</span>
-        <span class="d-block font-weight-light small">{{ headerLabels.updatePasswordMessageLabel }}</span>
+        <span class="h5 font-weight-light {{ labels.header.subtitlePwdSetup ? 'd-block mb-0' : '' }}">
+          {{ labels.header.titlePwdSetup }}
+        </span>
+        <span *ngIf="labels.header.subtitlePwdSetup" class="d-block font-weight-light small">
+          {{ labels.header.subtitlePwdSetup }}
+        </span>
       </div>
-      <div *ngIf="formType === forms.MFA || formType === forms.MFA_SETUP">
-        <span class="h5 font-weight-light">{{ headerLabels.mfaCodeLabel }}</span>
+      <div *ngIf="formType === forms.MFA">
+        <span class="h5 font-weight-light {{ labels.header.subtitleMfa ? 'd-block mb-0' : '' }}">
+          {{ labels.header.titleMfa }}
+        </span>
+        <span *ngIf="labels.header.subtitleMfa" class="d-block font-weight-light small">
+          {{ labels.header.subtitleMfa }}
+        </span>
+      </div>
+      <div *ngIf="formType === forms.MFA_SETUP">
+        <span class="h5 font-weight-light {{ labels.header.subtitleMfaSetup ? 'd-block mb-0' : '' }}">
+          {{ labels.header.titleMfaSetup }}
+        </span>
+        <span *ngIf="labels.header.subtitleMfaSetup" class="d-block font-weight-light small">
+          {{ labels.header.subtitleMfaSetup }}
+        </span>
       </div>
     </div>
     <div class="col-2 px-0 text-right">
@@ -22,29 +44,28 @@
 <mat-dialog-content class="py-4">
   <!-- NOTE: Pwd Form -->
   <cal-pwd-form *ngIf="formType === forms.PWD" 
-    [btnShowPwd]="btnShowPwdOnPwdForm" 
-    [btnClearCode]="btnClearCodeOnPwdForm" 
     [isFirst]="isFirst" 
-    [pwdLabels]="pwdLabels" 
     [pwdPolicies]="pwdPolicies" 
-    [err]="errOnPwdForm" 
+    [labels]="labels" 
+    [inputs]="inputs" 
+    [errors]="errors" 
     (firstConnection)="relayFirstLogEvent($event)" 
     (lostPassword)="relayLostPwdEvent($event)">
   </cal-pwd-form>
   <!-- NOTE: MFA Setup Form -->
   <cal-mfa-setup-form *ngIf="formType === forms.MFA_SETUP" 
-    [btnClearCode]="btnClearCodeOnMfaForm" 
-    [mfaSetupLabels]="mfaSetupLabels" 
     [qrCode]="qrCode" 
-    [code]="code" 
-    [err]="errOnMfaForm" 
+    [code]  ="code" 
+    [labels]="labels" 
+    [inputs]="inputs" 
+    [errors]="errors" 
     (saveMfa)="relaySaveMfaKeyEvent($event)">
   </cal-mfa-setup-form>
   <!-- NOTE: MFA Form -->
   <cal-mfa-form *ngIf="formType === forms.MFA" 
-    [btnClearCode]="btnClearCodeOnMfaForm" 
-    [mfaLabels]="mfaLabels" 
-    [err]="errOnMfaForm" 
+    [labels]="labels" 
+    [inputs]="inputs" 
+    [errors]="errors" 
     (sendMfa)="relaySendMfaCodeEvent($event)">
   </cal-mfa-form>
 </mat-dialog-content>

@@ -25,17 +25,18 @@ export class PwdFormComponent implements OnInit, OnChanges, OnDestroy
   public    formGroup    : FormGroup;
   public    showPassword : boolean = false;
   // public captchaToken : string; // TODO:
+
+  // Labels
+  @Input()  labels       : any;
+  // Errors
+  @Input()  errors       : any;
+  // Inputs
+  @Input()  inputs       : any;
+
   // First connection or Forgot password
   @Input()  isFirst      : boolean;
-  // Labels
-  @Input()  pwdLabels    : any;
+  // Password policies
   @Input()  pwdPolicies  : any;
-  // Display show/hide button inside password input
-  @Input()  btnShowPwd   : boolean;
-  // Display clear button inside code input
-  @Input()  btnClearCode : boolean;
-  // Display errors
-  @Input()  err          : boolean;
   // Event sent to the login form and relayed parents (modal & tab)
   @Output() firstConnection : EventEmitter<any> = new EventEmitter();
   @Output() lostPassword    : EventEmitter<any> = new EventEmitter();
@@ -49,13 +50,13 @@ export class PwdFormComponent implements OnInit, OnChanges, OnDestroy
 
   public ngOnInit() : void
   {
-    this.initFormsGroups();
+    this.initFormGroups();
   }
 
   public ngOnChanges(changes : SimpleChanges) : void
   {
     if(changes.pwdPolicies)
-      this.initFormsGroups(true);
+      this.initFormGroups(true);
   }
 
   public ngOnDestroy() : void
@@ -86,7 +87,7 @@ export class PwdFormComponent implements OnInit, OnChanges, OnDestroy
     this.lostPassword.emit(event);
   }
 
-  private initFormsGroups(refresh : boolean = false) : void
+  private initFormGroups(refresh : boolean = false) : void
   {
     let verifCode   : string = null;
     let newPassword : string = null;
@@ -113,10 +114,10 @@ export class PwdFormComponent implements OnInit, OnChanges, OnDestroy
 
     // Refresh min max label
     let rangeLabel : string = null;
-    rangeLabel = this.pwdLabels.policyPassword1Label;
+    rangeLabel = this.labels.policy.pwdLength;
     rangeLabel = rangeLabel.replace(/{{min}}/, this.pwdPolicies.range.min);
     rangeLabel = rangeLabel.replace(/{{max}}/, this.pwdPolicies.range.max);
-    this.pwdLabels.policyPassword1LabelReplaced = rangeLabel;
+    this.labels.policy.pwdLengthReplaced = rangeLabel;
 
     this.formGroup = this.builder.group({
       verifCode    : new FormControl({
