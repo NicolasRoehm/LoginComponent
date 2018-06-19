@@ -44,7 +44,7 @@ import { MatSnackBarModule }        from '@angular/material';
 import { AppComponent }    from './app.component';
 
 // Modules
-import { LoginFormModule } from 'login-form';
+import { LoginFormModule } from '../../projects/login-form/src/lib/login-form.module';
 
 // NgModule that includes all Material modules that are required to serve the app.
 @NgModule({

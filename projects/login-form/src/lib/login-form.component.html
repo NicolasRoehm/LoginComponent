@@ -1,22 +1,22 @@
-<div class="{{ container ? 'login-wrapper' : '' }}">
+<div class="{{ fixedWidth ? 'login-wrapper' : '' }}" id="debug-login-form">
   <mat-tab-group id="caliatys-login-form" [selectedIndex]="selectedTab">
     <mat-tab label="login-form">
       <!-- NOTE: Login form -->
-      <form (ngSubmit)="onClickLogin()" [formGroup]="formGroup" *ngIf="!loginBySteps">
+      <form (ngSubmit)="onClickLogin()" [formGroup]="formGroup" *ngIf="!googleStyle">
         <div class="row no-gutters">
           <div class="col">
             <div class="row no-gutters">
               <div class="col">
                 <!-- NOTE: Username -->
                 <mat-form-field class="w-100">
-                  <div matPrefix class="mr-2" *ngIf="iconUserOnLoginForm">
+                  <div matPrefix class="mr-2" *ngIf="icons.iconUsrOnLoginForm">
                     <mat-icon class="align-bottom">person</mat-icon>
                   </div>
                   <input matInput formControlName="username" 
                     name="username" autocomplete="username" 
-                    placeholder="{{ loginLabels.usernameLabel }}" 
-                    type="text"/> <!-- TODO: switch / case : email, phone, none -->
-                  <button *ngIf="formGroup.controls.username.value?.length > 0 && btnClearUserOnLoginForm" 
+                    placeholder="{{ labels.input.username }}" 
+                    type="text"/>
+                  <button *ngIf="formGroup.controls.username.value?.length > 0 && inputs.clearUsrOnLoginForm" 
                     mat-button matSuffix mat-icon-button aria-label="Clear" 
                     color="primary" (click)="formGroup.controls.username.setValue('')" 
                     [disabled]="formType === forms.MFA && formLayouts.mfa === layouts.INLINE ? true : false" 
@@ -24,17 +24,17 @@
                     <mat-icon>close</mat-icon>
                   </button>
                   <!-- NOTE: Error message(s) -->
-                  <mat-hint align="start" *ngIf="formGroup.controls.username.errors?.required && errOnLoginForm">
-                    {{ loginLabels.fieldRequiredLabel }}
+                  <mat-hint align="start" *ngIf="formGroup.controls.username.errors?.required && errors.login">
+                    {{ labels.policy.required }}
                   </mat-hint>
-                  <mat-hint align="start" *ngIf="formGroup.controls.username.errors?.pattern && errOnLoginForm && usrPolicy === userPolicies.EMAIL">
-                    {{ loginLabels.fieldEmailLabel }}
+                  <mat-hint align="start" *ngIf="formGroup.controls.username.errors?.pattern && errors.login && usrPolicy === userPolicies.EMAIL">
+                    {{ labels.policy.email }}
                   </mat-hint>
-                  <mat-hint align="start" *ngIf="formGroup.controls.username.errors?.pattern && errOnLoginForm && usrPolicy === userPolicies.PHONE">
-                    {{ loginLabels.fieldPhoneLabel }}
+                  <mat-hint align="start" *ngIf="formGroup.controls.username.errors?.pattern && errors.login && usrPolicy === userPolicies.PHONE">
+                    {{ labels.policy.phone }}
                   </mat-hint>
-                  <mat-hint align="start" *ngIf="formGroup.controls.username.errors?.pattern && errOnLoginForm && usrPolicy && usrPolicy !== userPolicies.EMAIL && usrPolicy !== userPolicies.PHONE">
-                    {{ loginLabels.fieldCustomLabel }}
+                  <mat-hint align="start" *ngIf="formGroup.controls.username.errors?.pattern && errors.login && usrPolicy && usrPolicy !== userPolicies.EMAIL && usrPolicy !== userPolicies.PHONE">
+                    {{ labels.policy.customRegex }}
                   </mat-hint>
                 </mat-form-field>
               </div>
@@ -43,14 +43,14 @@
               <div class="col">
                 <!-- NOTE: Password -->
                 <mat-form-field class="w-100">
-                  <div matPrefix class="mr-2" *ngIf="iconPwdOnLoginForm">
+                  <div matPrefix class="mr-2" *ngIf="icons.iconPwdOnLoginForm">
                     <mat-icon class="align-bottom">lock</mat-icon>
                   </div>
                   <input matInput formControlName="password" 
                     name="password" autocomplete="password" 
-                    placeholder="{{ loginLabels.passwordLabel }}" 
+                    placeholder="{{ labels.input.password }}" 
                     type="{{ showPassword ? 'text' : 'password' }}"/>
-                  <button *ngIf="btnShowPwdOnLoginForm" 
+                  <button *ngIf="inputs.showPwdOnLoginForm" 
                     mat-button matSuffix mat-icon-button aria-label="Clear" 
                     color="primary" (click)="showPassword=!showPassword" 
                     [disabled]="formType === forms.MFA && formLayouts.mfa === layouts.INLINE ? true : false" 
@@ -58,8 +58,8 @@
                     <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
                   </button>
                   <!-- NOTE: Error message -->
-                  <mat-hint align="start" *ngIf="formGroup.controls.password.errors?.required && errOnLoginForm">
-                    {{ loginLabels.fieldRequiredLabel }}
+                  <mat-hint align="start" *ngIf="formGroup.controls.password.errors?.required && errors.login">
+                    {{ labels.policy.required }}
                   </mat-hint>
                 </mat-form-field>
               </div> 
@@ -71,21 +71,21 @@
                   <!-- TODO: Remember me -->
                 </div>
                 <!-- NOTE: Forgot password -->
-                <div class="col text-right" *ngIf="btnForgotPwdOnLoginForm">
+                <div class="col text-right" *ngIf="buttons.forgotPassword">
                   <a (click)="onClickForgotPassword()" href="#" class="small">
-                    {{ loginLabels.forgotPasswordLabel }}
+                    {{ labels.button.forgotPassword }}
                   </a>
                 </div>
               </div>
               <div class="row no-gutters pb-3">
                 <div class="col text-right">
                   <!-- NOTE: Sign up -->
-                  <button mat-button (click)="onClickSignUp()" type="button" color="primary" class="small text-uppercase mr-3" *ngIf="btnSignUpOnLoginForm">
-                    {{ loginLabels.signUpLabel }}
+                  <button mat-button (click)="onClickSignUp()" type="button" color="primary" class="small text-uppercase mr-3" *ngIf="buttons.signUp">
+                    {{ labels.button.signUp }}
                   </button>
                   <!-- NOTE: Sign in -->
                   <button mat-raised-button type="submit" color="primary" [disabled]="!formGroup.valid" class="small text-uppercase">
-                    {{ loginLabels.signInLabel }}
+                    {{ labels.button.signIn }}
                   </button>
                 </div>
               </div>
@@ -94,17 +94,17 @@
         </div>
       </form>
       <!-- NOTE: Login by steps buttons -->
-      <div class="row no-gutters mb-3" *ngIf="loginBySteps">
-        <div class="col text-right" *ngIf="btnSignUpOnLoginForm">
+      <div class="row no-gutters mb-3" *ngIf="googleStyle">
+        <div class="col text-right" *ngIf="buttons.signUp">
           <!-- NOTE: Sign up -->
           <button mat-button (click)="onClickSignUp()" type="button" color="primary" class="small text-uppercase mr-2">
-            {{ loginLabels.signUpLabel }}
+            {{ labels.button.signUp }}
           </button>
         </div>
-        <div class="col text-left">
+        <div class="col {{ buttons.signUp ? 'text-left' : 'text-center'}}">
           <!-- NOTE: Sign in -->
           <button mat-raised-button (click)="onClickNextStep(0)" type="button" color="primary" class="small text-uppercase ml-2">
-            {{ loginLabels.signInLabel }}
+            {{ labels.button.signIn }}
           </button>
         </div>
       </div>
@@ -113,59 +113,60 @@
         <div class="row no-gutters">
           <div class="col text-center">
             <!-- NOTE: Google -->
-            <div class="d-block mb-3" *ngIf="socialButtons.google">
+            <div class="d-block mb-3" *ngIf="buttons.google">
               <button mat-raised-button type="button" class="mat-raised-button cal-btn google {{ theme }}" (click)="onClickLoginSocial('google')">
                 <span class="cal-bg-icon">
                   <mat-icon class="align-middle cal-icon" svgIcon="google"></mat-icon>
                 </span>
-                <span class="cal-label">{{ loginLabels.googleSignInLabel }}</span>
+                <span class="cal-label">{{ labels.button.googleSignIn }}</span>
               </button>
             </div>
             <!-- NOTE: Facebook -->
-            <div class="d-block mb-3" *ngIf="socialButtons.facebook">
+            <div class="d-block mb-3" *ngIf="buttons.facebook">
               <button mat-raised-button type="button" class="cal-btn facebook" (click)="onClickLoginSocial('facebook')">
                 <span class="cal-bg-icon">
                   <mat-icon class="align-middle cal-icon" svgIcon="facebook"></mat-icon>
                 </span>
-                <span class="cal-label">{{ loginLabels.facebookSignInLabel }}</span>
+                <span class="cal-label">{{ labels.button.facebookSignIn }}</span>
               </button>
             </div>
           </div>
         </div>
       </ng-container>
-
-      <div class="row no-gutters" *ngIf="formType === forms.MFA && formLayouts.mfa === layouts.INLINE">
-        <div class="col">
-          <!-- NOTE: Inline MFA -->
-          <cal-mfa-form 
-            [btnClearCode]="btnClearCodeOnMfaForm" 
-            [mfaLabels]="mfaLabels" 
-            [err]="errOnMfaForm" 
-            (sendMfa)="tabSendMfaCode($event)">
-          </cal-mfa-form>
+      <!-- NOTE: Inline MFA -->
+      <ng-container *ngIf="formType === forms.MFA && formLayouts.mfa === layouts.INLINE">
+        <div class="row no-gutters">
+          <div class="col">
+            <cal-mfa-form 
+              [inputs]="inputs" 
+              [labels]="labels" 
+              [errors]="errors" 
+              (sendMfa)="tabSendMfaCode($event)">
+            </cal-mfa-form>
+          </div>
         </div>
-      </div>
+      </ng-container>
     </mat-tab>
-    <mat-tab label="usr-step" *ngIf="loginBySteps">
+    <mat-tab label="usr-step" *ngIf="googleStyle">
       <!-- NOTE: Back button -->
       <div class="row no-gutters mb-3">
         <div class="col">
-          <a href="#" (click)="onClickPrevStep(1)" title="{{ loginLabels.backLabel }}">
-            <mat-icon class="align-bottom mr-2">keyboard_arrow_left</mat-icon>{{ loginLabels.backLabel }}
+          <a href="#" (click)="onClickPrevStep(1)" title="{{ labels.button.back }}">
+            <mat-icon class="align-bottom mr-2">keyboard_arrow_left</mat-icon>{{ labels.button.back }}
           </a>
         </div>
       </div>
       <form (ngSubmit)="onClickNextStep(1)" [formGroup]="usrFormGroup">
         <!-- NOTE: Username -->
         <mat-form-field class="w-100">
-          <div matPrefix class="mr-2" *ngIf="iconUserOnLoginForm">
+          <div matPrefix class="mr-2" *ngIf="icons.iconUsrOnLoginForm">
             <mat-icon class="align-bottom">person</mat-icon>
           </div>
           <input matInput formControlName="username" 
             name="username" autocomplete="username" 
-            placeholder="{{ loginLabels.usernameLabel }}" 
-            type="text"/> <!-- TODO: switch / case : email, phone, none -->
-          <button *ngIf="usrFormGroup.controls.username.value?.length > 0 && btnClearUserOnLoginForm" 
+            placeholder="{{ labels.input.username }}" 
+            type="text"/>
+          <button *ngIf="usrFormGroup.controls.username.value?.length > 0 && inputs.clearUsrOnLoginForm" 
             mat-button matSuffix mat-icon-button aria-label="Clear" 
             color="primary" (click)="usrFormGroup.controls.username.setValue('')" 
             [disabled]="formType === forms.MFA && formLayouts.mfa === layouts.INLINE ? true : false" 
@@ -173,57 +174,57 @@
             <mat-icon>close</mat-icon>
           </button>
           <!-- NOTE: Error message(s) -->
-          <mat-hint align="start" *ngIf="usrFormGroup.controls.username.errors?.required && errOnLoginForm">
-            {{ loginLabels.fieldRequiredLabel }}
+          <mat-hint align="start" *ngIf="usrFormGroup.controls.username.errors?.required && errors.login">
+            {{ labels.policy.required }}
           </mat-hint>
-          <mat-hint align="start" *ngIf="usrFormGroup.controls.username.errors?.pattern && errOnLoginForm && usrPolicy === userPolicies.EMAIL">
-            {{ loginLabels.fieldEmailLabel }}
+          <mat-hint align="start" *ngIf="usrFormGroup.controls.username.errors?.pattern && errors.login && usrPolicy === userPolicies.EMAIL">
+            {{ labels.policy.email }}
           </mat-hint>
-          <mat-hint align="start" *ngIf="usrFormGroup.controls.username.errors?.pattern && errOnLoginForm && usrPolicy === userPolicies.PHONE">
-            {{ loginLabels.fieldPhoneLabel }}
+          <mat-hint align="start" *ngIf="usrFormGroup.controls.username.errors?.pattern && errors.login && usrPolicy === userPolicies.PHONE">
+            {{ labels.policy.phone }}
           </mat-hint>
-          <mat-hint align="start" *ngIf="usrFormGroup.controls.username.errors?.pattern && errOnLoginForm && usrPolicy && usrPolicy !== userPolicies.EMAIL && usrPolicy !== userPolicies.PHONE">
-            {{ loginLabels.fieldCustomLabel }}
+          <mat-hint align="start" *ngIf="usrFormGroup.controls.username.errors?.pattern && errors.login && usrPolicy && usrPolicy !== userPolicies.EMAIL && usrPolicy !== userPolicies.PHONE">
+            {{ labels.policy.customRegex }}
           </mat-hint>
         </mat-form-field>
         <div class="row no-gutters mb-3">
           <!-- NOTE: Forgot password -->
-          <div class="col text-left" *ngIf="btnForgotPwdOnLoginForm">
+          <div class="col text-left" *ngIf="buttons.forgotPassword">
             <a (click)="onClickForgotPassword()" href="#" class="small">
-              {{ loginLabels.forgotPasswordLabel }}
+              {{ labels.button.forgotPassword }}
             </a>
           </div>
           <!-- NOTE: Next button -->
           <div class="col text-right">
             <button mat-raised-button type="submit" color="primary" [disabled]="!usrFormGroup.valid" class="small text-uppercase">
-              {{ loginLabels.nextLabel }}
+              {{ labels.button.next }}
             </button>
           </div>
         </div>
       </form>
     </mat-tab>
-    <mat-tab label="pwd-step" *ngIf="loginBySteps">
+    <mat-tab label="pwd-step" *ngIf="googleStyle">
       <!-- NOTE: Back button -->
       <div class="row no-gutters mb-3">
         <div class="col">
-          <a href="#" (click)="onClickPrevStep(2)" title="{{ loginLabels.backLabel }}">
-            <mat-icon class="align-bottom mr-2">keyboard_arrow_left</mat-icon>{{ loginLabels.backLabel }}
+          <a href="#" (click)="onClickPrevStep(2)" title="{{ labels.button.back }}">
+            <mat-icon class="align-bottom mr-2">keyboard_arrow_left</mat-icon>{{ labels.button.back }}
           </a>
         </div>
       </div>
-      <!-- NOTE: User info -->
+      <!-- TODO: User info -->
       <p>{{ userInfo }}</p>
-      <form (ngSubmit)="onClickLogin()" [formGroup]="pwdFormGroup">
+      <form (ngSubmit)="onClickNextStep(2)" [formGroup]="pwdFormGroup">
         <!-- NOTE: Password -->
         <mat-form-field class="w-100">
-          <div matPrefix class="mr-2" *ngIf="iconPwdOnLoginForm">
+          <div matPrefix class="mr-2" *ngIf="icons.iconPwdOnLoginForm">
             <mat-icon class="align-bottom">lock</mat-icon>
           </div>
           <input matInput formControlName="password" 
             name="password" autocomplete="password" 
-            placeholder="{{ loginLabels.passwordLabel }}" 
+            placeholder="{{ labels.input.password }}" 
             type="{{ showPassword ? 'text' : 'password' }}"/>
-          <button *ngIf="btnShowPwdOnLoginForm" 
+          <button *ngIf="inputs.showPwdOnLoginForm" 
             mat-button matSuffix mat-icon-button aria-label="Clear" 
             color="primary" (click)="showPassword=!showPassword" 
             [disabled]="formType === forms.MFA && formLayouts.mfa === layouts.INLINE ? true : false" 
@@ -231,15 +232,15 @@
             <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
           <!-- NOTE: Error message -->
-          <mat-hint align="start" *ngIf="pwdFormGroup.controls.password.errors?.required && errOnLoginForm">
-            {{ loginLabels.fieldRequiredLabel }}
+          <mat-hint align="start" *ngIf="pwdFormGroup.controls.password.errors?.required && errors.login">
+            {{ labels.policy.required }}
           </mat-hint>
         </mat-form-field>
         <!-- NOTE: Next button -->
         <div class="row no-gutters mb-3">
           <div class="col text-right">
             <button mat-raised-button type="submit" color="primary" [disabled]="!pwdFormGroup.valid" class="small text-uppercase">
-              {{ loginLabels.nextLabel }}
+              {{ labels.button.next }}
             </button>
           </div>
         </div>
@@ -252,16 +253,10 @@
         [isFirst]="isFirst" 
         [code]   ="code" 
         [qrCode] ="qrCode" 
-        [headerLabels]="headerLabels" 
-        [pwdLabels]="pwdLabels" 
         [pwdPolicies]="pwdPolicies" 
-        [errOnPwdForm]="errOnPwdForm" 
-        [errOnMfaForm]="errOnMfaForm" 
-        [btnShowPwdOnPwdForm]="btnShowPwdOnPwdForm" 
-        [btnClearCodeOnPwdForm]="btnClearCodeOnPwdForm" 
-        [mfaSetupLabels]="mfaSetupLabels" 
-        [mfaLabels]="mfaLabels" 
-        [btnClearCodeOnMfaForm]="btnClearCodeOnMfaForm" 
+        [errors]="errors" 
+        [labels]="labels" 
+        [inputs]="inputs" 
         (sendCloseTab)="onClickCloseTab($event)" 
         (relayFirstLog)="tabFirstLog($event)" 
         (relayLostPwd)="tabLostPwd($event)" 

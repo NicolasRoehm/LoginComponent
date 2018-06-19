@@ -20,11 +20,12 @@ export class MfaFormComponent implements OnInit, OnDestroy
   public    formGroup    : FormGroup;
 
   // Labels
-  @Input()  mfaLabels    : any;
-  // Display clear button inside code input
-  @Input()  btnClearCode : boolean;
-  // Display errors
-  @Input()  err          : boolean;
+  @Input()  labels       : any;
+  // Errors
+  @Input()  errors       : any;
+  // Inputs
+  @Input()  inputs       : any;
+
   // Event sent to the login form and relayed parents (modal & tab)
   @Output() sendMfa      : EventEmitter<any> = new EventEmitter();
 
@@ -37,7 +38,7 @@ export class MfaFormComponent implements OnInit, OnDestroy
 
   public ngOnInit() : void
   {
-    this.initFormsGroups();
+    this.initFormGroups();
   }
 
   public ngOnDestroy() : void
@@ -54,7 +55,7 @@ export class MfaFormComponent implements OnInit, OnDestroy
     this.sendMfa.emit(event);
   }
 
-  private initFormsGroups() : void
+  private initFormGroups() : void
   {
     this.formGroup = this.builder.group({
       verifCode : new FormControl({

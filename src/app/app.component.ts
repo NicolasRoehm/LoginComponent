@@ -7,6 +7,8 @@ import { ChangeDetectorRef }  from '@angular/core';
 import { MatSnackBar }        from '@angular/material';
 
 // External modules
+declare var CssDebug : any;
+import * as dat               from 'dat.gui';
 import { TranslateService }   from '@ngx-translate/core';
 
 // Services
@@ -29,7 +31,6 @@ export class AppComponent implements OnInit, OnDestroy
 {
   public loginForm : LoginFormComponent;
   public reset : any[] = [{}];
-
   @ViewChild('loginForm') set content(content : LoginFormComponent)
   {
     this.loginForm = content;
@@ -41,6 +42,108 @@ export class AppComponent implements OnInit, OnDestroy
   public credentials = Credentials;
 
   public selectedDemo : string = Demo.SIMPLE_CONNECTION;
+
+  public toggleNavbar : string = '';
+
+  // NOTE: Dynamic demo
+  public gui      : dat.GUI;
+
+  public pwdPolicies : any = {
+    range : {
+      min : 8,
+      max : 128,
+    },
+    char   : true,
+    number : true,
+    lower  : true,
+    upper  : true
+  };
+
+  public icons : any = {
+    iconUsrOnLoginForm : true,
+    iconPwdOnLoginForm : true
+  };
+
+  public inputs : any = {
+    clearUsrOnLoginForm : true,
+    showPwdOnLoginForm  : true,
+    showPwdOnPwdForm    : true,
+    clearCodeOnPwdForm  : true,
+    clearCodeOnMfaForm  : true
+  };
+
+  public buttons : any = {
+    google         : true,
+    facebook       : true,
+    forgotPassword : true,
+    signUp         : true
+  };
+
+  public layouts : any = {
+    pwd      : 'modal',
+    mfaSetup : 'tab',
+    mfa      : 'inline',
+  };
+
+  public errors : any = {
+    login : true,
+    pwd   : true,
+    mfa   : true
+  };
+
+  public labels : any = {
+    header : {
+      titlePwd         : 'Lost password',
+      subtitlePwd      : 'Please enter the confirmation code',
+      titlePwdSetup    : 'Password setup',
+      subtitlePwdSetup : 'Please enter a new password',
+      titleMfa         : 'MFA',
+      subtitleMfa      : 'Please enter the confirmation code',
+      titleMfaSetup    : 'MFA setup',
+      subtitleMfaSetup : 'Save this secret key for future connection'
+    },
+    input : {
+      username    : 'Username',
+      password    : 'Password',
+      verifCode   : 'Verification code',
+      newPassword : 'New password'
+    },
+    button : {
+      signIn         : 'Sign in',
+      signUp         : 'Sign up',
+      next           : 'Next',
+      back           : 'Back',
+      send           : 'Send',
+      save           : 'Save',
+      forgotPassword : 'Forgot password',
+      googleSignIn   : 'Sign in with Google',
+      facebookSignIn : 'Sign in with Facebook'
+    },
+    policy : {
+      required      : 'This field is required',
+      nonWhitespace : 'This value must not contain any spaces',
+      email         : 'This value must be an email',
+      phone         : 'This value must be a phone number',
+      sixDigits     : 'This value must contains six digits',
+      customRegex   : 'This value must match the custom regex provided',
+      pwdLength     : 'Minimum password length ({{min}} to {{max}})',
+      pwdUppercase  : 'Require at least one uppercase letter (A to Z)',
+      pwdLowercase  : 'Require at least one lowercase letter (a to z)',
+      pwdNumber     : 'Require at least one number (0 to 9)',
+      pwdSpecial    : 'Require at least one nonalphanumeric character ! @ # $ % ^ & * ( ) _ + - = [ ] { } | \''
+    }
+  };
+
+  public settings : any = {
+    // NOTE: Style
+    fixedWidth  : false,
+    googleStyle : false,
+    googleTheme : 'light',
+    // NOTE: User policy
+    usrPolicy   : 'email', // email / phone / regex
+    // NOTE: CSS
+    debugCss : false,
+  };
 
   constructor
   (
@@ -58,6 +161,90 @@ export class AppComponent implements OnInit, OnDestroy
 
   public ngOnInit() : void
   {
+    // NOTE: Init dat.GUI
+    this.gui = new dat.GUI({
+      width: 300,
+      autoPlace: false
+    });
+    this.gui.useLocalStorage = true;
+    this.gui.remember(this.settings);
+
+    var stepSize = 1; // NOTE: Precision level of our gui
+
+    this.gui.styleFolder = this.gui.addFolder('Style');
+    this.gui.styleFolder.add(this.settings, 'fixedWidth').name('Fixed width');
+    this.gui.styleFolder.add(this.settings, 'googleStyle').name('Google style');
+    this.gui.styleFolder.add(this.settings, 'googleTheme', [ 'light', 'dark' ]).name('Google theme');
+
+    this.gui.layoutsFolder = this.gui.addFolder('Layouts');
+    this.gui.layoutsFolder.add(this.layouts, 'pwd', [ 'modal', 'tab' ] ).name('Password + setup').onChange((v)=>{ this.layouts = this.upd(this.layouts); });
+    this.gui.layoutsFolder.add(this.layouts, 'mfaSetup', [ 'modal', 'tab' ] ).name('MFA setup').onChange((v)=>{ this.layouts = this.upd(this.layouts); });
+    this.gui.layoutsFolder.add(this.layouts, 'mfa', [ 'modal', 'tab', 'inline' ] ).name('MFA').onChange((v)=>{ this.layouts = this.upd(this.layouts); });
+
+    this.gui.policiesFolder = this.gui.addFolder('Policies');
+    this.gui.policiesFolder.add(this.settings, 'usrPolicy').name('Username policy');
+    this.gui.policiesFolder.add(this.pwdPolicies.range, 'min').min(0).max(255).step(stepSize).name('Password min length').onChange((v)=>{ this.pwdPolicies = this.upd(this.pwdPolicies); });
+    this.gui.policiesFolder.add(this.pwdPolicies.range, 'max').min(0).max(255).step(stepSize).name('Password max length').onChange((v)=>{ this.pwdPolicies = this.upd(this.pwdPolicies); });
+    this.gui.policiesFolder.add(this.pwdPolicies, 'char').name('Password character').onChange((v)=>{ this.pwdPolicies = this.upd(this.pwdPolicies); });
+    this.gui.policiesFolder.add(this.pwdPolicies, 'number').name('Password number').onChange((v)=>{ this.pwdPolicies = this.upd(this.pwdPolicies); });
+    this.gui.policiesFolder.add(this.pwdPolicies, 'lower').name('Password lowercase').onChange((v)=>{ this.pwdPolicies = this.upd(this.pwdPolicies); });
+    this.gui.policiesFolder.add(this.pwdPolicies, 'upper').name('Password uppercase').onChange((v)=>{ this.pwdPolicies = this.upd(this.pwdPolicies); });
+
+    this.gui.iconsFolder = this.gui.addFolder('Icons');
+    this.gui.iconsFolder.add(this.icons, 'iconUsrOnLoginForm').name('User icon').onChange((v)=>{ this.icons = this.upd(this.icons); });
+    this.gui.iconsFolder.add(this.icons, 'iconPwdOnLoginForm').name('Lock icon').onChange((v)=>{ this.icons = this.upd(this.icons); });
+
+    this.gui.buttonsFolder = this.gui.addFolder('Buttons');
+    this.gui.buttonsFolder.add(this.buttons, 'forgotPassword').name('Forgot password').onChange((v)=>{ this.buttons = this.upd(this.buttons); });
+    this.gui.buttonsFolder.add(this.buttons, 'signUp').name('Sign up').onChange((v)=>{ this.buttons = this.upd(this.buttons); });
+    this.gui.buttonsFolder.add(this.buttons, 'google').name('Sign in with Google').onChange((v)=>{ this.buttons = this.upd(this.buttons); });
+    this.gui.buttonsFolder.add(this.buttons, 'facebook').name('Sign in with Facebook').onChange((v)=>{ this.buttons = this.upd(this.buttons); });
+
+    this.gui.inputsFolder = this.gui.addFolder('Inputs');
+    this.gui.inputsFolder.add(this.inputs, 'clearUsrOnLoginForm').name('Clear username').onChange((v)=>{ this.inputs = this.upd(this.inputs); });
+    this.gui.inputsFolder.add(this.inputs, 'showPwdOnLoginForm').name('Show password').onChange((v)=>{ this.inputs = this.upd(this.inputs); });
+    this.gui.inputsFolder.add(this.inputs, 'showPwdOnPwdForm').name('Show password (pwd)').onChange((v)=>{ this.inputs = this.upd(this.inputs); });
+    this.gui.inputsFolder.add(this.inputs, 'clearCodeOnPwdForm').name('Clear code (pwd)').onChange((v)=>{ this.inputs = this.upd(this.inputs); });
+    this.gui.inputsFolder.add(this.inputs, 'clearCodeOnMfaForm').name('Clear code (MFA)').onChange((v)=>{ this.inputs = this.upd(this.inputs); });
+
+    this.gui.errorsFolder = this.gui.addFolder('Errors');
+    this.gui.errorsFolder.add(this.errors, 'login').name('Login form').onChange((v)=>{ this.errors = this.upd(this.errors); });
+    this.gui.errorsFolder.add(this.errors, 'pwd').name('Password form').onChange((v)=>{ this.errors = this.upd(this.errors); });
+    this.gui.errorsFolder.add(this.errors, 'mfa').name('MFA form').onChange((v)=>{ this.errors = this.upd(this.errors); });
+
+    this.gui.translateFolder = this.gui.addFolder('Translation');
+    // this.gui.translateFolder.add(this.labels.header, 'titlePwd').name('Title pwd').onChange((v)=>{ this.labels = this.upd(this.labels); });
+    // this.gui.translateFolder.add(this.labels.header, 'subtitlePwd').name('Subitle pwd').onChange((v)=>{ this.labels = this.upd(this.labels); });
+    // this.gui.translateFolder.add(this.labels.header, 'titlePwdSetup').name('Title pwd stp').onChange((v)=>{ this.labels = this.upd(this.labels); });
+    // this.gui.translateFolder.add(this.labels.header, 'subtitlePwdSetup').name('Subitle pwd stp').onChange((v)=>{ this.labels = this.upd(this.labels); });
+    // this.gui.translateFolder.add(this.labels.header, 'titleMfa').name('Title mfa').onChange((v)=>{ this.labels = this.upd(this.labels); });
+    // this.gui.translateFolder.add(this.labels.header, 'subtitleMfa').name('Subitle mfa').onChange((v)=>{ this.labels = this.upd(this.labels); });
+    // this.gui.translateFolder.add(this.labels.header, 'titleMfaSetup').name('Title mfa stp').onChange((v)=>{ this.labels = this.upd(this.labels); });
+    // this.gui.translateFolder.add(this.labels.header, 'subtitleMfaSetup').name('Subitle mfa stp').onChange((v)=>{ this.labels = this.upd(this.labels); });
+
+    this.gui.translateFolder.add(this.labels.input, 'username').name('Username').onChange((v)=>{ this.labels = this.upd(this.labels); });
+    this.gui.translateFolder.add(this.labels.input, 'password').name('Password').onChange((v)=>{ this.labels = this.upd(this.labels); });
+    this.gui.translateFolder.add(this.labels.input, 'verifCode').name('Verif code').onChange((v)=>{ this.labels = this.upd(this.labels); });
+    this.gui.translateFolder.add(this.labels.input, 'newPassword').name('New pwd').onChange((v)=>{ this.labels = this.upd(this.labels); });
+
+    // TODO: add other translation
+    // TODO: repair dat.GUI scroll
+
+    this.gui.errorsFolder = this.gui.addFolder('CSS');
+    var debug = this.gui.errorsFolder.add(this.settings, 'debugCss').name('Debug');
+
+    // NOTE: Init CssDebug
+    CssDebug.readQueryString();
+    CssDebug.AddOutliners();
+    debug.onChange((value) => {
+      this.cssDebug(value);
+    });
+
+    // NOTE: dat.GUI position
+    var customContainer = document.getElementById('gui-container');
+    customContainer.appendChild(this.gui.domElement);
+
+    // NOTE: Simple connection
     this.selectedDemo = Demo.SIMPLE_CONNECTION;
   }
 
@@ -88,7 +275,7 @@ export class AppComponent implements OnInit, OnDestroy
     let username : string = null;
     username = $event.username;
 
-    console.log(username);
+    console.log('stepUsr', $event);
     // NextStep
     this.loginForm.showPwdStep('nicolas roehm');
   }
@@ -98,10 +285,14 @@ export class AppComponent implements OnInit, OnDestroy
     if(!$event)
       return;
 
+    let username : string = null;
     let password : string = null;
+    username = $event.username;
     password = $event.password;
 
-    console.log(password);
+    console.log('stepPwd', $event);
+
+    this.auth(username, password);
   }
 
   public login($event : any) : void
@@ -114,32 +305,9 @@ export class AppComponent implements OnInit, OnDestroy
     username = $event.username;
     password = $event.password;
 
-    // Show loader
+    console.log('login', $event);
 
-    this.authService.fakeAuth(username, password).subscribe(res =>
-    {
-      if(res === 1)
-        this.snackBar.open('SUCCESS', 'X');
-
-      if(res === 2)
-        this.loginForm.showMfaForm();
-    },
-    err =>
-    {
-      // Hide loader
-
-      // First connection
-      if(err === 1)
-        this.loginForm.showPwdForm(true);
-
-      // Error
-      if(err === 2)
-        this.snackBar.open(this.translate.instant('ERROR_LOGIN_FAILED'), 'X');
-
-      // MFA setup
-      if(err === 3)
-        this.loginForm.showMfaSetupForm('JBSWY3DPEHPK3PXP', 'otpauth://totp/john@doe.com?secret=JBSWY3DPEHPK3PXP&issuer=Caliatys');
-    });
+    this.auth(username, password);
   }
 
   public loginSocial($event : any) : void
@@ -154,7 +322,7 @@ export class AppComponent implements OnInit, OnDestroy
     password = $event.password;
     social   = $event.social;
 
-    console.log($event);
+    console.log('loginSocial', $event);
   }
 
   public forgotPassword($event : any) : void
@@ -165,7 +333,7 @@ export class AppComponent implements OnInit, OnDestroy
     let username : string = null;
     username = $event.username;
 
-    console.log($event);
+    console.log('forgotPassword', $event);
 
     if(!username)
     {
@@ -211,7 +379,7 @@ export class AppComponent implements OnInit, OnDestroy
     if(!$event)
       return;
 
-    console.log($event);
+    console.log('firstPassword', $event);
 
     let newPassword : string = null;
     newPassword = $event.password;
@@ -232,7 +400,7 @@ export class AppComponent implements OnInit, OnDestroy
     if(!$event)
       return;
 
-    console.log($event);
+    console.log('lostPassword', $event);
 
     let newPassword : string = null;
     let verifCode   : string = null;
@@ -272,7 +440,7 @@ export class AppComponent implements OnInit, OnDestroy
     if(!$event)
       return;
 
-    console.log($event);
+    console.log('saveMfaKey', $event);
 
     let verifCode   : string = null;
     verifCode   = $event.code;
@@ -288,14 +456,69 @@ export class AppComponent implements OnInit, OnDestroy
     let verifCode : string = null;
     verifCode = $event.code;
 
-    console.log(verifCode);
+    console.log('sendMfaCode', $event);
 
     this.loginForm.hideMfaForm();
+  }
+
+  public auth(username : string, password : string) : void
+  {
+    // Show loader
+    this.authService.fakeAuth(username, password).subscribe(res =>
+    {
+      if(res === 1)
+        this.snackBar.open('SUCCESS', 'X');
+
+      if(res === 2)
+        this.loginForm.showMfaForm();
+    },
+    err =>
+    {
+      // Hide loader
+
+      // First connection
+      if(err === 1)
+        this.loginForm.showPwdForm(true);
+
+      // Error
+      if(err === 2)
+        this.snackBar.open(this.translate.instant('ERROR_LOGIN_FAILED'), 'X');
+
+      // MFA setup
+      if(err === 3)
+        this.loginForm.showMfaSetupForm('JBSWY3DPEHPK3PXP', 'otpauth://totp/john@doe.com?secret=JBSWY3DPEHPK3PXP&issuer=Caliatys');
+    });
   }
 
   // -------------------------------------------------------------------------------
   // ---- NOTE: Demo ---------------------------------------------------------------
   // -------------------------------------------------------------------------------
+
+
+
+  public cssDebug(value : boolean) : void
+  {
+    if(!value)
+    { // Remove event
+      CssDebug.removeEvent(document.body, 'mouseover', CssDebug.mouseHandler);
+      CssDebug.removeEvent(window, 'scroll', CssDebug.scrollHandler);
+      CssDebug.removeEvent(document.body, 'mouseout', CssDebug.mouseOutHandler);
+      CssDebug.hideBoxVis();
+      return;
+    }
+    // Add event
+    CssDebug.addEvent(document.body, 'mouseover', CssDebug.mouseHandler);
+    CssDebug.addEvent(window, 'scroll', CssDebug.scrollHandler);
+    CssDebug.addEvent(document.body, 'mouseout', CssDebug.mouseOutHandler);
+  }
+
+  public onClickNavbar() : void
+  {
+    if(!this.toggleNavbar.length)
+      this.toggleNavbar = 'open';
+    else
+      this.toggleNavbar = '';
+  }
 
   public onRecreate() : void
   {
@@ -342,5 +565,10 @@ export class AppComponent implements OnInit, OnDestroy
       this.loginForm.usrFormGroup.controls.username.setValue(username);
       this.loginForm.pwdFormGroup.controls.password.setValue(password);
     }
+  }
+
+  private upd(obj) : void
+  {
+    return JSON.parse(JSON.stringify(obj));
   }
 }

@@ -1,58 +1,66 @@
-<div class="container-fluid">
-  <div class="row">
-    <nav class="col-12 col-md-2 bg-light sidebar">
-      <div class="sidebar-sticky">
-        <ul class="nav flex-column">
-          <li class="nav-item" (click)="onClickChangeDemo(demo.SIMPLE_CONNECTION)">
-            <a class="nav-link" [class.active]="selectedDemo === demo.SIMPLE_CONNECTION">
-              Simple connection
-            </a>
-          </li>
-          <li class="nav-item" (click)="onClickChangeDemo(demo.MFA_CONNECTION)">
-            <a class="nav-link" [class.active]="selectedDemo === demo.MFA_CONNECTION">
-              MFA connection
-            </a>
-          </li>
-          <li class="nav-item" (click)="onClickChangeDemo(demo.PWD_SETUP)">
-            <a class="nav-link" [class.active]="selectedDemo === demo.PWD_SETUP">
-              Password setup
-            </a>
-          </li>
-          <li class="nav-item" (click)="onClickChangeDemo(demo.MFA_SETUP)">
-            <a class="nav-link" [class.active]="selectedDemo === demo.MFA_SETUP">
-              MFA setup
-            </a>
-          </li>
-        </ul>
-      </div>
-    </nav>
-    <div class="col-12 col-md-9 ml-sm-auto col-lg-10 px-4">
-      <div class="container">
-        <div class="row my-5">
-          <div class="col">
-            <cal-login-form #loginForm *ngFor="let r of reset" 
-              [customFormLayouts]="{ pwd : 'tab', mfaSetup : 'tab', mfa : 'inline' }" 
-              [customUsrPolicy]="'email'" 
-              [errOnLoginForm]="false" 
-              [errOnMfaForm]="false" 
-              [errOnPwdForm]="false" 
-              (initialized)="initialized()" 
-              (login)="login($event)" 
-              (signUp)="signUp()" 
-              (loginSocial)="loginSocial($event)" 
-              (forgotPwd)="forgotPassword($event)" 
-              (sendFirstPwd)="firstPassword($event)" 
-              (sendResetPwd)="lostPassword($event)" 
-              (saveMfaKey)="saveMfaKey($event)" 
-              (sendMfaCode)="sendMfaCode($event)" 
-              (stepUsr)="stepUsr($event)" 
-              (stepPwd)="stepPwd($event)">
-            </cal-login-form>
-          </div>
-        </div>
-      </div>
+<!-- NOTE: Navbar -->
+<nav class="navbar navbar-expand-md fixed-top navbar-dark bg-dark">
+  <a class="navbar-brand" href="#">LoginComponent</a>
+  <button class="navbar-toggler p-0 border-0" type="button" data-toggle="offcanvas" (click)="onClickNavbar()">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="navbar-collapse offcanvas-collapse {{ toggleNavbar }}" id="navbarsExampleDefault">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item"
+        [class.active]="selectedDemo === demo.SIMPLE_CONNECTION">
+        <a class="nav-link" 
+          (click)="onClickChangeDemo(demo.SIMPLE_CONNECTION)">
+          Simple connection
+        </a>
+      </li>
+      <li class="nav-item"
+        [class.active]="selectedDemo === demo.MFA_CONNECTION">
+        <a class="nav-link" 
+          (click)="onClickChangeDemo(demo.MFA_CONNECTION)">
+          MFA connection
+        </a>
+      </li>
+      <li class="nav-item"
+        [class.active]="selectedDemo === demo.PWD_SETUP">
+        <a class="nav-link" 
+          (click)="onClickChangeDemo(demo.PWD_SETUP)">
+          Password setup
+        </a>
+      </li>
+      <li class="nav-item"
+        [class.active]="selectedDemo === demo.MFA_SETUP">
+        <a class="nav-link" 
+          (click)="onClickChangeDemo(demo.MFA_SETUP)">
+          MFA setup
+        </a>
+      </li>
+    </ul>
+    <div class="form-inline my-2 my-lg-0" id="gui-container">
     </div>
   </div>
-
-</div>
-
+</nav>
+<!-- NOTE: LoginComponent -->
+<cal-login-form #loginForm *ngFor="let r of reset" 
+  [fixedWidth]="settings.fixedWidth" 
+  [googleStyle]="settings.googleStyle" 
+  [googleTheme]="settings.googleTheme" 
+  [customFormLayouts]="layouts" 
+  [customUsrPolicy]="settings.usrPolicy" 
+  [customPwdPolicies]="pwdPolicies" 
+  [customIcons]="icons" 
+  [customButtons]="buttons" 
+  [customInputs]="inputs" 
+  [customErrors]="errors" 
+  [customLabels]="labels" 
+  (initialized)="initialized()" 
+  (login)="login($event)" 
+  (signUp)="signUp()" 
+  (loginSocial)="loginSocial($event)" 
+  (forgotPwd)="forgotPassword($event)" 
+  (sendFirstPwd)="firstPassword($event)" 
+  (sendResetPwd)="lostPassword($event)" 
+  (saveMfaKey)="saveMfaKey($event)" 
+  (sendMfaCode)="sendMfaCode($event)" 
+  (stepUsr)="stepUsr($event)" 
+  (stepPwd)="stepPwd($event)">
+</cal-login-form>
