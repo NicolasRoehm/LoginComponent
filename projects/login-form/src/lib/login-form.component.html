@@ -27,13 +27,13 @@
                   <mat-hint align="start" *ngIf="formGroup.controls.username.errors?.required && errors.login">
                     {{ labels.policy.required }}
                   </mat-hint>
-                  <mat-hint align="start" *ngIf="formGroup.controls.username.errors?.pattern && errors.login && usrPolicy === userPolicies.EMAIL">
+                  <mat-hint align="start" *ngIf="formGroup.controls.username.errors && errors.login && formGroup.controls.username.errors.email && !formGroup.controls.username.errors?.required">
                     {{ labels.policy.email }}
                   </mat-hint>
-                  <mat-hint align="start" *ngIf="formGroup.controls.username.errors?.pattern && errors.login && usrPolicy === userPolicies.PHONE">
+                  <mat-hint align="start" *ngIf="formGroup.controls.username.errors && errors.login && formGroup.controls.username.errors.phone && !formGroup.controls.username.errors?.required">
                     {{ labels.policy.phone }}
                   </mat-hint>
-                  <mat-hint align="start" *ngIf="formGroup.controls.username.errors?.pattern && errors.login && usrPolicy && usrPolicy !== userPolicies.EMAIL && usrPolicy !== userPolicies.PHONE">
+                  <mat-hint align="start" *ngIf="formGroup.controls.username.errors && errors.login && formGroup.controls.username.errors.custom && !formGroup.controls.username.errors?.required">
                     {{ labels.policy.customRegex }}
                   </mat-hint>
                 </mat-form-field>
@@ -116,7 +116,8 @@
             <div class="d-block mb-3" *ngIf="buttons.google">
               <button mat-raised-button type="button" class="mat-raised-button cal-btn google {{ theme }}" (click)="onClickLoginSocial('google')">
                 <span class="cal-bg-icon">
-                  <mat-icon class="align-middle cal-icon" svgIcon="google"></mat-icon>
+                  <span class="cal-temp-icon"></span>
+                  <!-- <mat-icon class="align-middle cal-icon" svgIcon="google"></mat-icon> -->
                 </span>
                 <span class="cal-label">{{ labels.button.googleSignIn }}</span>
               </button>
@@ -125,7 +126,8 @@
             <div class="d-block mb-3" *ngIf="buttons.facebook">
               <button mat-raised-button type="button" class="cal-btn facebook" (click)="onClickLoginSocial('facebook')">
                 <span class="cal-bg-icon">
-                  <mat-icon class="align-middle cal-icon" svgIcon="facebook"></mat-icon>
+                  <span class="cal-temp-icon"></span>
+                  <!-- <mat-icon class="align-middle cal-icon" svgIcon="facebook"></mat-icon> -->
                 </span>
                 <span class="cal-label">{{ labels.button.facebookSignIn }}</span>
               </button>

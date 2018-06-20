@@ -162,87 +162,11 @@ export class AppComponent implements OnInit, OnDestroy
   public ngOnInit() : void
   {
     // NOTE: Init dat.GUI
-    this.gui = new dat.GUI({
-      width: 300,
-      autoPlace: false
-    });
-    this.gui.useLocalStorage = true;
-    this.gui.remember(this.settings);
-
-    var stepSize = 1; // NOTE: Precision level of our gui
-
-    this.gui.styleFolder = this.gui.addFolder('Style');
-    this.gui.styleFolder.add(this.settings, 'fixedWidth').name('Fixed width');
-    this.gui.styleFolder.add(this.settings, 'googleStyle').name('Google style');
-    this.gui.styleFolder.add(this.settings, 'googleTheme', [ 'light', 'dark' ]).name('Google theme');
-
-    this.gui.layoutsFolder = this.gui.addFolder('Layouts');
-    this.gui.layoutsFolder.add(this.layouts, 'pwd', [ 'modal', 'tab' ] ).name('Password + setup').onChange((v)=>{ this.layouts = this.upd(this.layouts); });
-    this.gui.layoutsFolder.add(this.layouts, 'mfaSetup', [ 'modal', 'tab' ] ).name('MFA setup').onChange((v)=>{ this.layouts = this.upd(this.layouts); });
-    this.gui.layoutsFolder.add(this.layouts, 'mfa', [ 'modal', 'tab', 'inline' ] ).name('MFA').onChange((v)=>{ this.layouts = this.upd(this.layouts); });
-
-    this.gui.policiesFolder = this.gui.addFolder('Policies');
-    this.gui.policiesFolder.add(this.settings, 'usrPolicy').name('Username policy');
-    this.gui.policiesFolder.add(this.pwdPolicies.range, 'min').min(0).max(255).step(stepSize).name('Password min length').onChange((v)=>{ this.pwdPolicies = this.upd(this.pwdPolicies); });
-    this.gui.policiesFolder.add(this.pwdPolicies.range, 'max').min(0).max(255).step(stepSize).name('Password max length').onChange((v)=>{ this.pwdPolicies = this.upd(this.pwdPolicies); });
-    this.gui.policiesFolder.add(this.pwdPolicies, 'char').name('Password character').onChange((v)=>{ this.pwdPolicies = this.upd(this.pwdPolicies); });
-    this.gui.policiesFolder.add(this.pwdPolicies, 'number').name('Password number').onChange((v)=>{ this.pwdPolicies = this.upd(this.pwdPolicies); });
-    this.gui.policiesFolder.add(this.pwdPolicies, 'lower').name('Password lowercase').onChange((v)=>{ this.pwdPolicies = this.upd(this.pwdPolicies); });
-    this.gui.policiesFolder.add(this.pwdPolicies, 'upper').name('Password uppercase').onChange((v)=>{ this.pwdPolicies = this.upd(this.pwdPolicies); });
-
-    this.gui.iconsFolder = this.gui.addFolder('Icons');
-    this.gui.iconsFolder.add(this.icons, 'iconUsrOnLoginForm').name('User icon').onChange((v)=>{ this.icons = this.upd(this.icons); });
-    this.gui.iconsFolder.add(this.icons, 'iconPwdOnLoginForm').name('Lock icon').onChange((v)=>{ this.icons = this.upd(this.icons); });
-
-    this.gui.buttonsFolder = this.gui.addFolder('Buttons');
-    this.gui.buttonsFolder.add(this.buttons, 'forgotPassword').name('Forgot password').onChange((v)=>{ this.buttons = this.upd(this.buttons); });
-    this.gui.buttonsFolder.add(this.buttons, 'signUp').name('Sign up').onChange((v)=>{ this.buttons = this.upd(this.buttons); });
-    this.gui.buttonsFolder.add(this.buttons, 'google').name('Sign in with Google').onChange((v)=>{ this.buttons = this.upd(this.buttons); });
-    this.gui.buttonsFolder.add(this.buttons, 'facebook').name('Sign in with Facebook').onChange((v)=>{ this.buttons = this.upd(this.buttons); });
-
-    this.gui.inputsFolder = this.gui.addFolder('Inputs');
-    this.gui.inputsFolder.add(this.inputs, 'clearUsrOnLoginForm').name('Clear username').onChange((v)=>{ this.inputs = this.upd(this.inputs); });
-    this.gui.inputsFolder.add(this.inputs, 'showPwdOnLoginForm').name('Show password').onChange((v)=>{ this.inputs = this.upd(this.inputs); });
-    this.gui.inputsFolder.add(this.inputs, 'showPwdOnPwdForm').name('Show password (pwd)').onChange((v)=>{ this.inputs = this.upd(this.inputs); });
-    this.gui.inputsFolder.add(this.inputs, 'clearCodeOnPwdForm').name('Clear code (pwd)').onChange((v)=>{ this.inputs = this.upd(this.inputs); });
-    this.gui.inputsFolder.add(this.inputs, 'clearCodeOnMfaForm').name('Clear code (MFA)').onChange((v)=>{ this.inputs = this.upd(this.inputs); });
-
-    this.gui.errorsFolder = this.gui.addFolder('Errors');
-    this.gui.errorsFolder.add(this.errors, 'login').name('Login form').onChange((v)=>{ this.errors = this.upd(this.errors); });
-    this.gui.errorsFolder.add(this.errors, 'pwd').name('Password form').onChange((v)=>{ this.errors = this.upd(this.errors); });
-    this.gui.errorsFolder.add(this.errors, 'mfa').name('MFA form').onChange((v)=>{ this.errors = this.upd(this.errors); });
-
-    this.gui.translateFolder = this.gui.addFolder('Translation');
-    // this.gui.translateFolder.add(this.labels.header, 'titlePwd').name('Title pwd').onChange((v)=>{ this.labels = this.upd(this.labels); });
-    // this.gui.translateFolder.add(this.labels.header, 'subtitlePwd').name('Subitle pwd').onChange((v)=>{ this.labels = this.upd(this.labels); });
-    // this.gui.translateFolder.add(this.labels.header, 'titlePwdSetup').name('Title pwd stp').onChange((v)=>{ this.labels = this.upd(this.labels); });
-    // this.gui.translateFolder.add(this.labels.header, 'subtitlePwdSetup').name('Subitle pwd stp').onChange((v)=>{ this.labels = this.upd(this.labels); });
-    // this.gui.translateFolder.add(this.labels.header, 'titleMfa').name('Title mfa').onChange((v)=>{ this.labels = this.upd(this.labels); });
-    // this.gui.translateFolder.add(this.labels.header, 'subtitleMfa').name('Subitle mfa').onChange((v)=>{ this.labels = this.upd(this.labels); });
-    // this.gui.translateFolder.add(this.labels.header, 'titleMfaSetup').name('Title mfa stp').onChange((v)=>{ this.labels = this.upd(this.labels); });
-    // this.gui.translateFolder.add(this.labels.header, 'subtitleMfaSetup').name('Subitle mfa stp').onChange((v)=>{ this.labels = this.upd(this.labels); });
-
-    this.gui.translateFolder.add(this.labels.input, 'username').name('Username').onChange((v)=>{ this.labels = this.upd(this.labels); });
-    this.gui.translateFolder.add(this.labels.input, 'password').name('Password').onChange((v)=>{ this.labels = this.upd(this.labels); });
-    this.gui.translateFolder.add(this.labels.input, 'verifCode').name('Verif code').onChange((v)=>{ this.labels = this.upd(this.labels); });
-    this.gui.translateFolder.add(this.labels.input, 'newPassword').name('New pwd').onChange((v)=>{ this.labels = this.upd(this.labels); });
-
-    // TODO: add other translation
-    // TODO: repair dat.GUI scroll
-
-    this.gui.errorsFolder = this.gui.addFolder('CSS');
-    var debug = this.gui.errorsFolder.add(this.settings, 'debugCss').name('Debug');
+    this.initDatGui();
 
     // NOTE: Init CssDebug
     CssDebug.readQueryString();
     CssDebug.AddOutliners();
-    debug.onChange((value) => {
-      this.cssDebug(value);
-    });
-
-    // NOTE: dat.GUI position
-    var customContainer = document.getElementById('gui-container');
-    customContainer.appendChild(this.gui.domElement);
 
     // NOTE: Simple connection
     this.selectedDemo = Demo.SIMPLE_CONNECTION;
@@ -494,7 +418,83 @@ export class AppComponent implements OnInit, OnDestroy
   // ---- NOTE: Demo ---------------------------------------------------------------
   // -------------------------------------------------------------------------------
 
+  public initDatGui() : void
+  {
+    this.gui = new dat.GUI({
+      width: 300,
+      autoPlace: false
+    });
+    this.gui.useLocalStorage = true;
+    this.gui.remember(this.settings);
 
+    var stepSize = 1; // NOTE: Precision level of our gui
+
+    this.gui.styleFolder = this.gui.addFolder('Style');
+    this.gui.styleFolder.add(this.settings, 'fixedWidth').name('Fixed width');
+    this.gui.styleFolder.add(this.settings, 'googleStyle').name('Google style');
+    this.gui.styleFolder.add(this.settings, 'googleTheme', [ 'light', 'dark' ]).name('Google theme');
+
+    this.gui.layoutsFolder = this.gui.addFolder('Layouts');
+    this.gui.layoutsFolder.add(this.layouts, 'pwd', [ 'modal', 'tab' ] ).name('Password + setup').onChange((v)=>{this.upd('layouts','pwd',v);});
+    this.gui.layoutsFolder.add(this.layouts, 'mfaSetup', [ 'modal', 'tab' ] ).name('MFA setup').onChange((v)=>{this.upd('layouts','mfaSetup',v);});
+    this.gui.layoutsFolder.add(this.layouts, 'mfa', [ 'modal', 'tab', 'inline' ] ).name('MFA').onChange((v)=>{this.upd('layouts','mfa',v);});
+
+    this.gui.policiesFolder = this.gui.addFolder('Policies');
+    this.gui.policiesFolder.add(this.settings, 'usrPolicy').name('Username policy');
+    this.gui.policiesFolder.add(this.pwdPolicies.range, 'min').min(0).max(255).step(stepSize).name('Password min length').onChange((v)=>{this.upd('pwdPolicies.range','min',v);});
+    this.gui.policiesFolder.add(this.pwdPolicies.range, 'max').min(0).max(255).step(stepSize).name('Password max length').onChange((v)=>{this.upd('pwdPolicies.range','max',v);});
+    this.gui.policiesFolder.add(this.pwdPolicies, 'char').name('Password character').onChange((v)=>{this.upd('pwdPolicies','char',v);});
+    this.gui.policiesFolder.add(this.pwdPolicies, 'number').name('Password number').onChange((v)=>{this.upd('pwdPolicies','number',v);});
+    this.gui.policiesFolder.add(this.pwdPolicies, 'lower').name('Password lowercase').onChange((v)=>{this.upd('pwdPolicies','lower',v);});
+    this.gui.policiesFolder.add(this.pwdPolicies, 'upper').name('Password uppercase').onChange((v)=>{this.upd('pwdPolicies','upper',v);});
+
+    this.gui.iconsFolder = this.gui.addFolder('Icons');
+    this.gui.iconsFolder.add(this.icons, 'iconUsrOnLoginForm').name('User icon').onChange((v)=>{this.upd('icons','iconUsrOnLoginForm',v);});
+    this.gui.iconsFolder.add(this.icons, 'iconPwdOnLoginForm').name('Lock icon').onChange((v)=>{this.upd('icons','iconPwdOnLoginForm',v);});
+
+    this.gui.buttonsFolder = this.gui.addFolder('Buttons');
+    this.gui.buttonsFolder.add(this.buttons, 'forgotPassword').name('Forgot password').onChange((v)=>{this.upd('buttons','forgotPassword',v);});
+    this.gui.buttonsFolder.add(this.buttons, 'signUp').name('Sign up').onChange((v)=>{this.upd('buttons','signUp',v);});
+    this.gui.buttonsFolder.add(this.buttons, 'google').name('Sign in with Google').onChange((v)=>{this.upd('buttons','google',v);});
+    this.gui.buttonsFolder.add(this.buttons, 'facebook').name('Sign in with Facebook').onChange((v)=>{this.upd('buttons','facebook',v);});
+
+    this.gui.inputsFolder = this.gui.addFolder('Inputs');
+    this.gui.inputsFolder.add(this.inputs, 'clearUsrOnLoginForm').name('Clear username').onChange((v)=>{this.upd('inputs','clearUsrOnLoginForm',v);});
+    this.gui.inputsFolder.add(this.inputs, 'showPwdOnLoginForm').name('Show password').onChange((v)=>{this.upd('inputs','showPwdOnLoginForm',v);});
+    this.gui.inputsFolder.add(this.inputs, 'showPwdOnPwdForm').name('Show password (pwd)').onChange((v)=>{this.upd('inputs','showPwdOnPwdForm',v);});
+    this.gui.inputsFolder.add(this.inputs, 'clearCodeOnPwdForm').name('Clear code (pwd)').onChange((v)=>{this.upd('inputs','clearCodeOnPwdForm',v);});
+    this.gui.inputsFolder.add(this.inputs, 'clearCodeOnMfaForm').name('Clear code (MFA)').onChange((v)=>{this.upd('inputs','clearCodeOnMfaForm',v);});
+
+    this.gui.errorsFolder = this.gui.addFolder('Errors');
+    this.gui.errorsFolder.add(this.errors, 'login').name('Login form').onChange((v)=>{this.upd('errors','login',v);});
+    this.gui.errorsFolder.add(this.errors, 'pwd').name('Password form').onChange((v)=>{this.upd('errors','pwd',v);});
+    this.gui.errorsFolder.add(this.errors, 'mfa').name('MFA form').onChange((v)=>{this.upd('errors','mfa',v);});
+
+    this.gui.translateFolder = this.gui.addFolder('Translation');
+    // this.gui.translateFolder.add(this.labels.header, 'titlePwd').name('Title pwd').onChange((v)=>{this.upd('labels.header','titlePwd',v);});
+    // this.gui.translateFolder.add(this.labels.header, 'subtitlePwd').name('Subitle pwd').onChange((v)=>{this.upd('labels.header','subtitlePwd',v);});
+    // this.gui.translateFolder.add(this.labels.header, 'titlePwdSetup').name('Title pwd stp').onChange((v)=>{this.upd('labels.header','titlePwdSetup',v);});
+    // this.gui.translateFolder.add(this.labels.header, 'subtitlePwdSetup').name('Subitle pwd stp').onChange((v)=>{this.upd('labels.header','subtitlePwdSetup',v);});
+    // this.gui.translateFolder.add(this.labels.header, 'titleMfa').name('Title mfa').onChange((v)=>{this.upd('labels.header','titleMfa',v);});
+    // this.gui.translateFolder.add(this.labels.header, 'subtitleMfa').name('Subitle mfa').onChange((v)=>{this.upd('labels.header','subtitleMfa',v);});
+    // this.gui.translateFolder.add(this.labels.header, 'titleMfaSetup').name('Title mfa stp').onChange((v)=>{this.upd('labels.header','titleMfaSetup',v);});
+    // this.gui.translateFolder.add(this.labels.header, 'subtitleMfaSetup').name('Subitle mfa stp').onChange((v)=>{this.upd('labels.header','subtitleMfaSetup',v);});
+
+    this.gui.translateFolder.add(this.labels.input, 'username').name('Username').onChange((v)=>{this.upd('labels.input','username',v);});
+    this.gui.translateFolder.add(this.labels.input, 'password').name('Password').onChange((v)=>{this.upd('labels.input','password',v);});
+    this.gui.translateFolder.add(this.labels.input, 'verifCode').name('Verif code').onChange((v)=>{this.upd('labels.input','verifCode',v);});
+    this.gui.translateFolder.add(this.labels.input, 'newPassword').name('New pwd').onChange((v)=>{this.upd('labels.input','newPassword',v);});
+
+    // TODO: add other translation
+    // TODO: repair dat.GUI scroll
+
+    this.gui.cssFolder = this.gui.addFolder('CSS');
+    this.gui.cssFolder.add(this.settings, 'debugCss').name('Debug').onChange((v)=>{this.cssDebug(v);});
+
+    // NOTE: dat.GUI position
+    var customContainer = document.getElementById('gui-container');
+    customContainer.appendChild(this.gui.domElement);
+  }
 
   public cssDebug(value : boolean) : void
   {
@@ -567,8 +567,26 @@ export class AppComponent implements OnInit, OnDestroy
     }
   }
 
-  private upd(obj) : void
+  private upd(obj : any, child : string, v : any) : any
   {
-    return JSON.parse(JSON.stringify(obj));
+    if(!obj.includes('.'))
+    {
+      this[obj][child] = v;
+      this[obj] = Object.assign({}, this[obj]);
+      return;
+    }
+
+    var depths = obj.split('.').reverse(),
+    toBottom = depths.length,
+    property = this;
+
+    while (toBottom--)
+      property = property[depths[toBottom]];
+
+    property[child] = v;
+
+    let firstItem : string = null;
+    firstItem = obj.split('.')[0];
+    this[firstItem] = Object.assign({}, this[firstItem]);
   }
 }

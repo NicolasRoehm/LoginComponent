@@ -1,6 +1,9 @@
 # Login Form Component
 > Angular component providing login and password management using [Angular Material](https://material.angular.io) library.
 
+## Example
+Check out the **[StackBlitz demo](https://cal-login-component.stackblitz.io/)**
+
 ## Installation
 Install `@caliatys/login-form` in your project:
 ```sh
@@ -19,7 +22,8 @@ import { LoginFormModule } from '@caliatys/login-form';
 export class LoginModule { }
 ```
 
-Use the `cal-login-form` component inside a `login.component.html`:
+## Usage
+Add the `cal-login-form` component inside a `login.component.html`:
 ```html
 <cal-login-form #loginForm 
   (initialized)="initialized()" 
@@ -186,14 +190,17 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
 ## Roadmap
 
 ### In Progress
-- List of functions (for user)
+- Repeat password (optional)
+- Forgot password : Try to get the username ? display it (optional) : ask for it inside pwd form
+- List of functions
 
 ### Planning
 - Captcha
+- GoogleStyle : user informations (image)
 - Test GoogleStyle on mobile (1/3)
 - Remove Bootstrap 4 dependency
-- Dissociate forgot password from setup password ?
-- Create an Online example with [StackBlitz](https://stackblitz.com)
+- Dissociate forgot password from setup password
+- Create a component for each input to remove duplication
 - Fix Angular 6 Library assets
 - Deploy with [Travis](https://travis-ci.org/) & Test Coverage with [Coveralls](https://coveralls.io/)
 
