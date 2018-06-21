@@ -33,6 +33,8 @@ export class PwdFormComponent implements OnInit, OnChanges, OnDestroy
   // Inputs
   @Input()  inputs       : any;
 
+  // Username
+  @Input()  username     : string;
   // First connection or Forgot password
   @Input()  isFirst      : boolean;
   // Password policies
@@ -78,6 +80,7 @@ export class PwdFormComponent implements OnInit, OnChanges, OnDestroy
     // First connection
     if(this.isFirst)
     {
+      event.username = this.username;
       this.firstConnection.emit(event);
       return;
     }

@@ -36,6 +36,8 @@ export class ModalWrapperComponent implements OnInit, OnDestroy
   public closeSub        : Subscription;
 
   // NOTE: Password
+  // Username
+  public username      : string;
   // First connection or Forgot password
   public isFirst       : boolean;
   // Password policies
@@ -112,6 +114,8 @@ export class ModalWrapperComponent implements OnInit, OnDestroy
       this.inputs         = data.inputs;
 
       // NOTE: Password
+      // Username
+      this.username       = data.username;
       // First connection or Forgot password
       this.isFirst        = data.isFirst;
       // Password policies
