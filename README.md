@@ -169,7 +169,8 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
 /* password : string
 *  code     : string */
 @Output() sendFirstPwd : EventEmitter<any>;
-/* password : string */
+/* username : string
+*  password : string */
 @Output() saveMfaKey   : EventEmitter<any>;
 /* code     : string */
 @Output() sendMfaCode  : EventEmitter<any>;
@@ -179,6 +180,24 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
 @Output() stepPwd      : EventEmitter<any>;
 /* username : string
 *  password : string */
+```
+
+#### Functions
+```typescript
+// Show functions
+// Show MFA form to get verification code.
+LoginFormComponent.showMfaForm() : void
+// Show MFA setup form to initialize first TOTP (Time-based One-time Password).
+LoginFormComponent.showMfaSetupForm(code : string, qrCode : string) : void
+// Show password form either to initialize first password or to reset forgot password.
+LoginFormComponent.showPwdForm(isFirst : boolean) : void
+// Show password input (for google-style form)
+LoginFormComponent.showPwdStep(userInfo? : string, userImage? : string) : void
+
+// Hide functions
+LoginFormComponent.hideMfaForm() : void
+LoginFormComponent.hideMfaSetupForm() : void
+LoginFormComponent.hidePwdForm() : void
 ```
 
 **Important Note**: This project uses the following dependencies :
@@ -200,8 +219,6 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
 
 ### In Progress
 - Repeat password (optional)
-- Forgot password : Try to get the username ? display it (optional) : ask for it inside pwd form
-- List of functions
 
 ### Planning
 - Captcha
@@ -210,6 +227,7 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
 - Remove Bootstrap 4 dependency
 - Dissociate forgot password from setup password
 - Create a component for each input to remove duplication
+- Forgot password : Try to get the username ? display it (optional) : ask for it inside pwd form
 - Fix Angular 6 Library assets
 - Deploy with [Travis](https://travis-ci.org/) & Test Coverage with [Coveralls](https://coveralls.io/)
 

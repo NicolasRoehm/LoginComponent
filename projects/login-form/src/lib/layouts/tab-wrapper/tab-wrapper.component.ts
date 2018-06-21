@@ -32,6 +32,8 @@ export class TabWrapperComponent implements OnInit, OnDestroy
   @Output() sendCloseTab  : EventEmitter<boolean> = new EventEmitter();
 
   // NOTE: Password
+  // Username
+  @Input()  username      : string;
   // First connection or Forgot password
   @Input()  isFirst       : boolean;
   // Password policies

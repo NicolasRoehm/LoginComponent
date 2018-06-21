@@ -43,6 +43,7 @@
 </div>
 <!-- NOTE: Pwd Form -->
 <cal-pwd-form *ngIf="formType === forms.PWD" 
+  [username]="username" 
   [isFirst]="isFirst" 
   [pwdPolicies]="pwdPolicies" 
   [labels]="labels" 

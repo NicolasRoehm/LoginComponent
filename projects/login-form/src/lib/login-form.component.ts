@@ -93,7 +93,7 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
   @Output() forgotPwd     : EventEmitter<any> = new EventEmitter();
   // Event object containing password and code properties
   @Output() sendResetPwd  : EventEmitter<any> = new EventEmitter();
-  // Event object containing password property
+  // Event object containing username and password property
   @Output() sendFirstPwd  : EventEmitter<any> = new EventEmitter();
   // Event object containing code property
   @Output() saveMfaKey    : EventEmitter<any> = new EventEmitter();
@@ -112,6 +112,7 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
   public    forms = Forms;
 
   // NOTE: Password
+  public    username      : string  = null;
   public    isFirst       : boolean = false;
 
   // NOTE: MFA
@@ -270,6 +271,10 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
   {
     this.isFirst  = isFirst;
     this.formType = Forms.PWD;
+    if(!this.googleStyle)
+      this.username = this.formGroup.controls.username.value;
+    else
+      this.username = this.usrFormGroup.controls.username.value;
     this.showLayout(this.formLayouts.pwd);
   }
 
@@ -311,9 +316,11 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
     this.closeLayout(this.formLayouts.mfa);
   }
 
-  /** Go password step. */
+  /** Show password input (for google-style form). */
   public showPwdStep(userInfo : string = null, userImage : string = null) : void
   {
+    if(!this.googleStyle)
+      return;
     this.userInfo    = userInfo;
     this.userImage   = userImage;
     this.selectedTab = 2;
@@ -369,6 +376,7 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
   /** Emit `$event` object containing password property.
   *
   * @example
+  * var username    : string = $event.username;
   * var newPassword : string = $event.password;
   */
   public tabFirstLog($event : any) : void
@@ -487,6 +495,7 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
       errors                : this.errors,
       inputs                : this.inputs,
       // Password form
+      username              : this.username,
       isFirst               : this.isFirst,
       pwdPolicies           : this.pwdPolicies,
       // Mfa form

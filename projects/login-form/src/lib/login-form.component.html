@@ -77,7 +77,7 @@
                   </a>
                 </div>
               </div>
-              <div class="row no-gutters pb-3">
+              <div class="row no-gutters {{ buttons.google || buttons.facebook ? 'pb-3' : '' }}">
                 <div class="col text-right">
                   <!-- NOTE: Sign up -->
                   <button mat-button (click)="onClickSignUp()" type="button" color="primary" class="small text-uppercase mr-3" *ngIf="buttons.signUp">
@@ -252,6 +252,7 @@
       <!-- NOTE: Tab form -->
       <cal-tab-wrapper 
         [formType]="formType" 
+        [username]="username" 
         [isFirst]="isFirst" 
         [code]   ="code" 
         [qrCode] ="qrCode" 
