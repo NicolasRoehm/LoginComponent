@@ -220,7 +220,7 @@ export class AppComponent implements OnInit, OnDestroy
   }
 
   public login($event : any) : void
-  { // NOTE: onClickLogin
+  { // NOTE: Sign in event
     if(!$event)
       return;
 
@@ -235,7 +235,7 @@ export class AppComponent implements OnInit, OnDestroy
   }
 
   public loginSocial($event : any) : void
-  { // NOTE: onClickLoginSocial
+  { // NOTE: Social event
     if(!$event)
       return;
 
@@ -250,7 +250,7 @@ export class AppComponent implements OnInit, OnDestroy
   }
 
   public forgotPassword($event : any) : void
-  { // NOTE: onClickForgotPassword
+  { // NOTE: Forgot password
     if(!$event)
       return;
 
@@ -265,9 +265,11 @@ export class AppComponent implements OnInit, OnDestroy
       return;
     }
 
-    this.authService.fakeResetPassword(username).subscribe((res : any) =>
+    this.authService.fakeForgotPassword(username).subscribe(res =>
     {
-      this.loginForm.showPwdForm(false);
+      // Verification code
+      if(res.code === 2)
+        this.loginForm.showPwdForm(false);
     },
     err =>
     {
@@ -294,6 +296,7 @@ export class AppComponent implements OnInit, OnDestroy
           break;
       }
 
+      console.error('AppComponent : forgotPassword -> fakeForgotPassword', err);
       this.snackBar.open(errorMsg, 'X');
     });
   }
@@ -305,16 +308,25 @@ export class AppComponent implements OnInit, OnDestroy
 
     console.log('firstPassword', $event);
 
+    let username    : string = null;
     let newPassword : string = null;
+    username    = $event.username;
     newPassword = $event.password;
 
-    this.authService.fakeInitPassword(newPassword).subscribe(res =>
+    this.authService.fakeChangePassword(newPassword).subscribe(res =>
     {
-      this.loginForm.hidePwdForm();
+      // Success
+      if(res.code === 1)
+        this.loginForm.hidePwdForm();
+      // MFA required
+      if(res.code === 2)
+        this.loginForm.showMfaForm();
+
       this.snackBar.open(this.translate.instant('SUCCESS_UPDATE_PWD'), 'x');
     },
     err =>
     {
+      console.error('AppComponent : firstPassword -> fakeInitPassword', err);
       this.snackBar.open(this.translate.instant('ERROR_AMAZON_POLICY'), 'x');
     });
   }
@@ -355,6 +367,7 @@ export class AppComponent implements OnInit, OnDestroy
           break;
       }
 
+      console.error('AppComponent : lostPassword -> fakeConfirmPassword', err);
       this.snackBar.open(errorMsg, 'x');
     });
   }
@@ -390,10 +403,12 @@ export class AppComponent implements OnInit, OnDestroy
     // Show loader
     this.authService.fakeAuth(username, password).subscribe(res =>
     {
-      if(res === 1)
+      // Success login
+      if(res.code === 1)
         this.snackBar.open('SUCCESS', 'X');
 
-      if(res === 2)
+      // MFA required
+      if(res.code === 2)
         this.loginForm.showMfaForm();
     },
     err =>
@@ -401,16 +416,26 @@ export class AppComponent implements OnInit, OnDestroy
       // Hide loader
 
       // First connection
-      if(err === 1)
+      if(err.code === 1)
         this.loginForm.showPwdForm(true);
 
       // Error
-      if(err === 2)
+      if(err.code === 2)
+      {
+        console.error('AppComponent : auth -> fakeAuth', err);
         this.snackBar.open(this.translate.instant('ERROR_LOGIN_FAILED'), 'X');
+      }
 
-      // MFA setup
-      if(err === 3)
+      // MFA setup : associate secret code
+      if(err.code === 3)
         this.loginForm.showMfaSetupForm('JBSWY3DPEHPK3PXP', 'otpauth://totp/john@doe.com?secret=JBSWY3DPEHPK3PXP&issuer=Caliatys');
+
+      // MFA setup : error
+      if(err.code === 4)
+      {
+        console.error('AppComponent : auth -> fakeAuth', err);
+        this.snackBar.open(err.data, 'X');
+      }
     });
   }
 

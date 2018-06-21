@@ -29,20 +29,20 @@ export class AuthService
       switch(response)
       {
         case 'onSuccess' :
-          resolve(1);
+          resolve({ code : 1 });
           break;
         case 'mfaRequired' :
-          resolve(2);
+          resolve({ code : 2 });
           break;
 
         case 'newPasswordRequired' :
-          reject(1);
+          reject({ code : 1 });
           break;
         case 'onFailure' :
-          reject(2);
+          reject({ code : 2 });
           break;
         case 'mfaSetup' :
-          reject(3);
+          reject({ code : 3 });
           break;
       }
     }));
@@ -50,7 +50,7 @@ export class AuthService
 
   // public fakeAuthGoogle();
 
-  public fakeResetPassword(username : string, response? : string) : Observable<any>
+  public fakeForgotPassword(username : string, response? : string) : Observable<any>
   {
     if(!response)
       response = 'onSuccess';
@@ -59,20 +59,21 @@ export class AuthService
     {
       switch(response)
       {
-        case 'inputVerificationCode' :
-          resolve(1);
-          break;
         case 'onSuccess' :
-          resolve();
+          resolve({ code : 1 });
           break;
+        case 'inputVerificationCode' :
+          resolve({ code : 2 });
+          break;
+
         case 'onFailure' :
-          reject(-2);
+          reject();
           break;
       }
     }));
   }
 
-  public fakeInitPassword(newPassword : string, response? : string) : Observable<any>
+  public fakeChangePassword(newPassword : string, response? : string) : Observable<any>
   {
     if(!response)
       response = 'onSuccess';
@@ -82,8 +83,12 @@ export class AuthService
       switch(response)
       {
         case 'onSuccess' :
-          resolve();
+          resolve({ code : 1 });
           break;
+        case 'mfaRequired' :
+          resolve({ code : 2 });
+          break;
+
         case 'onFailure' :
           reject();
           break;
@@ -103,6 +108,7 @@ export class AuthService
         case 'onSuccess' :
           resolve();
           break;
+
         case 'onFailure' :
           reject();
           break;
