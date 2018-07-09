@@ -46,6 +46,13 @@ import { ExistsLayoutPipe }         from './pipes/exists-layout.pipe';
 // External modules
 import { QRCodeModule }             from 'angularx-qrcode';
 
+import { DynamicBuilderComponent }  from './dynamic-builder/dynamic-builder.component';
+import { FieldBuilderComponent }    from './dynamic-builder/field-builder/field-builder.component';
+import { InputTextboxComponent }    from './dynamic-builder/inputs/textbox/input-textbox.component';
+// import { DropDownComponent } from './dynamic-builder/inputs/dropdown';
+// import { CheckBoxComponent } from './dynamic-builder/inputs/checkbox';
+// import { RadioComponent } from './dynamic-builder/inputs/radio';
+
 // NgModule that includes all Material modules that are required to serve the app.
 @NgModule({
   exports: [
@@ -95,7 +102,14 @@ export class MaterialModule {}
     TabWrapperComponent,
     MfaSetupFormComponent,
     MfaFormComponent,
-    ExistsLayoutPipe
+    ExistsLayoutPipe,
+    DynamicBuilderComponent,
+    FieldBuilderComponent,
+    InputTextboxComponent
+    // TextBoxComponent,
+    // DropDownComponent,
+    // CheckBoxComponent,
+    // RadioComponent
   ],
   providers: [
   ],
@@ -107,7 +121,14 @@ export class MaterialModule {}
     TabWrapperComponent,
     MfaSetupFormComponent,
     MfaFormComponent,
-    ExistsLayoutPipe
+    ExistsLayoutPipe,
+    DynamicBuilderComponent,
+    FieldBuilderComponent,
+    InputTextboxComponent
+    // TextBoxComponent,
+    // DropDownComponent,
+    // CheckBoxComponent,
+    // RadioComponent
   ]
 })
 export class LoginFormModule { }

@@ -53,7 +53,7 @@ export class AuthService
   public fakeForgotPassword(username : string, response? : string) : Observable<any>
   {
     if(!response)
-      response = 'onSuccess';
+      response = 'inputVerificationCode';
 
     return Observable.fromPromise(new Promise((resolve, reject) =>
     {

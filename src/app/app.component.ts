@@ -60,16 +60,15 @@ export class AppComponent implements OnInit, OnDestroy
   };
 
   public icons : any = {
-    iconUsrOnLoginForm : true,
-    iconPwdOnLoginForm : true
+    iconUsr       : 'person',
+    iconPwd       : 'lock',
+    iconVerifCode : 'fingerprint'
   };
 
-  public inputs : any = {
-    clearUsrOnLoginForm : true,
-    showPwdOnLoginForm  : true,
-    showPwdOnPwdForm    : true,
-    clearCodeOnPwdForm  : true,
-    clearCodeOnMfaForm  : true
+  public actions : any = {
+    clearUsr  : true,
+    clearCode : true,
+    showPwd   : true
   };
 
   public buttons : any = {
@@ -103,14 +102,15 @@ export class AppComponent implements OnInit, OnDestroy
       subtitleMfaSetup : 'Save this secret key for future connection'
     },
     input : {
-      username    : 'Username',
-      password    : 'Password',
-      verifCode   : 'Verification code',
-      newPassword : 'New password'
+      username         : 'Username',
+      password         : 'Password',
+      verificationCode : 'Verification code',
+      newPassword      : 'New password'
     },
     button : {
       signIn         : 'Sign in',
       signUp         : 'Sign up',
+      submit         : 'Submit',
       next           : 'Next',
       back           : 'Back',
       send           : 'Send',
@@ -267,6 +267,7 @@ export class AppComponent implements OnInit, OnDestroy
 
     this.authService.fakeForgotPassword(username).subscribe(res =>
     {
+      console.log(res.code);
       // Verification code
       if(res.code === 2)
         this.loginForm.showPwdForm(false);
@@ -317,7 +318,8 @@ export class AppComponent implements OnInit, OnDestroy
     {
       // Success
       if(res.code === 1)
-        this.loginForm.hidePwdForm();
+        this.loginForm.hidePwdForm(newPassword);
+
       // MFA required
       if(res.code === 2)
         this.loginForm.showMfaForm();
@@ -345,7 +347,7 @@ export class AppComponent implements OnInit, OnDestroy
 
     this.authService.fakeConfirmPassword(newPassword, verifCode).subscribe(res =>
     {
-      this.loginForm.hidePwdForm();
+      this.loginForm.hidePwdForm(newPassword);
       this.snackBar.open(this.translate.instant('SUCCESS_UPDATE_PWD'), 'x');
     },
     err =>
@@ -474,8 +476,9 @@ export class AppComponent implements OnInit, OnDestroy
     this.gui.policiesFolder.add(this.pwdPolicies, 'upper').name('Password uppercase').onChange((v)=>{this.upd('pwdPolicies','upper',v);});
 
     this.gui.iconsFolder = this.gui.addFolder('Icons');
-    this.gui.iconsFolder.add(this.icons, 'iconUsrOnLoginForm').name('User icon').onChange((v)=>{this.upd('icons','iconUsrOnLoginForm',v);});
-    this.gui.iconsFolder.add(this.icons, 'iconPwdOnLoginForm').name('Lock icon').onChange((v)=>{this.upd('icons','iconPwdOnLoginForm',v);});
+    this.gui.iconsFolder.add(this.icons, 'iconUsr').name('User icon').onChange((v)=>{this.upd('icons','iconUsr',v);});
+    this.gui.iconsFolder.add(this.icons, 'iconPwd').name('Password icon').onChange((v)=>{this.upd('icons','iconPwd',v);});
+    this.gui.iconsFolder.add(this.icons, 'iconVerifCode').name('Code icon').onChange((v)=>{this.upd('icons','iconVerifCode',v);});
 
     this.gui.buttonsFolder = this.gui.addFolder('Buttons');
     this.gui.buttonsFolder.add(this.buttons, 'forgotPassword').name('Forgot password').onChange((v)=>{this.upd('buttons','forgotPassword',v);});
@@ -483,12 +486,10 @@ export class AppComponent implements OnInit, OnDestroy
     this.gui.buttonsFolder.add(this.buttons, 'google').name('Sign in with Google').onChange((v)=>{this.upd('buttons','google',v);});
     this.gui.buttonsFolder.add(this.buttons, 'facebook').name('Sign in with Facebook').onChange((v)=>{this.upd('buttons','facebook',v);});
 
-    this.gui.inputsFolder = this.gui.addFolder('Inputs');
-    this.gui.inputsFolder.add(this.inputs, 'clearUsrOnLoginForm').name('Clear username').onChange((v)=>{this.upd('inputs','clearUsrOnLoginForm',v);});
-    this.gui.inputsFolder.add(this.inputs, 'showPwdOnLoginForm').name('Show password').onChange((v)=>{this.upd('inputs','showPwdOnLoginForm',v);});
-    this.gui.inputsFolder.add(this.inputs, 'showPwdOnPwdForm').name('Show password (pwd)').onChange((v)=>{this.upd('inputs','showPwdOnPwdForm',v);});
-    this.gui.inputsFolder.add(this.inputs, 'clearCodeOnPwdForm').name('Clear code (pwd)').onChange((v)=>{this.upd('inputs','clearCodeOnPwdForm',v);});
-    this.gui.inputsFolder.add(this.inputs, 'clearCodeOnMfaForm').name('Clear code (MFA)').onChange((v)=>{this.upd('inputs','clearCodeOnMfaForm',v);});
+    this.gui.actionsFolder = this.gui.addFolder('Actions');
+    this.gui.actionsFolder.add(this.actions, 'clearUsr').name('Clear username').onChange((v)=>{this.upd('actions','clearUsr',v);});
+    this.gui.actionsFolder.add(this.actions, 'clearCode').name('Clear code').onChange((v)=>{this.upd('actions','clearCode',v);});
+    this.gui.actionsFolder.add(this.actions, 'showPwd').name('Show password').onChange((v)=>{this.upd('actions','showPwd',v);});
 
     this.gui.errorsFolder = this.gui.addFolder('Errors');
     this.gui.errorsFolder.add(this.errors, 'login').name('Login form').onChange((v)=>{this.upd('errors','login',v);});
@@ -507,7 +508,7 @@ export class AppComponent implements OnInit, OnDestroy
 
     this.gui.translateFolder.add(this.labels.input, 'username').name('Username').onChange((v)=>{this.upd('labels.input','username',v);});
     this.gui.translateFolder.add(this.labels.input, 'password').name('Password').onChange((v)=>{this.upd('labels.input','password',v);});
-    this.gui.translateFolder.add(this.labels.input, 'verifCode').name('Verif code').onChange((v)=>{this.upd('labels.input','verifCode',v);});
+    this.gui.translateFolder.add(this.labels.input, 'verificationCode').name('Verif code').onChange((v)=>{this.upd('labels.input','verificationCode',v);});
     this.gui.translateFolder.add(this.labels.input, 'newPassword').name('New pwd').onChange((v)=>{this.upd('labels.input','newPassword',v);});
 
     // TODO: add other translation
@@ -580,16 +581,10 @@ export class AppComponent implements OnInit, OnDestroy
 
   public setValues(username : string, password: string) : void
   {
-    if(this.loginForm.formGroup)
-    {
-      this.loginForm.formGroup.controls.username.setValue(username);
-      this.loginForm.formGroup.controls.password.setValue(password);
-    }
-    else
-    {
-      this.loginForm.usrFormGroup.controls.username.setValue(username);
-      this.loginForm.pwdFormGroup.controls.password.setValue(password);
-    }
+    let obj : any = {};
+    obj.username = username;
+    obj.password = password;
+    this.loginForm.setForm(obj);
   }
 
   private upd(obj : any, child : string, v : any) : any

@@ -1,0 +1,93 @@
+<!-- https://gist.github.com/runspired/b9fdf1fa74fc9fb4554418dea35718fe -->
+<!-- NOTE: <form autocomplete="off"> will turn off autocomplete for the form in most browsers
+     except for username/email/password fields -->
+<form (ngSubmit)="onSubmit.emit(this.form.value)" [formGroup]="form" autocomplete="{{ params.autocomplete ? 'on' : 'off' }}">
+
+  <ng-container *ngIf="!params.autocomplete">
+    <!-- NOTE: fake fields are a workaround for chrome/opera autofill getting the wrong fields -->
+    <input id="username" style="display:none" type="text" name="fakeusernameremembered">
+    <input id="password" style="display:none" type="password" name="fakepasswordremembered">
+  </ng-container>
+
+  <!-- NOTE: Fields -->
+  <div *ngFor="let field of fields">
+    <cal-field-builder [form]="form" [field]="field" [params]="params" [properties]="properties"></cal-field-builder>
+  </div>
+
+  <!-- TODO: Enable Google Captcha -->
+  <!-- <div class="row w-100 no-gutters">
+    <div class="col">
+      <re-captcha site_key="6LdBtAkUAAAAAB2_l_TOz7oZmTLXaFjP1cxnu4yM"
+        (captchaResponse)="handleCorrectCaptcha($event)">
+      </re-captcha>
+    </div>
+  </div> -->
+
+  <!-- NOTE: Buttons -->
+  <div [ngSwitch]="params.dynamicButtons">
+
+    <!-- NOTE: (Google style) Username step buttons -->
+    <div class="row no-gutters mb-3" *ngSwitchCase="dynamicButtons.USR_STEP">
+      <!-- NOTE: Forgot password -->
+      <div class="col text-left" *ngIf="properties.buttons.forgotPassword">
+        <a (click)="onClickForgotPassword()" href="#" class="small">
+          {{ properties.labels.button.forgotPassword }}
+        </a>
+      </div>
+      <!-- NOTE: Next button -->
+      <div class="col text-right">
+        <button mat-raised-button type="submit" color="primary" [disabled]="!form.valid" class="small text-uppercase">
+          {{ properties.labels.button.next }}
+        </button>
+      </div>
+    </div>
+
+    <!-- NOTE: (Google style) Password step button -->
+    <div class="row no-gutters mb-3" *ngSwitchCase="dynamicButtons.PWD_STEP">
+      <div class="col text-right">
+        <button mat-raised-button type="submit" color="primary" [disabled]="!form.valid" class="small text-uppercase">
+          {{ properties.labels.button.next }}
+        </button>
+      </div>
+    </div>
+
+    <!-- NOTE: Login form : Buttons -->
+    <ng-container *ngSwitchCase="dynamicButtons.LOGIN">
+      <ng-container *ngIf="!( properties.formId === formIds.MFA && properties.layouts.mfa === layoutIds.INLINE )">
+        <div class="row no-gutters pb-3">
+          <div class="col text-left">
+            <!-- TODO: Remember me -->
+          </div>
+          <!-- NOTE: Forgot password -->
+          <div class="col text-right" *ngIf="properties.buttons.forgotPassword">
+            <a (click)="onClickForgotPassword()" href="#" class="small">
+              {{ properties.labels.button.forgotPassword }}
+            </a>
+          </div>
+        </div>
+        <div class="row no-gutters {{ properties.buttons.google || properties.buttons.facebook ? 'pb-3' : '' }}">
+          <div class="col text-right">
+            <!-- NOTE: Sign up -->
+            <button mat-button (click)="onClickSignUp()" type="button" color="primary" class="small text-uppercase mr-3" *ngIf="properties.buttons.signUp">
+              {{ properties.labels.button.signUp }}
+            </button>
+            <!-- NOTE: Sign in -->
+            <button mat-raised-button type="submit" color="primary" [disabled]="!form.valid" class="small text-uppercase">
+              {{ properties.labels.button.signIn }}
+            </button>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+
+    <!-- NOTE: Default -->
+    <div class="row no-gutters" *ngSwitchDefault>
+      <div class="col text-right">
+        <button mat-raised-button type="submit" color="primary" [disabled]="!form.valid" class="small text-uppercase">
+          {{ properties.labels.button.submit }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+</form>

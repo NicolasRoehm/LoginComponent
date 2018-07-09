@@ -1,4 +1,4 @@
-export enum Layouts
+export enum LayoutIds
 {
   MODAL  = 'modal',
   TAB    = 'tab',

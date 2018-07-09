@@ -52,7 +52,7 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
 @Input() googleTheme       : string  = null;
 // Display forms inside a layout : tab (by default) / modal / inline
 // The inline layout is only available for the MFA form
-@Input() customFormLayouts : any = {
+@Input() customLayouts : any = {
   pwd      : 'modal',
   mfaSetup : 'tab',
   mfa      : 'inline'
@@ -74,8 +74,9 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
 };
 // Dislay icon inside inputs on the login form
 @Input() customIcons : any = {
-  iconUsrOnLoginForm : true,
-  iconPwdOnLoginForm : true
+  iconUsr       : 'person',
+  iconPwd       : 'lock',
+  iconVerifCode : 'fingerprint'
 };
 // Display buttons with events
 @Input() customButtons : any = {
@@ -85,12 +86,10 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
   facebook       : true
 };
 // Display clear & show/hide buttons inside inputs
-@Input() customInputs : any = {
-  clearUsrOnLoginForm : true,
-  showPwdOnLoginForm  : true,
-  showPwdOnPwdForm    : true,
-  clearCodeOnPwdForm  : true,
-  clearCodeOnMfaForm  : true
+@Input() customActions : any = {
+  clearUsr  : true,
+  clearCode : true,
+  showPwd   : true
 };
 // Display error messages
 @Input() customErrors : any = {
@@ -111,14 +110,15 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
     subtitleMfaSetup : 'Save this secret key for future connection'
   },
   input : {
-    username    : 'Username',
-    password    : 'Password',
-    verifCode   : 'Verification code',
-    newPassword : 'New password'
+    username         : 'Username',
+    password         : 'Password',
+    verificationCode : 'Verification code',
+    newPassword      : 'New password'
   },
   button : {
     signIn         : 'Sign in',
     signUp         : 'Sign up',
+    submit         : 'Submit',
     next           : 'Next',
     back           : 'Back',
     send           : 'Send',
@@ -158,14 +158,14 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
 /* username : string */
 @Output() sendResetPwd : EventEmitter<any>;
 /* password : string
-*  code     : string */
+*  verificationCode : string */
 @Output() sendFirstPwd : EventEmitter<any>;
 /* username : string
 *  password : string */
 @Output() saveMfaKey   : EventEmitter<any>;
-/* code     : string */
+/* verificationCode : string */
 @Output() sendMfaCode  : EventEmitter<any>;
-/* code     : string */
+/* verificationCode : string */
 @Output() stepUsr      : EventEmitter<any>;
 /* username : string */
 @Output() stepPwd      : EventEmitter<any>;
@@ -188,7 +188,11 @@ LoginFormComponent.showPwdStep(userInfo? : string, userImage? : string) : void
 // Hide functions
 LoginFormComponent.hideMfaForm() : void
 LoginFormComponent.hideMfaSetupForm() : void
-LoginFormComponent.hidePwdForm() : void
+LoginFormComponent.hidePwdForm(updatePwdField ?: string) : void
+
+// Access functions
+LoginFormComponent.getForm() : any
+LoginFormComponent.setForm(obj : any) : void
 ```
 
 **Important Note**: This project uses the following dependencies :
@@ -210,6 +214,7 @@ LoginFormComponent.hidePwdForm() : void
 
 ### In Progress
 - Repeat password (optional)
+- Dynamic display password policies
 
 ### Planning
 - Captcha
@@ -217,7 +222,6 @@ LoginFormComponent.hidePwdForm() : void
 - Test GoogleStyle on mobile (1/3)
 - Remove Bootstrap 4 dependency
 - Dissociate forgot password from setup password
-- Create a component for each input to remove duplication
 - Forgot password : Try to get the username ? display it (optional) : ask for it inside pwd form
 - Fix Angular 6 Library assets
 - Deploy with [Travis](https://travis-ci.org/) & Test Coverage with [Coveralls](https://coveralls.io/)

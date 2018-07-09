@@ -1,30 +1,31 @@
 // Angular modules
 import { OnInit }       from '@angular/core';
 import { Component }    from '@angular/core';
-import { OnDestroy }    from '@angular/core';
 import { Input }        from '@angular/core';
 import { Output }       from '@angular/core';
 import { EventEmitter } from '@angular/core';
-import { FormControl }  from '@angular/forms';
-import { FormGroup }    from '@angular/forms';
-import { FormBuilder }  from '@angular/forms';
-import { Validators }   from '@angular/forms';
+
+// Enums
+import { FieldIds }     from '../../enums/field-ids.enum';
+import { FieldTypes }   from '../../enums/field-types.enum';
 
 @Component({
   selector    : 'cal-mfa-setup-form',
   templateUrl : './mfa-setup-form.component.html',
   styleUrls   : ['./mfa-setup-form.component.scss']
 })
-export class MfaSetupFormComponent implements OnInit, OnDestroy
+export class MfaSetupFormComponent implements OnInit
 {
-  public    formGroup      : FormGroup;
+  public    formProperties : any   = {};
+  public    mfaSetupParams : any   = {};
+  public    mfaSetupFields : any[] = [];
 
   // Labels
   @Input()  labels         : any;
   // Errors
   @Input()  errors         : any;
-  // Inputs
-  @Input()  inputs         : any;
+  // Actions
+  @Input()  actions        : any;
 
   // MFA secret key
   @Input()  qrCode         : string;
@@ -32,43 +33,65 @@ export class MfaSetupFormComponent implements OnInit, OnDestroy
   // Event sent to the login form and relayed parents (modal & tab)
   @Output() saveMfa        : EventEmitter<any> = new EventEmitter();
 
-  constructor
-  (
-    private builder : FormBuilder
-  )
-  {
-  }
+  constructor() { }
 
   public ngOnInit() : void
   {
-    this.initFormGroups();
+    // Mfa setup form
+    this.initFormProperties();
+    this.initMfaSetupParameters();
+    this.initMfaSetupForm();
   }
 
-  public ngOnDestroy() : void
+  // -------------------------------------------------------------------------------------------
+  // NOTE: Dynamic form ------------------------------------------------------------------------
+  // -------------------------------------------------------------------------------------------
+
+  public send($event) : void
   {
+    this.saveMfa.emit($event);
   }
 
-  public send() : void
+  private initFormProperties() : void
   {
-    let event : any = {};
-
-    let verifCode : string = null;
-
-    verifCode = this.formGroup.controls.verifCode.value;
-
-    event.code = verifCode;
-
-    this.saveMfa.emit(event);
+    // NOTE: Form properties
+    // this.formProperties.layouts = this.layouts;
+    this.formProperties.labels  = this.labels;
+    // this.formProperties.formId  = this.formId;
   }
 
-  private initFormGroups() : void
+  private initMfaSetupParameters() : void
   {
-    this.formGroup = this.builder.group({
-      verifCode : new FormControl({
-        value      : null,
-        disabled   : false
-      }, [ Validators.required ]),
-    });
+    // NOTE: Mfa setup parameters
+    this.mfaSetupParams.errors       = this.errors.mfa;
+    this.mfaSetupParams.autocomplete = false;
+  }
+
+  private initMfaSetupForm() : void
+  {
+    // NOTE: Get field
+    let codeField : any = null;
+    codeField = this.initVerificationCodeField();
+    // NOTE: Mfa setup field
+    this.mfaSetupFields = [];
+    this.mfaSetupFields.push(codeField);
+  }
+
+  // -------------------------------------------------------------------------------------------
+  // NOTE: Field -------------------------------------------------------------------------------
+  // -------------------------------------------------------------------------------------------
+
+  private initVerificationCodeField() : any
+  {
+    let field : any = {};
+    field.type      = FieldTypes.TEXT;
+    field.name      = FieldIds.VERIF_CODE;
+    field.id        = 'mfaSetup' + FieldIds.VERIF_CODE;
+    // field.policies  = this.pwdPolicies;
+    field.action    = this.actions.clearCode;
+    field.icon      = null;
+    field.disabled  = false;
+    return field;
   }
 
 }

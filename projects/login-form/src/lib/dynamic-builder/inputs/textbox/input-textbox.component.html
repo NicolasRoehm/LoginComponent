@@ -1,0 +1,66 @@
+<div class="row no-gutters" [formGroup]="form">
+  <div class="col">
+    <!-- NOTE: Input text -->
+    <mat-form-field class="w-100">
+      <div matPrefix class="mr-2" *ngIf="field.icon">
+        <mat-icon class="align-bottom">{{ field.icon }}</mat-icon>
+      </div>
+      <input matInput [formControlName]="field.name" [value]="field.value"
+        [id]="field.id" [name]="field.name" [autocomplete]="getOptionAutocomplete(field)" 
+        [placeholder]="properties.labels.input[field.name]" 
+        [attr.type]="showPassword || field.name !== fieldIds.PWD ? fieldTypes.TEXT : fieldTypes.PASSWORD"/>
+      <!-- NOTE: Show/Hide button -->
+      <button *ngIf="field.name === fieldIds.PWD && field.action" 
+        mat-button matSuffix mat-icon-button aria-label="Show / Hide" 
+        color="primary" (click)="showPassword=!showPassword" 
+        [disabled]="field.disabled" 
+        type="button">
+        <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+      </button>
+      <!-- NOTE: Clear button -->
+      <button *ngIf="field.name !== fieldIds.PWD && form.controls[field.name].value?.length > 0 && field.action" 
+        mat-button matSuffix mat-icon-button aria-label="Clear" 
+        color="primary" (click)="form.controls[field.name].setValue('')" 
+        [disabled]="field.disabled" 
+        type="button">
+        <mat-icon>close</mat-icon>
+      </button>
+      <!-- NOTE: Error message -->
+      <mat-hint align="start">
+        {{ getErrors(field) }}
+      </mat-hint>
+    </mat-form-field>
+  </div>
+</div>
+<!-- NOTE: Password policies -->
+<div class="row no-gutters" *ngIf="field.name === fieldIds.PWD && field.showPolicies">
+  <div class="col">
+    <ul class="list-unstyled small">
+      <li class="check-policy">
+        <mat-icon class="red-policy" *ngIf="form.controls[field.name].errors && form.controls[field.name].errors.longEnough">close</mat-icon>
+        <mat-icon class="green-policy" *ngIf="!form.controls[field.name].errors || !form.controls[field.name].errors.longEnough">check</mat-icon>
+        {{ properties.labels.policy.pwdLengthReplaced }}
+      </li>
+      <li class="check-policy" *ngIf="field.policies.upper">
+        <mat-icon class="red-policy" *ngIf="form.controls[field.name].errors && form.controls[field.name].errors.upper">close</mat-icon>
+        <mat-icon class="green-policy" *ngIf="!form.controls[field.name].errors || !form.controls[field.name].errors.upper">check</mat-icon>
+        {{ properties.labels.policy.pwdUppercase }}
+      </li>
+      <li class="check-policy" *ngIf="field.policies.lower">
+        <mat-icon class="red-policy" *ngIf="form.controls[field.name].errors && form.controls[field.name].errors.lower">close</mat-icon>
+        <mat-icon class="green-policy" *ngIf="!form.controls[field.name].errors || !form.controls[field.name].errors.lower">check</mat-icon>
+        {{ properties.labels.policy.pwdLowercase }}
+      </li>
+      <li class="check-policy" *ngIf="field.policies.number">
+        <mat-icon class="red-policy" *ngIf="form.controls[field.name].errors && form.controls[field.name].errors.number">close</mat-icon>
+        <mat-icon class="green-policy" *ngIf="!form.controls[field.name].errors || !form.controls[field.name].errors.number">check</mat-icon>
+        {{ properties.labels.policy.pwdNumber }}
+      </li>
+      <li class="check-policy" *ngIf="field.policies.char">
+        <mat-icon class="red-policy" *ngIf="form.controls[field.name].errors && form.controls[field.name].errors.char">close</mat-icon>
+        <mat-icon class="green-policy" *ngIf="!form.controls[field.name].errors || !form.controls[field.name].errors.char">check</mat-icon>
+        {{ properties.labels.policy.pwdSpecial }}
+      </li>
+    </ul>
+  </div>
+</div>
