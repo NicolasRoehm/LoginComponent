@@ -11,7 +11,7 @@ import { MAT_DIALOG_DATA } from '@angular/material';
 import { Subscription }    from 'rxjs/Subscription';
 
 // Enum
-import { Forms }           from '../../enums/forms.enum';
+import { FormIds }         from '../../enums/form-ids.enum';
 
 @Component({
   selector    : 'cal-modal-wrapper',
@@ -21,29 +21,27 @@ import { Forms }           from '../../enums/forms.enum';
 export class ModalWrapperComponent implements OnInit, OnDestroy
 {
   // NOTE: Useful for template
-  public forms = Forms;
+  public formIds = FormIds;
 
   // NOTE: Common
   // Form type (password / mfa)
-  public formType        : string;
+  public formId    : string;
   // Labels
   public labels    : any;
   // Errors
   public errors    : any;
-  // Inputs
-  public inputs    : any;
+  // Actions
+  public actions   : any;
   // Event sent from modal
-  public closeSub        : Subscription;
+  public closeSub  : Subscription;
 
   // NOTE: Password
-  // Username
-  public username      : string;
   // First connection or Forgot password
   public isFirst       : boolean;
   // Password policies
   public pwdPolicies   : any;
   // Event sent from password form
-  public relayFirstLog : EventEmitter<any> = new EventEmitter();
+  public relayFirstPwd : EventEmitter<any> = new EventEmitter();
   public relayLostPwd  : EventEmitter<any> = new EventEmitter();
 
   // NOTE: MFA setup
@@ -76,9 +74,9 @@ export class ModalWrapperComponent implements OnInit, OnDestroy
       this.closeSub.unsubscribe();
   }
 
-  public relayFirstLogEvent($event : any) : void
+  public relayFirstPwdEvent($event : any) : void
   {
-    this.relayFirstLog.emit($event);
+    this.relayFirstPwd.emit($event);
   }
 
   public relayLostPwdEvent($event : any) : void
@@ -103,19 +101,17 @@ export class ModalWrapperComponent implements OnInit, OnDestroy
 
     if(data !== null)
     {
-      this.formType       = data.formType;
+      this.formId         = data.formId;
 
       // NOTE: Common
       // Labels
       this.labels         = data.labels;
-      // Labels
+      // Errors
       this.errors         = data.errors;
-      // Labels
-      this.inputs         = data.inputs;
+      // Actions
+      this.actions        = data.actions;
 
       // NOTE: Password
-      // Username
-      this.username       = data.username;
       // First connection or Forgot password
       this.isFirst        = data.isFirst;
       // Password policies

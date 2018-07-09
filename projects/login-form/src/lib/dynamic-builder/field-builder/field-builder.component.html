@@ -1,0 +1,8 @@
+<div class="row no-gutters" [formGroup]="form">
+  <div class="col" [ngSwitch]="true">
+    <cal-input-textbox *ngSwitchCase="field.type === fieldTypes.TEXT || field.type === fieldTypes.PASSWORD" [form]="form" [field]="field" [params]="params" [properties]="properties"></cal-input-textbox>
+    <!-- <cal-input-checkbox *ngSwitchCase="field.type === fieldTypes.CHECKBOX" [form]="form" [field]="field" [params]="params" [properties]="properties"></cal-input-checkbox>
+    <cal-input-radio *ngSwitchCase="field.type === fieldTypes.RADIO" [form]="form" [field]="field" [params]="params" [properties]="properties"></cal-input-radio>
+    <cal-input-dropdown *ngSwitchCase="field.type === fieldTypes.DROPDOWN" [form]="form" [field]="field" [params]="params" [properties]="properties"></cal-input-dropdown> -->
+  </div>
+</div>

@@ -1,7 +1,7 @@
 <div class="header py-2 px-4">
   <div class="row align-items-center">
     <div class="col">
-      <div *ngIf="!isFirst && formType === forms.PWD">
+      <div *ngIf="!isFirst && formId === formIds.PWD">
         <span class="h5 font-weight-light {{ labels.header.subtitlePwd ? 'd-block mb-0' : '' }}">
           {{ labels.header.titlePwd }}
         </span>
@@ -9,7 +9,7 @@
           {{ labels.header.subtitlePwd }}
         </span>
       </div>
-      <div *ngIf="isFirst && formType === forms.PWD">
+      <div *ngIf="isFirst && formId === formIds.PWD">
         <span class="h5 font-weight-light {{ labels.header.subtitlePwdSetup ? 'd-block mb-0' : '' }}">
           {{ labels.header.titlePwdSetup }}
         </span>
@@ -17,7 +17,7 @@
           {{ labels.header.subtitlePwdSetup }}
         </span>
       </div>
-      <div *ngIf="formType === forms.MFA">
+      <div *ngIf="formId === formIds.MFA">
         <span class="h5 font-weight-light {{ labels.header.subtitleMfa ? 'd-block mb-0' : '' }}">
           {{ labels.header.titleMfa }}
         </span>
@@ -25,7 +25,7 @@
           {{ labels.header.subtitleMfa }}
         </span>
       </div>
-      <div *ngIf="formType === forms.MFA_SETUP">
+      <div *ngIf="formId === formIds.MFA_SETUP">
         <span class="h5 font-weight-light {{ labels.header.subtitleMfaSetup ? 'd-block mb-0' : '' }}">
           {{ labels.header.titleMfaSetup }}
         </span>
@@ -43,29 +43,28 @@
 </div>
 <mat-dialog-content class="py-4">
   <!-- NOTE: Pwd Form -->
-  <cal-pwd-form *ngIf="formType === forms.PWD" 
-    [username]="username" 
+  <cal-pwd-form *ngIf="formId === formIds.PWD" 
     [isFirst]="isFirst" 
     [pwdPolicies]="pwdPolicies" 
     [labels]="labels" 
-    [inputs]="inputs" 
+    [actions]="actions" 
     [errors]="errors" 
-    (firstConnection)="relayFirstLogEvent($event)" 
+    (firstConnection)="relayFirstPwdEvent($event)" 
     (lostPassword)="relayLostPwdEvent($event)">
   </cal-pwd-form>
   <!-- NOTE: MFA Setup Form -->
-  <cal-mfa-setup-form *ngIf="formType === forms.MFA_SETUP" 
+  <cal-mfa-setup-form *ngIf="formId === formIds.MFA_SETUP" 
     [qrCode]="qrCode" 
     [code]  ="code" 
     [labels]="labels" 
-    [inputs]="inputs" 
+    [actions]="actions" 
     [errors]="errors" 
     (saveMfa)="relaySaveMfaKeyEvent($event)">
   </cal-mfa-setup-form>
   <!-- NOTE: MFA Form -->
-  <cal-mfa-form *ngIf="formType === forms.MFA" 
+  <cal-mfa-form *ngIf="formId === formIds.MFA" 
     [labels]="labels" 
-    [inputs]="inputs" 
+    [actions]="actions" 
     [errors]="errors" 
     (sendMfa)="relaySendMfaCodeEvent($event)">
   </cal-mfa-form>

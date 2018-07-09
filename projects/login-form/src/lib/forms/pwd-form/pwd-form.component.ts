@@ -1,140 +1,127 @@
 // Angular modules
-import { OnInit }        from '@angular/core';
-import { OnChanges }     from '@angular/core';
-import { SimpleChanges } from '@angular/core';
-import { Component }     from '@angular/core';
-import { OnDestroy }     from '@angular/core';
-import { Input }         from '@angular/core';
-import { Output }        from '@angular/core';
-import { EventEmitter }  from '@angular/core';
-import { FormControl }   from '@angular/forms';
-import { FormGroup }     from '@angular/forms';
-import { FormBuilder }   from '@angular/forms';
-import { Validators }    from '@angular/forms';
+import { OnInit }         from '@angular/core';
+import { Component }      from '@angular/core';
+import { Input }          from '@angular/core';
+import { Output }         from '@angular/core';
+import { EventEmitter }   from '@angular/core';
 
-// Internal modules
-import { PwdValidator }  from '../../validators/pwd.validator';
+// Enums
+import { FieldIds }       from '../../enums/field-ids.enum';
+import { FieldTypes }     from '../../enums/field-types.enum';
 
 @Component({
   selector    : 'cal-pwd-form',
   templateUrl : './pwd-form.component.html',
   styleUrls   : ['./pwd-form.component.scss']
 })
-export class PwdFormComponent implements OnInit, OnChanges, OnDestroy
+export class PwdFormComponent implements OnInit
 {
-  public    formGroup    : FormGroup;
-  public    showPassword : boolean = false;
+  public    formProperties  : any   = {};
+  public    pwdParams       : any   = {};
+  public    pwdFields       : any[] = [];
   // public captchaToken : string; // TODO:
 
   // Labels
-  @Input()  labels       : any;
+  @Input()  labels          : any;
   // Errors
-  @Input()  errors       : any;
-  // Inputs
-  @Input()  inputs       : any;
+  @Input()  errors          : any;
+  // Actions
+  @Input()  actions         : any;
 
-  // Username
-  @Input()  username     : string;
   // First connection or Forgot password
-  @Input()  isFirst      : boolean;
+  @Input()  isFirst         : boolean;
   // Password policies
-  @Input()  pwdPolicies  : any;
+  @Input()  pwdPolicies     : any;
   // Event sent to the login form and relayed parents (modal & tab)
   @Output() firstConnection : EventEmitter<any> = new EventEmitter();
   @Output() lostPassword    : EventEmitter<any> = new EventEmitter();
 
-  constructor
-  (
-    private builder : FormBuilder
-  )
-  {
-  }
+  constructor() { }
 
   public ngOnInit() : void
   {
-    this.initFormGroups();
+    // Pwd form
+    this.initFormProperties();
+    this.initPwdParameters();
+    this.initPwdForm();
   }
 
-  public ngOnChanges(changes : SimpleChanges) : void
+  // -------------------------------------------------------------------------------------------
+  // NOTE: Dynamic form ------------------------------------------------------------------------
+  // -------------------------------------------------------------------------------------------
+
+  public send($event) : void
   {
-    if(changes.pwdPolicies)
-      this.initFormGroups(true);
-  }
-
-  public ngOnDestroy() : void
-  {
-  }
-
-  public send() : void
-  {
-    let event : any = {};
-
-    let verifCode   : string = null;
-    let newPassword : string = null;
-
-    verifCode       = this.formGroup.controls.verifCode.value;
-    newPassword     = this.formGroup.controls.newPassword.value;
-
-    event.password = newPassword;
-
     // First connection
     if(this.isFirst)
     {
-      event.username = this.username;
-      this.firstConnection.emit(event);
+      this.firstConnection.emit($event);
       return;
     }
-
-    event.code = verifCode;
-    // Lost password
-    this.lostPassword.emit(event);
+    this.lostPassword.emit($event);
   }
 
-  private initFormGroups(refresh : boolean = false) : void
+  private initFormProperties() : void
   {
-    let verifCode   : string = null;
-    let newPassword : string = null;
+    // NOTE: Form properties
+    // this.formProperties.layouts = this.layouts;
+    this.formProperties.labels  = this.labels;
+    // this.formProperties.formId  = this.formId;
+  }
 
-    if(refresh && this.formGroup)
-    {
-      verifCode   = this.formGroup.controls.verifCode.value;
-      newPassword = this.formGroup.controls.newPassword.value;
-    }
+  private initPwdParameters() : void
+  {
+    // NOTE: Pwd parameters
+    this.pwdParams.errors       = this.errors.pwd;
+    this.pwdParams.autocomplete = false;
+  }
 
-    let validators : any = [];
-
-    if(this.pwdPolicies.char)
-      validators.push(PwdValidator.char);
-    if(this.pwdPolicies.number)
-      validators.push(PwdValidator.number);
-    if(this.pwdPolicies.upper)
-      validators.push(PwdValidator.upper);
-    if(this.pwdPolicies.lower)
-      validators.push(PwdValidator.lower);
-
-    validators.push(Validators.required);
-    validators.push(PwdValidator.longEnough(this.pwdPolicies.range.min, this.pwdPolicies.range.max));
-
-    // Refresh min max label
-    let rangeLabel : string = null;
-    rangeLabel = this.labels.policy.pwdLength;
-    rangeLabel = rangeLabel.replace(/{{min}}/, this.pwdPolicies.range.min);
-    rangeLabel = rangeLabel.replace(/{{max}}/, this.pwdPolicies.range.max);
-    this.labels.policy.pwdLengthReplaced = rangeLabel;
-
-    this.formGroup = this.builder.group({
-      verifCode    : new FormControl({
-        value      : verifCode,
-        disabled   : false
-      }),
-      newPassword  : new FormControl({
-        value      : newPassword,
-        disabled   : false
-      }, validators),
-    });
-
+  private initPwdForm() : void
+  {
+    // NOTE: Get fields
+    let pwdField  : any = null;
+    let codeField : any = null;
+    pwdField  = this.initPasswordField();
+    codeField = this.initVerificationCodeField();
+    // NOTE: Mfa fields
+    this.pwdFields = [];
     if(!this.isFirst)
-      this.formGroup.controls.verifCode.setValidators([Validators.required]);
+      this.pwdFields.push(codeField);
+    this.pwdFields.push(pwdField);
+  }
+
+  // -------------------------------------------------------------------------------------------
+  // NOTE: Field -------------------------------------------------------------------------------
+  // -------------------------------------------------------------------------------------------
+
+  private initPasswordField() : any
+  {
+    let field : any = {};
+    field.type      = FieldTypes.PASSWORD;
+    field.name      = FieldIds.PWD;
+    field.id        = 'new' + FieldIds.PWD;
+    field.policies  = this.pwdPolicies;
+    field.action    = this.actions.showPwd;
+    field.icon      = null;
+    if(this.isFirst) // display pwd policies
+      field.showPolicies = true;
+    else
+      field.showPolicies = false;
+    field.disabled  = false;
+    return field;
+  }
+
+  private initVerificationCodeField() : any
+  {
+    let field : any = {};
+    field.type      = FieldTypes.TEXT;
+    field.name      = FieldIds.VERIF_CODE;
+    field.id        = 'pwd' + FieldIds.VERIF_CODE;
+    // field.policies  = this.pwdPolicies;
+    field.action    = this.actions.clearCode;
+    field.icon      = null;
+    field.disabled  = false;
+    return field;
   }
 
 }

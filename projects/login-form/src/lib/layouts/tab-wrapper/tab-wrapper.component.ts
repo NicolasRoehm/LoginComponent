@@ -7,7 +7,7 @@ import { Output }       from '@angular/core';
 import { EventEmitter } from '@angular/core';
 
 // Enum
-import { Forms }        from '../../enums/forms.enum';
+import { FormIds }      from '../../enums/form-ids.enum';
 
 @Component({
   selector    : 'cal-tab-wrapper',
@@ -17,29 +17,27 @@ import { Forms }        from '../../enums/forms.enum';
 export class TabWrapperComponent implements OnInit, OnDestroy
 {
   // NOTE: Useful for template
-  public    forms = Forms;
+  public    formIds = FormIds;
 
   // NOTE: Common
   // Form type (password / mfa)
-  @Input()  formType      : string;
+  @Input()  formId        : string;
   // Labels
   @Input()  labels        : any;
   // Errors
   @Input()  errors        : any;
-  // Inputs
-  @Input()  inputs        : any;
+  // Actions
+  @Input()  actions       : any;
   // Event sent from tab
   @Output() sendCloseTab  : EventEmitter<boolean> = new EventEmitter();
 
   // NOTE: Password
-  // Username
-  @Input()  username      : string;
   // First connection or Forgot password
   @Input()  isFirst       : boolean;
   // Password policies
   @Input()  pwdPolicies   : any;
   // Event sent from password form
-  @Output() relayFirstLog : EventEmitter<any> = new EventEmitter();
+  @Output() relayFirstPwd : EventEmitter<any> = new EventEmitter();
   @Output() relayLostPwd  : EventEmitter<any> = new EventEmitter();
 
   // NOTE: MFA setup
@@ -72,9 +70,9 @@ export class TabWrapperComponent implements OnInit, OnDestroy
     this.sendCloseTab.emit();
   }
 
-  public relayFirstLogEvent($event : any) : void
+  public relayFirstPwdEvent($event : any) : void
   {
-    this.relayFirstLog.emit($event);
+    this.relayFirstPwd.emit($event);
   }
 
   public relayLostPwdEvent($event : any) : void

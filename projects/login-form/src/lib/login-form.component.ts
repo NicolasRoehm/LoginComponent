@@ -2,6 +2,7 @@
 import { OnInit }          from '@angular/core';
 import { AfterViewInit }   from '@angular/core';
 import { OnChanges }       from '@angular/core';
+import { ViewChild }       from '@angular/core';
 import { SimpleChanges }   from '@angular/core';
 import { OnDestroy }       from '@angular/core';
 import { Input }           from '@angular/core';
@@ -11,25 +12,22 @@ import { EventEmitter }    from '@angular/core';
 import { MatDialog }       from '@angular/material';
 import { MatIconRegistry } from '@angular/material';
 import { DomSanitizer }    from '@angular/platform-browser';
-import { FormControl }     from '@angular/forms';
-import { FormGroup }       from '@angular/forms';
-import { FormBuilder }     from '@angular/forms';
-import { Validators }      from '@angular/forms';
 
 // External modules
 import { Subscription }    from 'rxjs/Subscription';
 
-// Internal modules
-import { UsrValidator }    from './validators/usr.validator';
-
 // Enums
-import { Layouts }         from './enums/layouts.enum';
+import { LayoutIds }       from './enums/layout-ids.enum';
+import { FormIds }         from './enums/form-ids.enum';
+import { FieldIds }        from './enums/field-ids.enum';
+import { FieldTypes }      from './enums/field-types.enum';
 import { Themes }          from './enums/themes.enum';
-import { Forms }           from './enums/forms.enum';
 import { UserPolicies }    from './enums/user-policies.enum';
+import { DynamicButtons }  from './enums/dynamic-buttons.enum';
 
 // Components
-import { ModalWrapperComponent } from './layouts/modal-wrapper/modal-wrapper.component';
+import { ModalWrapperComponent }   from './layouts/modal-wrapper/modal-wrapper.component';
+import { DynamicBuilderComponent } from './dynamic-builder/dynamic-builder.component';
 
 @Component({
   selector    : 'cal-login-form',
@@ -38,27 +36,26 @@ import { ModalWrapperComponent } from './layouts/modal-wrapper/modal-wrapper.com
 })
 export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy
 {
-  public    formLayouts    : any;
+  public    layouts        : any;
   public    theme          : string;
 
-  public    usrPolicy      : string;
   public    pwdPolicies    : any;
 
   public    icons          : any;
   public    buttons        : any;
-  public    inputs         : any;
+  public    actions        : any;
   public    errors         : any;
   public    labels         : any;
 
   // Display login form inside a container
-  @Input()  fixedWidth        : boolean = false;
+  @Input()  fixedWidth    : boolean = false;
   // Display login form like Google & Microsoft (step by step)
-  @Input()  googleStyle       : boolean = false;
+  @Input()  googleStyle   : boolean = false;
   // Display Google button with the supplied theme : light / dark
-  @Input()  googleTheme       : string  = null;
+  @Input()  googleTheme   : string  = null;
   // Display forms inside a layout : tab (by default) / modal / inline
   // The inline layout is only available for the MFA form
-  @Input()  customFormLayouts : any;
+  @Input()  customLayouts : any;
 
   // Optional policy applied on the username input : email / phone / regex
   // Be careful, you must double all the backslashes used in the supplied regex
@@ -73,7 +70,7 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
   @Input()  customButtons : any;
 
   // Display clear & show/hide buttons inside inputs
-  @Input()  customInputs  : any;
+  @Input()  customActions : any;
 
   // Display error messages
   @Input()  customErrors  : any;
@@ -104,12 +101,24 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
   // Event object containing username and password property
   @Output() stepPwd       : EventEmitter<any> = new EventEmitter();
 
-  // NOTE: Form
-  public    formGroup     : FormGroup;
-  public    showPassword  : boolean = false;
-  public    formType      : string;
-  public    userPolicies = UserPolicies;
-  public    forms = Forms;
+  // NOTE: Forms
+  public    formId         : string  = null;
+  public    formProperties : any     = {};
+
+  @ViewChild('defaultLoginForm') defaultLoginForm : DynamicBuilderComponent;
+  public    loginParams    : any     = {};
+  public    loginFields    : any[]   = [];
+
+  @ViewChild('usrForm')   usrForm   : DynamicBuilderComponent;
+  public    usrParams      : any     = {};
+  public    usrFields      : any[]   = [];
+
+  @ViewChild('pwdForm')   pwdForm   : DynamicBuilderComponent;
+  public    pwdParams      : any     = {};
+  public    pwdFields      : any[]   = [];
+
+  public    mfaParams      : any     = {};
+  public    mfaFields      : any[]   = [];
 
   // NOTE: Password
   public    username      : string  = null;
@@ -120,16 +129,19 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
   public    qrCode        : string  = null;
 
   // NOTE: Steps
-  public    usrFormGroup  : FormGroup;
-  public    pwdFormGroup  : FormGroup;
   public    userInfo      : string  = null;
   public    userImage     : string  = null;
 
   // NOTE: Wrapper
-  public    layouts = Layouts;
   public    selectedTab     : number = 0;
   public    closeModalEvent : EventEmitter<boolean> = new EventEmitter();
 
+  // NOTE: Enums
+  public    userPolicies = UserPolicies;
+  public    formIds      = FormIds;
+  public    layoutIds    = LayoutIds;
+
+  // NOTE: Modal events
   private   modalFirstSub       : Subscription;
   private   modalLostSub        : Subscription;
   private   modalSaveMfaKeySub  : Subscription;
@@ -142,8 +154,7 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
   (
     public  dialog       : MatDialog,
     public  sanitizer    : DomSanitizer,
-    public  iconRegistry : MatIconRegistry,
-    private builder      : FormBuilder
+    public  iconRegistry : MatIconRegistry
   )
   {
     // Social icons
@@ -154,18 +165,25 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
 
   public ngOnInit() : void
   {
-    // Login form
-    this.initFormGroups();
     // Style (container, step, theme & layout)
-    this.initFormLayouts();
+    this.initLayouts();
     this.initTheme();
 
     this.initPolicies();
     this.initIcons();
     this.initButtons();
-    this.initInputs();
+    this.initActions();
     this.initErrors();
     this.initLabels();
+
+    // Login form
+    this.initFormProperties();
+    this.initLoginParameters();
+    this.initLoginForm();
+
+    // Mfa form
+    this.initMfaParameters();
+    this.initMfaForm();
   }
 
   public ngAfterViewInit() : void
@@ -175,10 +193,12 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
 
   public ngOnChanges(changes : SimpleChanges) : void
   {
-    if(changes.googleStyle)
-      this.initFormGroups();
-    if(changes.customFormLayouts)
-      this.initFormLayouts();
+    if(changes.customLayouts)
+    {
+      this.initLayouts();
+      this.initFormProperties();
+    }
+
     if(changes.googleTheme)
       this.initTheme();
 
@@ -188,12 +208,26 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
       this.initIcons();
     if(changes.customButtons)
       this.initButtons();
-    if(changes.customInputs)
-      this.initInputs();
+    if(changes.customActions)
+      this.initActions();
     if(changes.customErrors)
+    {
       this.initErrors();
+      this.initLoginParameters();
+      this.initMfaParameters();
+    }
+
     if(changes.customLabels)
+    {
       this.initLabels();
+      this.initFormProperties();
+    }
+
+    if(changes.googleStyle)
+    {
+      this.initLoginParameters();
+      this.initLoginForm();
+    }
   }
 
   public ngOnDestroy() : void
@@ -220,11 +254,9 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
   * var username : string = $event.username;
   * var password : string = $event.password;
   */
-  public onClickLogin() : void
+  public onClickLogin($event) : void
   {
-    let event : any = {};
-    event = this.getEventResponse();
-    this.login.emit(event);
+    this.login.emit($event);
   }
 
   /** Emit `$event` object containing username, password and social properties.
@@ -240,6 +272,7 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
     let event : any = {};
     event = this.getEventResponse();
     event.social = social;
+    // this.normalizeEvent(event);
     this.loginSocial.emit(event);
   }
 
@@ -257,7 +290,7 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
   public onClickForgotPassword() : void
   {
     let event : any = {};
-    event = this.getEventResponse('usr');
+    event = this.getEventResponse(FieldIds.USR);
     this.forgotPwd.emit(event);
   }
 
@@ -269,13 +302,10 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
   */
   public showPwdForm(isFirst : boolean) : void
   {
-    this.isFirst  = isFirst;
-    this.formType = Forms.PWD;
-    if(!this.googleStyle)
-      this.username = this.formGroup.controls.username.value;
-    else
-      this.username = this.usrFormGroup.controls.username.value;
-    this.showLayout(this.formLayouts.pwd);
+    this.isFirst = isFirst;
+    this.formId  = FormIds.PWD;
+    this.initFormProperties(); // NOTE: Refresh formId
+    this.showLayout(this.layouts.pwd);
   }
 
   /** Show MFA setup form to initialize first TOTP (Time-based One-time Password).
@@ -285,35 +315,41 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
   */
   public showMfaSetupForm(code : string, qrCode : string) : void
   {
-    this.code     = code;
-    this.qrCode   = qrCode;
-    this.formType = Forms.MFA_SETUP;
-    this.showLayout(this.formLayouts.mfaSetup);
+    this.code   = code;
+    this.qrCode = qrCode;
+    this.formId = FormIds.MFA_SETUP;
+    this.initFormProperties(); // NOTE: Refresh formId
+    this.showLayout(this.layouts.mfaSetup);
   }
 
   /** Show MFA form to get verification code. */
   public showMfaForm() : void
   {
-    this.formType = Forms.MFA;
-    this.showLayout(this.formLayouts.mfa);
+    this.formId = FormIds.MFA;
+    this.initFormProperties(); // NOTE: Refresh formId
+    this.showLayout(this.layouts.mfa);
   }
 
   /** Hide password form. */
-  public hidePwdForm() : void
+  public hidePwdForm(updatePwdField ?: string) : void
   {
-    this.closeLayout(this.formLayouts.password);
+    let obj : any = {};
+    obj.password = updatePwdField;
+    if(updatePwdField)
+      this.setForm(obj);
+    this.closeLayout(this.layouts.pwd);
   }
 
   /** Hide MFA setup form. */
   public hideMfaSetupForm() : void
   {
-    this.closeLayout(this.formLayouts.mfaSetup);
+    this.closeLayout(this.layouts.mfaSetup);
   }
 
   /** Hide MFA form. */
   public hideMfaForm() : void
   {
-    this.closeLayout(this.formLayouts.mfa);
+    this.closeLayout(this.layouts.mfa);
   }
 
   /** Show password input (for google-style form). */
@@ -326,11 +362,40 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
     this.selectedTab = 2;
   }
 
+  /** Content management */
+
+  public getForm() : any
+  {
+    return this.getEventResponse();
+  }
+
+  public setForm(obj : any) : void
+  {
+    let usrField : any = {};
+    let pwdField : any = {};
+
+    if(!this.googleStyle)
+    {
+      usrField = this.loginFields.find((field) => { return field.name === FieldIds.USR; });
+      pwdField = this.loginFields.find((field) => { return field.name === FieldIds.PWD; });
+    }
+    else
+    {
+      usrField = this.usrFields.find((field) => { return field.name === FieldIds.USR; });
+      pwdField = this.pwdFields.find((field) => { return field.name === FieldIds.PWD; });
+    }
+
+    if(obj.username)
+      usrField.value = obj.username;
+    if(obj.password)
+      pwdField.value = obj.password;
+  }
+
   // -------------------------------------------------------------------------------------------
   // NOTE: Steps events ------------------------------------------------------------------------
   // -------------------------------------------------------------------------------------------
 
-  public onClickNextStep(currentStep : number) : void
+  public onClickNextStep(currentStep : number, $event ?: any) : void
   {
     switch(currentStep)
     {
@@ -338,14 +403,12 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
         this.selectedTab = 1;
         break;
       case 1 : // Username
-        let eventUsr : any = null;
-        eventUsr = this.getEventResponse('usr');
-        this.stepUsr.emit(eventUsr);
+        this.stepUsr.emit($event);
         break;
       case 2 : // Password
-        let eventPwd : any = null;
-        eventPwd = this.getEventResponse();
-        this.stepPwd.emit(eventPwd);
+        let pwdEvent : any = null;
+        pwdEvent = this.getEventResponse();
+        this.stepPwd.emit(pwdEvent);
         break;
       default:
         break;
@@ -379,19 +442,28 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
   * var username    : string = $event.username;
   * var newPassword : string = $event.password;
   */
-  public tabFirstLog($event : any) : void
+  public tabFirstPwd($event : any) : void
   {
+    // Add username
+    let usrEvent : any = {};
+    usrEvent = this.getEventResponse(FieldIds.USR);
+    $event.username = usrEvent.username;
     this.sendFirstPwd.emit($event);
   }
 
   /** Emit `$event` object containing password and code properties.
   *
   * @example
+  * var username         : string = $event.username;
   * var newPassword      : string = $event.password;
   * var verificationCode : string = $event.code;
   */
   public tabLostPwd($event : any) : void
   {
+    // Add username
+    let usrEvent : any = {};
+    usrEvent = this.getEventResponse(FieldIds.USR);
+    $event.username = usrEvent.username;
     this.sendResetPwd.emit($event);
   }
 
@@ -422,12 +494,17 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
   /** Emit `$event` object containing password property.
   *
   * @example
+  * var username    : string = $event.username;
   * var newPassword : string = $event.password;
   */
-  public modalFirstLog(dialogRef : any) : void
+  public modalFirstPwd(dialogRef : any) : void
   {
-    this.modalFirstSub = dialogRef.componentInstance.relayFirstLog.subscribe((event) =>
+    this.modalFirstSub = dialogRef.componentInstance.relayFirstPwd.subscribe((event) =>
     {
+      let usrEvent : any = {};
+      usrEvent = this.getEventResponse(FieldIds.USR);
+      event.username = usrEvent.username;
+      // this.normalizeEvent(event);
       this.sendFirstPwd.emit(event);
     });
   }
@@ -435,6 +512,7 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
   /** Emit `$event` object containing password and code properties.
   *
   * @example
+  * var username         : string = $event.username;
   * var newPassword      : string = $event.password;
   * var verificationCode : string = $event.code;
   */
@@ -442,6 +520,10 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
   {
     this.modalLostSub = dialogRef.componentInstance.relayLostPwd.subscribe((event) =>
     {
+      let usrEvent : any = {};
+      usrEvent = this.getEventResponse(FieldIds.USR);
+      event.username = usrEvent.username;
+      // this.normalizeEvent(event);
       this.sendResetPwd.emit(event);
     });
   }
@@ -489,39 +571,43 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
   {
     let params : any = {
       // Common
-      formType              : this.formType,
-      labels                : this.labels,
-      closeEvent            : this.closeModalEvent,
-      errors                : this.errors,
-      inputs                : this.inputs,
+      formId      : this.formId,
+      labels      : this.labels,
+      closeEvent  : this.closeModalEvent,
+      errors      : this.errors,
+      actions     : this.actions,
       // Password form
-      username              : this.username,
-      isFirst               : this.isFirst,
-      pwdPolicies           : this.pwdPolicies,
+      isFirst     : this.isFirst,
+      pwdPolicies : this.pwdPolicies,
       // Mfa form
-      code                  : this.code,
-      qrCode                : this.qrCode
+      code        : this.code,
+      qrCode      : this.qrCode
     };
 
     let dialogRef = this.dialog.open(ModalWrapperComponent, { data : params });
 
-    if(this.formType === Forms.PWD)
+    if(this.formId === FormIds.PWD)
     {
-      this.modalFirstLog(dialogRef);
+      this.modalFirstPwd(dialogRef);
       this.modalLostPwd(dialogRef);
     }
 
-    if(this.formType === Forms.MFA_SETUP)
+    if(this.formId === FormIds.MFA_SETUP)
       this.modalSaveMfaKey(dialogRef);
 
-    if(this.formType === Forms.MFA)
+    if(this.formId === FormIds.MFA)
       this.modalSendMfaCode(dialogRef);
 
     dialogRef.afterClosed().subscribe(result =>
     {
-      this.formType = null;
+      this.formId = null;
+      this.initFormProperties(); // NOTE: Refresh formId
       if(result)
-        this.formGroup.controls.password.setValue(result); // Set password
+      {
+        let pwdField : any = {};
+        pwdField           = this.loginFields.find((field) => { return field.name === FieldIds.PWD; });
+        pwdField.value     = result; // Set password
+      }
     });
   }
 
@@ -533,15 +619,16 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
   {
     switch(formLayout)
     {
-      case Layouts.TAB    :
+      case LayoutIds.TAB    :
         this.openTab();
         break;
-      case Layouts.MODAL  :
+      case LayoutIds.MODAL  :
         this.openModal();
         break;
-      case Layouts.INLINE :
-        this.formGroup.controls.username.disable();
-        this.formGroup.controls.password.disable();
+      case LayoutIds.INLINE :
+        for(let field of this.loginFields)
+          field.disabled = true;
+        this.loginFields = Object.assign([], this.loginFields);
         break;
       default :
         this.openTab();
@@ -549,21 +636,23 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
     }
   }
 
-  private closeLayout(formLayout : string) : void
+  private closeLayout(layoutId : string) : void
   {
-    this.formType = null;
+    this.formId = null;
+    this.initFormProperties(); // NOTE: Refresh formId
 
-    switch(formLayout)
+    switch(layoutId)
     {
-      case Layouts.TAB    :
+      case LayoutIds.TAB    :
         this.closeTab();
         break;
-      case Layouts.MODAL  :
+      case LayoutIds.MODAL  :
         this.closeModal();
         break;
-      case Layouts.INLINE :
-        this.formGroup.controls.username.enable();
-        this.formGroup.controls.password.enable();
+      case LayoutIds.INLINE :
+        for(let field of this.loginFields)
+          field.disabled = false;
+        this.loginFields = Object.assign([], this.loginFields);
         break;
       default :
         this.closeTab();
@@ -591,30 +680,36 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
 
   private getEventResponse(onlyOne : string = null) : any
   {
-    let event    : any    = {};
-    let username : string = null;
-    let password : string = null;
+    let event      : any = {};
+    let usrValue   : any = {};
+    let pwdValue   : any = {};
 
-    if(this.googleStyle)
+    if(!this.googleStyle)
     {
-      username = this.usrFormGroup.controls.username.value;
-      password = this.pwdFormGroup.controls.password.value;
+      let loginFormValues : any = {};
+      loginFormValues = this.defaultLoginForm.form.value;
+      usrValue        = loginFormValues.username;
+      pwdValue        = loginFormValues.password;
     }
     else
     {
-      username = this.formGroup.controls.username.value;
-      password = this.formGroup.controls.password.value;
+      let usrFormValue : any = {};
+      let pwdFormValue : any = {};
+      usrFormValue = this.usrForm.form.value;
+      pwdFormValue = this.pwdForm.form.value;
+      usrValue     = usrFormValue.username;
+      pwdValue     = pwdFormValue.password;
     }
 
     if(!onlyOne)
     {
-      event.username = username;
-      event.password = password;
+      event.username = usrValue;
+      event.password = pwdValue;
     }
-    if(onlyOne && onlyOne === 'usr')
-      event.username = username;
-    if(onlyOne && onlyOne === 'pwd')
-      event.password = password;
+    if(onlyOne && onlyOne === FieldIds.USR)
+      event.username = usrValue;
+    if(onlyOne && onlyOne === FieldIds.PWD)
+      event.password = pwdValue;
 
     return event;
   }
@@ -623,29 +718,29 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
   // NOTE: Init --------------------------------------------------------------------------------
   // -------------------------------------------------------------------------------------------
 
-  private initFormLayouts() : void
+  private initLayouts() : void
   {
-    let defaultFormLayouts : any = null;
-    let formLayouts        : any = null;
+    let defaultLayouts : any = null;
+    let layouts        : any = null;
 
     // Form layouts
-    defaultFormLayouts = {
-      pwd      : Layouts.TAB,
-      mfaSetup : Layouts.TAB,
-      mfa      : Layouts.TAB,
+    defaultLayouts = {
+      pwd      : LayoutIds.TAB,
+      mfaSetup : LayoutIds.TAB,
+      mfa      : LayoutIds.TAB,
     };
 
-    formLayouts = Object.assign(defaultFormLayouts, this.customFormLayouts);
+    layouts = Object.assign(defaultLayouts, this.customLayouts);
 
     // Corrections
-    if(formLayouts.pwd === Layouts.INLINE)
-      formLayouts.pwd = Layouts.TAB;
-    if(formLayouts.mfaSetup === Layouts.INLINE)
-      formLayouts.mfaSetup = Layouts.TAB;
-    if(this.googleStyle && formLayouts.mfa === Layouts.INLINE)
-      formLayouts.mfa = Layouts.TAB;
+    if(layouts.pwd === LayoutIds.INLINE)
+      layouts.pwd = LayoutIds.TAB;
+    if(layouts.mfaSetup === LayoutIds.INLINE)
+      layouts.mfaSetup = LayoutIds.TAB;
+    if(this.googleStyle && layouts.mfa === LayoutIds.INLINE)
+      layouts.mfa = LayoutIds.TAB;
 
-    this.formLayouts = formLayouts;
+    this.layouts = layouts;
   }
 
   private initTheme() : void
@@ -676,8 +771,9 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
 
     // Icons
     defaultIcons = {
-      iconUsrOnLoginForm : true,
-      iconPwdOnLoginForm : true,
+      iconUsr       : 'person',
+      iconPwd       : 'lock',
+      iconVerifCode : 'fingerprint'
     };
 
     icons = Object.assign(defaultIcons, this.customIcons);
@@ -701,22 +797,20 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
     this.buttons = buttons;
   }
 
-  private initInputs() : void
+  private initActions() : void
   {
-    let defaultInputs : any = null;
-    let inputs        : any = null;
+    let defaultActions : any = null;
+    let actions        : any = null;
 
-    // Inputs
-    defaultInputs = {
-      clearUsrOnLoginForm : true,
-      showPwdOnLoginForm  : true,
-      showPwdOnPwdForm    : true,
-      clearCodeOnPwdForm  : true,
-      clearCodeOnMfaForm  : true
+    // Actions
+    defaultActions = {
+      clearUsr  : true,
+      clearCode : true,
+      showPwd   : true
     };
 
-    inputs = Object.assign(defaultInputs, this.customInputs);
-    this.inputs = inputs;
+    actions = Object.assign(defaultActions, this.customActions);
+    this.actions = actions;
   }
 
   private initErrors() : void
@@ -764,33 +858,6 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
     }
 
     this.pwdPolicies = pwdPolicies;
-
-    // NOTE: Username
-    if(!this.customUsrPolicy)
-      return;
-
-    let validators : any = [];
-
-    switch(this.customUsrPolicy)
-    {
-      case UserPolicies.EMAIL :
-        validators.push(UsrValidator.email);
-        break;
-      case UserPolicies.PHONE :
-        validators.push(UsrValidator.phone);
-        break;
-      default :
-        let regExp : RegExp = null;
-        regExp = new RegExp(this.customUsrPolicy);
-        validators.push(UsrValidator.custom(regExp));
-        break;
-    }
-
-    validators.push(Validators.required);
-    if(this.googleStyle)
-      this.usrFormGroup.controls.username.setValidators(validators);
-    else
-      this.formGroup.controls.username.setValidators(validators);
   }
 
   private initLabels() : void
@@ -809,14 +876,15 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
       subtitleMfaSetup : 'Save this secret key for future connection'
     };
     defaultLabels.input = {
-      username    : 'Username',
-      password    : 'Password',
-      verifCode   : 'Verification code',
-      newPassword : 'New password'
+      username         : 'Username',
+      password         : 'Password',
+      verificationCode : 'Verification code',
+      newPassword      : 'New password'
     };
     defaultLabels.button = {
       signIn         : 'Sign in',
       signUp         : 'Sign up',
+      submit         : 'Submit',
       next           : 'Next',
       back           : 'Back',
       send           : 'Send',
@@ -844,36 +912,122 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
     this.labels = labels;
   }
 
-  private initFormGroups() : void
+  // -------------------------------------------------------------------------------------------
+  // NOTE: Dynamic forms -----------------------------------------------------------------------
+  // -------------------------------------------------------------------------------------------
+
+  private initFormProperties() : void
   {
+    // NOTE: Form properties
+    this.formProperties.layouts = this.layouts;
+    this.formProperties.buttons = this.buttons;
+    this.formProperties.labels  = this.labels;
+    this.formProperties.formId  = this.formId;
+  }
+
+  private initMfaParameters() : void
+  {
+    // NOTE: Mfa parameters
+    this.mfaParams.errors       = this.errors.mfa;
+    this.mfaParams.autocomplete = false;
+  }
+
+  private initMfaForm() : void
+  {
+    // NOTE: Get field
+    let verificationCodeField : any = null;
+    verificationCodeField = this.initVerificationCodeField();
+
+    this.mfaFields = [];
+    this.mfaFields.push(verificationCodeField);
+  }
+
+  private initLoginParameters() : void
+  {
+    let params : any    = {};
+    params.errors       = this.errors.login;
+    params.autocomplete = true;
+
+    // NOTE: Login parameters
     if(!this.googleStyle)
     {
-      this.formGroup = this.builder.group({
-        username     : new FormControl({
-          value      : null,
-          disabled   : false
-        },[Validators.required]),
-        password     : new FormControl({
-          value      : null,
-          disabled   : false
-        },[Validators.required]),
-      });
+      this.loginParams = params;
+      this.loginParams.dynamicButtons = DynamicButtons.LOGIN;
       return;
     }
 
-    this.usrFormGroup = this.builder.group({
-      username     : new FormControl({
-        value      : null,
-        disabled   : false
-      },[Validators.required])
-    });
+    this.usrParams = params;
+    this.usrParams.dynamicButtons = DynamicButtons.USR_STEP;
 
-    this.pwdFormGroup = this.builder.group({
-      password     : new FormControl({
-        value      : null,
-        disabled   : false
-      },[Validators.required])
-    });
+    this.pwdParams = params;
+    this.pwdParams.dynamicButtons = DynamicButtons.PWD_STEP;
+  }
+
+  private initLoginForm() : void
+  {
+    // NOTE: Get fields
+    let usernameField : any = null;
+    let passwordField : any = null;
+    usernameField = this.initUsernameField();
+    passwordField = this.initPasswordField();
+
+    if(!this.googleStyle)
+    {
+      // NOTE: Login fields
+      this.loginFields = [];
+      this.loginFields.push(usernameField);
+      this.loginFields.push(passwordField);
+      return;
+    }
+
+    this.usrFields = [];
+    this.usrFields.push(usernameField);
+
+    this.pwdFields = [];
+    this.pwdFields.push(passwordField);
+  }
+
+  // -------------------------------------------------------------------------------------------
+  // NOTE: Fields ------------------------------------------------------------------------------
+  // -------------------------------------------------------------------------------------------
+
+  private initUsernameField() : any
+  {
+    let field : any = {};
+    field.type      = FieldTypes.TEXT;
+    field.name      = FieldIds.USR;
+    field.id        = FieldIds.USR;
+    field.policies  = this.customUsrPolicy;
+    field.action    = this.actions.clearUsr;
+    field.icon      = this.icons.iconUsr;
+    field.disabled  = false;
+    return field;
+  }
+
+  private initPasswordField() : any
+  {
+    let field : any = {};
+    field.type      = FieldTypes.PASSWORD;
+    field.name      = FieldIds.PWD;
+    field.id        = FieldIds.PWD;
+    field.policies  = this.pwdPolicies;
+    field.action    = this.actions.showPwd;
+    field.icon      = this.icons.iconPwd;
+    field.disabled  = false;
+    return field;
+  }
+
+  private initVerificationCodeField() : any
+  {
+    let field : any = {};
+    field.type      = FieldTypes.TEXT;
+    field.name      = FieldIds.VERIF_CODE;
+    field.id        = FieldIds.VERIF_CODE;
+    // field.policies  = this.pwdPolicies;
+    field.action    = this.actions.clearCode;
+    field.icon      = this.icons.iconVerifCode;
+    field.disabled  = false;
+    return field;
   }
 
 }
