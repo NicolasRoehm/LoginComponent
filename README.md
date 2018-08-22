@@ -81,6 +81,8 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
   lower  : true,
   upper  : true
 };
+// Remove password field controls on the login form (except required)
+@Input() hidePwdPolicyOnLogin : boolean = false;
 // Dislay icon inside inputs on the login form
 @Input() customIcons : any = {
   iconUsr       : 'person',

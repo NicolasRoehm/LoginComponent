@@ -159,6 +159,10 @@ export class DynamicBuilderComponent implements OnInit, OnChanges
   {
     let validators : ValidatorFn[] = [];
     validators.push(Validators.required);
+
+    if(!pwdPolicies)
+      return validators;
+
     validators.push(FieldValidator.longEnough(pwdPolicies.range.min, pwdPolicies.range.max));
 
     if(pwdPolicies.char)

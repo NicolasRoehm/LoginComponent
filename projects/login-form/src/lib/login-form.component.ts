@@ -62,6 +62,8 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
   @Input()  customUsrPolicy   : string = null;
   // Policies applied on the password input
   @Input()  customPwdPolicies : any;
+  // Remove password field controls on the login form (except required)
+  @Input()  hidePwdPolicyOnLogin : boolean = false;
 
   // Dislay icon inside inputs on the login form
   @Input()  customIcons   : any;
@@ -904,7 +906,7 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
       pwdUppercase  : 'Require at least one uppercase letter (A to Z)',
       pwdLowercase  : 'Require at least one lowercase letter (a to z)',
       pwdNumber     : 'Require at least one number (0 to 9)',
-      pwdSpecial    : 'Require at least one nonalphanumeric character ! @ # $ % ^ & * ( ) _ + - = [ ] { } | \''
+      pwdSpecial    : 'Require at least one nonalphanumeric character ^ $ * . [ ] { } ( ) ? - " ! @ # % & / \\ , > < \' : ; | _ ~ `'
     };
 
     labels = Object.assign(defaultLabels, this.customLabels);
@@ -1010,7 +1012,10 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
     field.type      = FieldTypes.PASSWORD;
     field.name      = FieldIds.PWD;
     field.id        = FieldIds.PWD;
-    field.policies  = this.pwdPolicies;
+    if(!this.hidePwdPolicyOnLogin)
+      field.policies  = this.pwdPolicies;
+    else
+      field.policies  = null;
     field.action    = this.actions.showPwd;
     field.icon      = this.icons.iconPwd;
     field.disabled  = false;

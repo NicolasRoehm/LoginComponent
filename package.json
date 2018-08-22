@@ -1,7 +1,7 @@
 {
   "name": "login-form-app",
   "description": "JavaScript library that provides a login component for Angular",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "author": "Nicolas Roehm <nicolas.roehm@gmail.com>",
   "license": "MIT",
   "private": false,

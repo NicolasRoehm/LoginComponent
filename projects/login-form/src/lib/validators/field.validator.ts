@@ -77,7 +77,7 @@ export class FieldValidator
 
   public static char(control : FormControl) : ValidationResult
   {
-    let hasChar = control.value !== null && /[!@#$%^&\*()_+\-=\[\]{}|']/.test(control.value);
+    let hasChar = control.value !== null && /[!@#$%^&\*()_><\.~\[\]{}|'\\:;?\-"\/,\`]/.test(control.value);
     if(!hasChar)
       return { char : true };
 
