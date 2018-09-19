@@ -60,9 +60,9 @@
           </div>
           <!-- NOTE: Forgot password -->
           <div class="col text-right" *ngIf="properties.buttons.forgotPassword">
-            <a (click)="onClickForgotPassword()" href="#" class="small">
+            <button mat-button (click)="onClickForgotPassword()" type="button" class="small">
               {{ properties.labels.button.forgotPassword }}
-            </a>
+            </button>
           </div>
         </div>
         <div class="row no-gutters {{ properties.buttons.google || properties.buttons.facebook ? 'pb-3' : '' }}">
