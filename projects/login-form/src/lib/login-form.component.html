@@ -32,7 +32,7 @@
           <div class="col text-center">
             <!-- NOTE: Google -->
             <div class="d-block mb-3" *ngIf="buttons.google">
-              <button mat-raised-button type="button" class="mat-raised-button cal-btn google {{ theme }}" (click)="onClickLoginSocial('google')">
+              <button mat-flat-button type="button" class="mat-raised-button cal-btn google {{ theme }}" (click)="onClickLoginSocial('google')">
                 <span class="cal-bg-icon">
                   <span class="cal-temp-icon"></span>
                   <!-- <mat-icon class="align-middle cal-icon" svgIcon="google"></mat-icon> -->
@@ -42,7 +42,7 @@
             </div>
             <!-- NOTE: Facebook -->
             <div class="d-block mb-3" *ngIf="buttons.facebook">
-              <button mat-raised-button type="button" class="cal-btn facebook" (click)="onClickLoginSocial('facebook')">
+              <button mat-flat-button type="button" class="cal-btn facebook" (click)="onClickLoginSocial('facebook')">
                 <span class="cal-bg-icon">
                   <span class="cal-temp-icon"></span>
                   <!-- <mat-icon class="align-middle cal-icon" svgIcon="facebook"></mat-icon> -->
@@ -62,7 +62,7 @@
               [params]="mfaParams" 
               [properties]="formProperties" 
               (onSubmit)="tabSendMfaCode($event)">
-          </cal-dynamic-builder>
+            </cal-dynamic-builder>
           </div>
         </div>
       </ng-container>
@@ -81,7 +81,7 @@
         [fields]="usrFields" 
         [params]="usrParams" 
         [properties]="formProperties" 
-        (onSubmit)="onClickNextStep(1, $event)"
+        (onSubmit)="onClickNextStep(1, $event)" 
         (forgotPwd)="onClickForgotPassword()">
       </cal-dynamic-builder>
     </mat-tab>
@@ -97,7 +97,7 @@
       <!-- TODO: User info -->
       <p>{{ userInfo }}</p>
       <!-- NOTE: (Google style) Password step -->
-      <cal-dynamic-builder #pwdForm
+      <cal-dynamic-builder #pwdForm 
         [fields]="pwdFields" 
         [params]="pwdParams" 
         [properties]="formProperties" 

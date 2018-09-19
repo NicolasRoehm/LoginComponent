@@ -30,9 +30,9 @@
     <div class="row no-gutters mb-3" *ngSwitchCase="dynamicButtons.USR_STEP">
       <!-- NOTE: Forgot password -->
       <div class="col text-left" *ngIf="properties.buttons.forgotPassword">
-        <a (click)="onClickForgotPassword()" href="#" class="small">
+        <button mat-button (click)="onClickForgotPassword()" type="button" class="small">
           {{ properties.labels.button.forgotPassword }}
-        </a>
+        </button>
       </div>
       <!-- NOTE: Next button -->
       <div class="col text-right">
