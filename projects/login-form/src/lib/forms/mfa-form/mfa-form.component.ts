@@ -26,6 +26,8 @@ export class MfaFormComponent implements OnInit
   @Input()  errors       : any;
   // Actions
   @Input()  actions      : any;
+  // Classes
+  @Input()  classes      : any;
 
   // Event sent to the login form and relayed parents (modal & tab)
   @Output() sendMfa      : EventEmitter<any> = new EventEmitter();
@@ -54,6 +56,7 @@ export class MfaFormComponent implements OnInit
     // NOTE: Form properties
     // this.formProperties.layouts = this.layouts;
     this.formProperties.labels  = this.labels;
+    this.formProperties.classes = this.classes;
     // this.formProperties.formId  = this.formId;
   }
 
@@ -86,6 +89,7 @@ export class MfaFormComponent implements OnInit
     field.id        = 'mfa' + FieldIds.VERIF_CODE;
     // field.policies  = this.pwdPolicies;
     field.action    = this.actions.clearCode;
+    field.color     = this.classes.mfaInputsColor;
     field.icon      = null;
     field.disabled  = false;
     return field;

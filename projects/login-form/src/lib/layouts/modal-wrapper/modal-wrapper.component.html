@@ -35,7 +35,8 @@
       </div>
     </div>
     <div class="col-2 px-0 text-right">
-      <button mat-icon-button mat-dialog-close>
+      <button mat-button mat-dialog-close
+        [ngClass]="classes.closeDialog ? classes.closeDialog : 'mat-icon-button mat-primary'">
         <mat-icon>close</mat-icon>
       </button>
     </div>
@@ -49,6 +50,7 @@
     [labels]="labels" 
     [actions]="actions" 
     [errors]="errors" 
+    [classes]="classes" 
     (firstConnection)="relayFirstPwdEvent($event)" 
     (lostPassword)="relayLostPwdEvent($event)">
   </cal-pwd-form>
@@ -59,6 +61,7 @@
     [labels]="labels" 
     [actions]="actions" 
     [errors]="errors" 
+    [classes]="classes" 
     (saveMfa)="relaySaveMfaKeyEvent($event)">
   </cal-mfa-setup-form>
   <!-- NOTE: MFA Form -->
@@ -66,6 +69,7 @@
     [labels]="labels" 
     [actions]="actions" 
     [errors]="errors" 
+    [classes]="classes" 
     (sendMfa)="relaySendMfaCodeEvent($event)">
   </cal-mfa-form>
 </mat-dialog-content>

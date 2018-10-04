@@ -14,7 +14,7 @@ import { MatIconRegistry } from '@angular/material';
 import { DomSanitizer }    from '@angular/platform-browser';
 
 // External modules
-import { Subscription }    from 'rxjs/Subscription';
+import { Subscription }    from 'rxjs';
 
 // Enums
 import { LayoutIds }       from './enums/layout-ids.enum';
@@ -41,11 +41,12 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
 
   public    pwdPolicies    : any;
 
-  public    icons          : any;
-  public    buttons        : any;
-  public    actions        : any;
-  public    errors         : any;
-  public    labels         : any;
+  public    icons          : any = {};
+  public    buttons        : any = {};
+  public    actions        : any = {};
+  public    errors         : any = {};
+  public    labels         : any = {};
+  public    classes        : any = {};
 
   // Display login form inside a container
   @Input()  fixedWidth    : boolean = false;
@@ -79,6 +80,9 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
 
   // Labels
   @Input()  customLabels  : any;
+
+  // Classes
+  @Input()  customClasses : any;
 
   // Event triggered after creating the login form (AfterViewInit)
   @Output() initialized   : EventEmitter<any> = new EventEmitter();
@@ -177,6 +181,7 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
     this.initActions();
     this.initErrors();
     this.initLabels();
+    this.initClasses();
 
     // Login form
     this.initFormProperties();
@@ -212,6 +217,8 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
       this.initButtons();
     if(changes.customActions)
       this.initActions();
+    if(changes.customClasses)
+      this.initClasses();
     if(changes.customErrors)
     {
       this.initErrors();
@@ -578,6 +585,7 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
       closeEvent  : this.closeModalEvent,
       errors      : this.errors,
       actions     : this.actions,
+      classes     : this.classes,
       // Password form
       isFirst     : this.isFirst,
       pwdPolicies : this.pwdPolicies,
@@ -914,6 +922,34 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
     this.labels = labels;
   }
 
+  private initClasses() : void
+  {
+    let defaultClasses : any = {};
+    let classes        : any = {};
+
+    // Colors
+    defaultClasses = {
+      // Input colors
+      loginInputsColor : 'primary',
+      pwdInputsColor   : 'primary',
+      mfaInputsColor   : 'primary',
+      // Button classes
+      signIn           : null,
+      signUp           : null,
+      forgotPassword   : null,
+      backStep         : null,
+      nextStep         : null,
+      google           : null,
+      facebook         : null,
+      closeTag         : null,
+      closeDialog      : null
+    };
+
+    classes = Object.assign(defaultClasses, this.customClasses);
+
+    this.classes = classes;
+  }
+
   // -------------------------------------------------------------------------------------------
   // NOTE: Dynamic forms -----------------------------------------------------------------------
   // -------------------------------------------------------------------------------------------
@@ -925,6 +961,7 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
     this.formProperties.buttons = this.buttons;
     this.formProperties.labels  = this.labels;
     this.formProperties.formId  = this.formId;
+    this.formProperties.classes = this.classes;
   }
 
   private initMfaParameters() : void
@@ -938,7 +975,8 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
   {
     // NOTE: Get field
     let verificationCodeField : any = null;
-    verificationCodeField = this.initVerificationCodeField();
+    verificationCodeField       = this.initVerificationCodeField();
+    verificationCodeField.color = this.classes.mfaInputsColor;
 
     this.mfaFields = [];
     this.mfaFields.push(verificationCodeField);
@@ -970,8 +1008,8 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
     // NOTE: Get fields
     let usernameField : any = null;
     let passwordField : any = null;
-    usernameField = this.initUsernameField();
-    passwordField = this.initPasswordField();
+    usernameField       = this.initUsernameField();
+    passwordField       = this.initPasswordField();
 
     if(!this.googleStyle)
     {
@@ -1002,6 +1040,7 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
     field.policies  = this.customUsrPolicy;
     field.action    = this.actions.clearUsr;
     field.icon      = this.icons.iconUsr;
+    field.color     = this.classes.loginInputsColor;
     field.disabled  = false;
     return field;
   }
@@ -1018,6 +1057,7 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
       field.policies  = null;
     field.action    = this.actions.showPwd;
     field.icon      = this.icons.iconPwd;
+    field.color     = this.classes.loginInputsColor;
     field.disabled  = false;
     return field;
   }

@@ -8,7 +8,7 @@ import { MatDialogRef }    from '@angular/material';
 import { MAT_DIALOG_DATA } from '@angular/material';
 
 // External modules
-import { Subscription }    from 'rxjs/Subscription';
+import { Subscription }    from 'rxjs';
 
 // Enum
 import { FormIds }         from '../../enums/form-ids.enum';
@@ -32,6 +32,8 @@ export class ModalWrapperComponent implements OnInit, OnDestroy
   public errors    : any;
   // Actions
   public actions   : any;
+  // Classes
+  public classes   : any;
   // Event sent from modal
   public closeSub  : Subscription;
 
@@ -110,6 +112,8 @@ export class ModalWrapperComponent implements OnInit, OnDestroy
       this.errors         = data.errors;
       // Actions
       this.actions        = data.actions;
+      // Classes
+      this.classes        = data.classes;
 
       // NOTE: Password
       // First connection or Forgot password

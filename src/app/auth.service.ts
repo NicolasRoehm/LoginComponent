@@ -1,21 +1,15 @@
 // Angular modules
-import { Injectable } from '@angular/core';
+import { Injectable }  from '@angular/core';
 
 // External modules
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/throw';
-import 'rxjs/add/observable/of';
-import 'rxjs/add/operator/do';
-import 'rxjs/add/operator/delay';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/observable/fromPromise';
+import { Observable }  from 'rxjs';
+import { from }        from 'rxjs';
 
 // Enums
 import { Credentials } from './credentials.enum';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn : 'root'
 })
 export class AuthService
 {
@@ -24,7 +18,7 @@ export class AuthService
     if(!response)
       response = this.getResponseByCredentials(username, password);
 
-    return Observable.fromPromise(new Promise((resolve, reject) =>
+    return from(new Promise((resolve, reject) =>
     {
       switch(response)
       {
@@ -55,7 +49,7 @@ export class AuthService
     if(!response)
       response = 'inputVerificationCode';
 
-    return Observable.fromPromise(new Promise((resolve, reject) =>
+    return from(new Promise((resolve, reject) =>
     {
       switch(response)
       {
@@ -78,7 +72,7 @@ export class AuthService
     if(!response)
       response = 'onSuccess';
 
-    return Observable.fromPromise(new Promise((resolve, reject) =>
+    return from(new Promise((resolve, reject) =>
     {
       switch(response)
       {
@@ -101,7 +95,7 @@ export class AuthService
     if(!response)
       response = 'onSuccess';
 
-    return Observable.fromPromise(new Promise((resolve, reject) =>
+    return from(new Promise((resolve, reject) =>
     {
       switch(response)
       {

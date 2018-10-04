@@ -152,6 +152,23 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
     pwdSpecial    : 'Require at least one nonalphanumeric character ! @ # $ % ^ & * ( ) _ + - = [ ] { } | \''
   }
 };
+// Classes
+@Input() customClasses : any = {
+  // Input colors (primary / accent / warn)
+  loginInputsColor : 'primary',
+  pwdInputsColor   : 'primary',
+  mfaInputsColor   : 'primary',
+  // Button classes (Example : mat-raised-button mat-accent)
+  signIn           : null,
+  signUp           : null,
+  forgotPassword   : null,
+  backStep         : null,
+  nextStep         : null,
+  google           : null,
+  facebook         : null,
+  closeTag         : null,
+  closeDialog      : null
+};
 ```
 
 #### Outputs

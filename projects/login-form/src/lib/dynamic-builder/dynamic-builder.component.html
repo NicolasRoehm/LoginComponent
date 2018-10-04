@@ -30,13 +30,13 @@
     <div class="row no-gutters mb-3" *ngSwitchCase="dynamicButtons.USR_STEP">
       <!-- NOTE: Forgot password -->
       <div class="col text-left" *ngIf="properties.buttons.forgotPassword">
-        <button mat-button (click)="onClickForgotPassword()" type="button" class="small">
+        <button mat-button (click)="onClickForgotPassword()" type="button" [ngClass]="properties.classes.forgotPassword ? properties.classes.forgotPassword : 'small'">
           {{ properties.labels.button.forgotPassword }}
         </button>
       </div>
       <!-- NOTE: Next button -->
       <div class="col text-right">
-        <button mat-raised-button type="submit" color="primary" [disabled]="!form.valid" class="small text-uppercase">
+        <button mat-button type="submit" [disabled]="!form.valid" [ngClass]="properties.classes.nextStep ? properties.classes.nextStep : 'mat-raised-button mat-primary small text-uppercase'">
           {{ properties.labels.button.next }}
         </button>
       </div>
@@ -45,7 +45,7 @@
     <!-- NOTE: (Google style) Password step button -->
     <div class="row no-gutters mb-3" *ngSwitchCase="dynamicButtons.PWD_STEP">
       <div class="col text-right">
-        <button mat-raised-button type="submit" color="primary" [disabled]="!form.valid" class="small text-uppercase">
+        <button mat-button type="submit" [disabled]="!form.valid" [ngClass]="properties.classes.nextStep ? properties.classes.nextStep : 'mat-raised-button mat-primary small text-uppercase'">
           {{ properties.labels.button.next }}
         </button>
       </div>
@@ -55,12 +55,12 @@
     <ng-container *ngSwitchCase="dynamicButtons.LOGIN">
       <ng-container *ngIf="!( properties.formId === formIds.MFA && properties.layouts.mfa === layoutIds.INLINE )">
         <div class="row no-gutters pb-3">
-          <div class="col text-left">
-            <!-- TODO: Remember me -->
-          </div>
+          <!-- TODO: Remember me -->
+          <!-- <div class="col text-left">
+          </div> -->
           <!-- NOTE: Forgot password -->
           <div class="col text-right" *ngIf="properties.buttons.forgotPassword">
-            <button mat-button (click)="onClickForgotPassword()" type="button" class="small">
+            <button mat-button (click)="onClickForgotPassword()" type="button" [ngClass]="properties.classes.forgotPassword ? properties.classes.forgotPassword : 'small'">
               {{ properties.labels.button.forgotPassword }}
             </button>
           </div>
@@ -68,11 +68,11 @@
         <div class="row no-gutters {{ properties.buttons.google || properties.buttons.facebook ? 'pb-3' : '' }}">
           <div class="col text-right">
             <!-- NOTE: Sign up -->
-            <button mat-button (click)="onClickSignUp()" type="button" color="primary" class="small text-uppercase mr-3" *ngIf="properties.buttons.signUp">
+            <button mat-button type="button" (click)="onClickSignUp()" [ngClass]="properties.classes.signUp ? properties.classes.signUp : 'mat-primary small text-uppercase mr-3'" *ngIf="properties.buttons.signUp">
               {{ properties.labels.button.signUp }}
             </button>
             <!-- NOTE: Sign in -->
-            <button mat-raised-button type="submit" color="primary" [disabled]="!form.valid" class="small text-uppercase">
+            <button mat-button type="submit" [disabled]="!form.valid" [ngClass]="properties.classes.signIn ? properties.classes.signIn : 'mat-raised-button mat-primary small text-uppercase'">
               {{ properties.labels.button.signIn }}
             </button>
           </div>
@@ -83,7 +83,7 @@
     <!-- NOTE: Default -->
     <div class="row no-gutters" *ngSwitchDefault>
       <div class="col text-right">
-        <button mat-raised-button type="submit" color="primary" [disabled]="!form.valid" class="small text-uppercase">
+        <button mat-button type="submit" [disabled]="!form.valid" [ngClass]="properties.classes.signIn ? properties.classes.signIn : 'mat-raised-button mat-primary small text-uppercase'">
           {{ properties.labels.button.submit }}
         </button>
       </div>
