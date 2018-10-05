@@ -3,7 +3,7 @@
     <!-- NOTE: Input text -->
     <mat-form-field class="w-100" [color]="field.color">
       <div matPrefix class="mr-2" *ngIf="field.icon">
-        <mat-icon class="align-bottom">{{ field.icon }}</mat-icon>
+        <mat-icon class="align-bottom" [color]="field.color">{{ field.icon }}</mat-icon>
       </div>
       <input matInput [formControlName]="field.name" [value]="field.value" 
         [id]="field.id" [name]="field.name" [autocomplete]="getOptionAutocomplete(field)" 
