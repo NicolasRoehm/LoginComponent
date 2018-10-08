@@ -28,6 +28,8 @@ export class TabWrapperComponent implements OnInit, OnDestroy
   @Input()  errors        : any;
   // Actions
   @Input()  actions       : any;
+  // Classes
+  @Input()  classes       : any;
   // Event sent from tab
   @Output() sendCloseTab  : EventEmitter<boolean> = new EventEmitter();
 

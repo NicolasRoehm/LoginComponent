@@ -15,13 +15,15 @@
       <div class="row no-gutters mb-3" *ngIf="googleStyle">
         <div class="col text-right" *ngIf="buttons.signUp">
           <!-- NOTE: Sign up -->
-          <button mat-button (click)="onClickSignUp()" type="button" color="primary" class="small text-uppercase mr-2">
+          <button mat-button (click)="onClickSignUp()" type="button" 
+            [ngClass]="classes.signUp ? classes.signUp : 'mat-primary small text-uppercase mr-2'">
             {{ labels.button.signUp }}
           </button>
         </div>
-        <div class="col {{ buttons.signUp ? 'text-left' : 'text-center'}}">
+        <div class="col {{ buttons.signUp ? 'text-left' : 'text-center' }}">
           <!-- NOTE: Sign in -->
-          <button mat-raised-button (click)="onClickNextStep(0)" type="button" color="primary" class="small text-uppercase ml-2">
+          <button mat-button (click)="onClickNextStep(0)" type="button" 
+            [ngClass]="classes.signIn ? classes.signIn : 'mat-raised-button mat-primary small text-uppercase ml-2'">
             {{ labels.button.signIn }}
           </button>
         </div>
@@ -32,7 +34,8 @@
           <div class="col text-center">
             <!-- NOTE: Google -->
             <div class="d-block mb-3" *ngIf="buttons.google">
-              <button mat-raised-button type="button" class="mat-raised-button cal-btn google {{ theme }}" (click)="onClickLoginSocial('google')">
+              <button mat-button type="button" (click)="onClickLoginSocial('google')" 
+                class="cal-btn google {{ theme }} {{ classes.google ? classes.google : 'mat-raised-button' }}">
                 <span class="cal-bg-icon">
                   <span class="cal-temp-icon"></span>
                   <!-- <mat-icon class="align-middle cal-icon" svgIcon="google"></mat-icon> -->
@@ -42,7 +45,8 @@
             </div>
             <!-- NOTE: Facebook -->
             <div class="d-block mb-3" *ngIf="buttons.facebook">
-              <button mat-raised-button type="button" class="cal-btn facebook" (click)="onClickLoginSocial('facebook')">
+              <button mat-button type="button" (click)="onClickLoginSocial('facebook')" 
+                class="cal-btn facebook {{ classes.facebook ? classes.facebook : 'mat-raised-button' }}">
                 <span class="cal-bg-icon">
                   <span class="cal-temp-icon"></span>
                   <!-- <mat-icon class="align-middle cal-icon" svgIcon="facebook"></mat-icon> -->
@@ -62,7 +66,7 @@
               [params]="mfaParams" 
               [properties]="formProperties" 
               (onSubmit)="tabSendMfaCode($event)">
-          </cal-dynamic-builder>
+            </cal-dynamic-builder>
           </div>
         </div>
       </ng-container>
@@ -71,9 +75,10 @@
       <!-- NOTE: Back button -->
       <div class="row no-gutters mb-3">
         <div class="col">
-          <a href="#" (click)="onClickPrevStep(1)" title="{{ labels.button.back }}">
-            <mat-icon class="align-bottom mr-2">keyboard_arrow_left</mat-icon>{{ labels.button.back }}
-          </a>
+          <button mat-button type="button" [ngClass]="classes.backStep ? classes.backStep : ''" (click)="onClickPrevStep(1)" title="{{ labels.button.back }}">
+            <mat-icon class="align-middle mr-2">keyboard_arrow_left</mat-icon>
+            <span class="align-middle">{{ labels.button.back }}</span>
+          </button>
         </div>
       </div>
       <!-- NOTE: (Google style) Username step -->
@@ -81,7 +86,7 @@
         [fields]="usrFields" 
         [params]="usrParams" 
         [properties]="formProperties" 
-        (onSubmit)="onClickNextStep(1, $event)"
+        (onSubmit)="onClickNextStep(1, $event)" 
         (forgotPwd)="onClickForgotPassword()">
       </cal-dynamic-builder>
     </mat-tab>
@@ -89,15 +94,16 @@
       <!-- NOTE: Back button -->
       <div class="row no-gutters mb-3">
         <div class="col">
-          <a href="#" (click)="onClickPrevStep(2)" title="{{ labels.button.back }}">
-            <mat-icon class="align-bottom mr-2">keyboard_arrow_left</mat-icon>{{ labels.button.back }}
-          </a>
+          <button mat-button type="button" [ngClass]="classes.backStep ? classes.backStep : ''" (click)="onClickPrevStep(2)" title="{{ labels.button.back }}">
+            <mat-icon class="align-middle mr-2">keyboard_arrow_left</mat-icon>
+            <span class="align-middle">{{ labels.button.back }}</span>
+          </button>
         </div>
       </div>
       <!-- TODO: User info -->
       <p>{{ userInfo }}</p>
       <!-- NOTE: (Google style) Password step -->
-      <cal-dynamic-builder #pwdForm
+      <cal-dynamic-builder #pwdForm 
         [fields]="pwdFields" 
         [params]="pwdParams" 
         [properties]="formProperties" 
@@ -115,6 +121,7 @@
         [errors]="errors" 
         [labels]="labels" 
         [actions]="actions" 
+        [classes]="classes" 
         (sendCloseTab)="onClickCloseTab($event)" 
         (relayFirstPwd)="tabFirstPwd($event)" 
         (relayLostPwd)="tabLostPwd($event)" 

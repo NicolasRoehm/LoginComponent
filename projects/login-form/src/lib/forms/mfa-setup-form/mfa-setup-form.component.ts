@@ -26,6 +26,8 @@ export class MfaSetupFormComponent implements OnInit
   @Input()  errors         : any;
   // Actions
   @Input()  actions        : any;
+  // Classes
+  @Input()  classes        : any;
 
   // MFA secret key
   @Input()  qrCode         : string;
@@ -57,6 +59,7 @@ export class MfaSetupFormComponent implements OnInit
     // NOTE: Form properties
     // this.formProperties.layouts = this.layouts;
     this.formProperties.labels  = this.labels;
+    this.formProperties.classes = this.classes;
     // this.formProperties.formId  = this.formId;
   }
 
@@ -72,6 +75,7 @@ export class MfaSetupFormComponent implements OnInit
     // NOTE: Get field
     let codeField : any = null;
     codeField = this.initVerificationCodeField();
+
     // NOTE: Mfa setup field
     this.mfaSetupFields = [];
     this.mfaSetupFields.push(codeField);
@@ -89,6 +93,7 @@ export class MfaSetupFormComponent implements OnInit
     field.id        = 'mfaSetup' + FieldIds.VERIF_CODE;
     // field.policies  = this.pwdPolicies;
     field.action    = this.actions.clearCode;
+    field.color     = this.classes.mfaInputsColor;
     field.icon      = null;
     field.disabled  = false;
     return field;

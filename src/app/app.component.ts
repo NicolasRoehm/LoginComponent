@@ -141,6 +141,8 @@ export class AppComponent implements OnInit, OnDestroy
     googleTheme : 'light',
     // NOTE: User policy
     usrPolicy   : 'email', // email / phone / regex
+    // NOTE: Visibility of password policies
+    hidePwdPolicyOnLogin : false,
     // NOTE: CSS
     debugCss : false,
   };
@@ -468,6 +470,7 @@ export class AppComponent implements OnInit, OnDestroy
 
     this.gui.policiesFolder = this.gui.addFolder('Policies');
     this.gui.policiesFolder.add(this.settings, 'usrPolicy').name('Username policy');
+    this.gui.policiesFolder.add(this.settings, 'hidePwdPolicyOnLogin').name('Hide pwd policy (login form)');
     this.gui.policiesFolder.add(this.pwdPolicies.range, 'min').min(0).max(255).step(stepSize).name('Password min length').onChange((v)=>{this.upd('pwdPolicies.range','min',v);});
     this.gui.policiesFolder.add(this.pwdPolicies.range, 'max').min(0).max(255).step(stepSize).name('Password max length').onChange((v)=>{this.upd('pwdPolicies.range','max',v);});
     this.gui.policiesFolder.add(this.pwdPolicies, 'char').name('Password character').onChange((v)=>{this.upd('pwdPolicies','char',v);});

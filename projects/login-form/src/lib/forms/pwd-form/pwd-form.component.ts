@@ -27,6 +27,8 @@ export class PwdFormComponent implements OnInit
   @Input()  errors          : any;
   // Actions
   @Input()  actions         : any;
+  // Classes
+  @Input()  classes         : any;
 
   // First connection or Forgot password
   @Input()  isFirst         : boolean;
@@ -66,6 +68,7 @@ export class PwdFormComponent implements OnInit
     // NOTE: Form properties
     // this.formProperties.layouts = this.layouts;
     this.formProperties.labels  = this.labels;
+    this.formProperties.classes = this.classes;
     // this.formProperties.formId  = this.formId;
   }
 
@@ -83,6 +86,7 @@ export class PwdFormComponent implements OnInit
     let codeField : any = null;
     pwdField  = this.initPasswordField();
     codeField = this.initVerificationCodeField();
+
     // NOTE: Mfa fields
     this.pwdFields = [];
     if(!this.isFirst)
@@ -102,6 +106,7 @@ export class PwdFormComponent implements OnInit
     field.id        = 'new' + FieldIds.PWD;
     field.policies  = this.pwdPolicies;
     field.action    = this.actions.showPwd;
+    field.color     = this.classes.pwdInputsColor;
     field.icon      = null;
     if(this.isFirst) // display pwd policies
       field.showPolicies = true;
@@ -119,6 +124,7 @@ export class PwdFormComponent implements OnInit
     field.id        = 'pwd' + FieldIds.VERIF_CODE;
     // field.policies  = this.pwdPolicies;
     field.action    = this.actions.clearCode;
+    field.color     = this.classes.pwdInputsColor;
     field.icon      = null;
     field.disabled  = false;
     return field;

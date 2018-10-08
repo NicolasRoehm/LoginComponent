@@ -72,6 +72,8 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
   lower  : true,
   upper  : true
 };
+// Remove password field controls on the login form (except required)
+@Input() hidePwdPolicyOnLogin : boolean = false;
 // Dislay icon inside inputs on the login form
 @Input() customIcons : any = {
   iconUsr       : 'person',
@@ -140,6 +142,23 @@ See the example in [src/app/app.component.ts](https://github.com/Caliatys/LoginC
     pwdNumber     : 'Require at least one number (0 to 9)',
     pwdSpecial    : 'Require at least one nonalphanumeric character ! @ # $ % ^ & * ( ) _ + - = [ ] { } | \''
   }
+};
+// Classes
+@Input() customClasses : any = {
+  // Input colors (primary / accent / warn)
+  loginInputsColor : 'primary',
+  pwdInputsColor   : 'primary',
+  mfaInputsColor   : 'primary',
+  // Button classes (Example : mat-raised-button mat-accent)
+  signIn           : null,
+  signUp           : null,
+  forgotPassword   : null,
+  backStep         : null,
+  nextStep         : null,
+  google           : null,
+  facebook         : null,
+  closeTag         : null,
+  closeDialog      : null
 };
 ```
 

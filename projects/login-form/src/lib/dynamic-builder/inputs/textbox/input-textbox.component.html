@@ -1,26 +1,28 @@
 <div class="row no-gutters" [formGroup]="form">
   <div class="col">
     <!-- NOTE: Input text -->
-    <mat-form-field class="w-100">
+    <mat-form-field class="w-100" [color]="field.color">
       <div matPrefix class="mr-2" *ngIf="field.icon">
-        <mat-icon class="align-bottom">{{ field.icon }}</mat-icon>
+        <mat-icon class="align-bottom" [color]="field.color">{{ field.icon }}</mat-icon>
       </div>
-      <input matInput [formControlName]="field.name" [value]="field.value"
+      <input matInput [formControlName]="field.name" [value]="field.value" 
         [id]="field.id" [name]="field.name" [autocomplete]="getOptionAutocomplete(field)" 
         [placeholder]="properties.labels.input[field.name]" 
         [attr.type]="showPassword || field.name !== fieldIds.PWD ? fieldTypes.TEXT : fieldTypes.PASSWORD"/>
       <!-- NOTE: Show/Hide button -->
       <button *ngIf="field.name === fieldIds.PWD && field.action" 
-        mat-button matSuffix mat-icon-button aria-label="Show / Hide" 
-        color="primary" (click)="showPassword=!showPassword" 
+        matSuffix mat-icon-button aria-label="Show / Hide" 
+        (click)="showPassword=!showPassword" 
+        [color]="field.color" 
         [disabled]="field.disabled" 
         type="button">
         <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
       </button>
       <!-- NOTE: Clear button -->
       <button *ngIf="field.name !== fieldIds.PWD && form.controls[field.name].value?.length > 0 && field.action" 
-        mat-button matSuffix mat-icon-button aria-label="Clear" 
-        color="primary" (click)="form.controls[field.name].setValue('')" 
+        matSuffix mat-icon-button aria-label="Clear" 
+        (click)="form.controls[field.name].setValue('')" 
+        [color]="field.color" 
         [disabled]="field.disabled" 
         type="button">
         <mat-icon>close</mat-icon>

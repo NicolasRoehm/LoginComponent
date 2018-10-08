@@ -70,7 +70,7 @@ export class InputTextboxComponent implements OnInit, OnChanges
 
   public initProperties() : void
   {
-    if(this.field.name !== FieldIds.PWD)
+    if(this.field.name !== FieldIds.PWD || !this.field.policies)
       return;
     // Refresh min max label
     let rangeLabel : string = null;
