@@ -1,9 +1,24 @@
 # Login Form Component
-> Angular component providing login and password management using [Angular Material](https://material.angular.io) library.
+Angular component providing login and password management using [Angular Material](https://material.angular.io) library.
 
 <a href="https://nodei.co/npm/@caliatys/login-form/" target="_blank">
   <img src="https://nodei.co/npm/@caliatys/login-form.svg?downloads=true">
 </a>
+
+## Table of contents
+- [Example](#example)
+- [Demo](#demo)
+- [Installation](#installation)
+- [Usage](#usage)
+  * [Inputs](#inputs)
+  * [Outputs](#outputs)
+  * [Functions](#functions)
+- [Dependencies](#dependencies)
+- [Roadmap](#roadmap)
+  * [In progress](#in-progress)
+  * [Planning](#planning)
+  * [Contributions](#contributions)
+- [Development](#development)
 
 ## Example
 Check out the **[StackBlitz demo](https://cal-login-component.stackblitz.io/)**
@@ -13,13 +28,23 @@ Check out the **[StackBlitz demo](https://cal-login-component.stackblitz.io/)**
   <div align=center><img alt="Screenshot" src="src/assets/img/example.png"></div>
 </details>
 
+## Demo
+
+```sh
+git clone https://github.com/Caliatys/LoginComponent
+cd LoginComponent/
+npm install
+ng build login-form --prod
+ng serve
+```
+
 ## Installation
-Install `@caliatys/login-form` in your project:
+Install `@caliatys/login-form` in your project :
 ```sh
 npm install @caliatys/login-form --save
 ```
 
-Import the `LoginFormModule` inside a `login.module.ts`:
+Import the `LoginFormModule` inside a `login.module.ts` :
 ```typescript
 import { LoginFormModule } from '@caliatys/login-form';
 
@@ -32,7 +57,7 @@ export class LoginModule { }
 ```
 
 ## Usage
-Add the `cal-login-form` component inside a `login.component.html`:
+Add the `cal-login-form` component inside a `login.component.html` :
 ```html
 <cal-login-form #loginForm 
   (initialized)="initialized()" 
@@ -223,24 +248,26 @@ LoginFormComponent.getForm() : any
 LoginFormComponent.setForm(obj : any) : void
 ```
 
-**Important Note**: This project uses the following dependencies :
+## Dependencies
+
+**Important Note** : This project uses the following dependencies :
 ```json
-"peerDependencies": {
-  "@angular/common": "^6.0.0-rc.0 || ^6.0.0",
-  "@angular/core": "^6.0.0-rc.0 || ^6.0.0",
-  "@angular/material": "^6.0.0-rc.0 || ^6.0.0",
-  "rxjs": "^6.0.0",
-  "rxjs-compat": "^6.0.0",
-  "bootstrap": "^4.0.0"
+"peerDependencies"     : {
+  "@angular/common"    : "^6.0.0-rc.0 || ^6.0.0",
+  "@angular/core"      : "^6.0.0-rc.0 || ^6.0.0",
+  "@angular/material"  : "^6.0.0-rc.0 || ^6.0.0",
+  "rxjs"               : "^6.0.0",
+  "rxjs-compat"        : "^6.0.0",
+  "bootstrap"          : "^4.0.0"
 },
-"optionalDependencies": {
-  "angularx-qrcode": "^1.1.7"
+"optionalDependencies" : {
+  "angularx-qrcode"    : "^1.1.7"
 }
 ```
 
 ## Roadmap
 
-### In Progress
+### In progress
 - Repeat password (optional)
 - Dynamic display password policies
 
@@ -263,28 +290,3 @@ For example, if we replace Bootstrap 4 classes by hand-made style we can reduce 
 ## Development
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.0.5.
-
-### Development server
-
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
-
-### Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
-### Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
-
-### Library Build / NPM Package
-
-Run `npm run package` to build the library and generate an [NPM](https://www.npmjs.com) package.
-The build artifacts will be stored in the `dist/lib` folder.
-
-### Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-### Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
