@@ -62,7 +62,7 @@ Add the `cal-login-form` component inside a `login.component.html` :
   (loginSocial)="loginSocial($event)" 
   (forgotPwd)="forgotPassword($event)" 
   (sendFirstPwd)="firstPassword($event)" 
-  (sendResetPwd)="lostPassword($event)" 
+  (sendResetPwd)="resetPassword($event)" 
   (saveMfaKey)="saveMfaKey($event)" 
   (sendMfaCode)="sendMfaCode($event)" 
   (stepUsr)="stepUsr($event)" 

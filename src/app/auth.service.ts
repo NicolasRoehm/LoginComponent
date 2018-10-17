@@ -7,6 +7,7 @@ import { from }        from 'rxjs';
 
 // Enums
 import { Credentials } from './credentials.enum';
+import { RespType }    from './resp-type.enum';
 
 @Injectable({
   providedIn : 'root'
@@ -22,21 +23,21 @@ export class AuthService
     {
       switch(response)
       {
+        case 'newPasswordRequired' :
+          resolve({ type : RespType.NEW_PASSWORD_REQUIRED, data : '' });
+          break;
         case 'onSuccess' :
-          resolve({ code : 1 });
+          resolve({ type : RespType.ON_SUCCESS, data : '' });
           break;
         case 'mfaRequired' :
-          resolve({ code : 2 });
-          break;
-
-        case 'newPasswordRequired' :
-          reject({ code : 1 });
-          break;
-        case 'onFailure' :
-          reject({ code : 2 });
+          resolve({ type : RespType.MFA_REQUIRED, data : '' });
           break;
         case 'mfaSetup' :
-          reject({ code : 3 });
+          resolve({ type : RespType.MFA_SETUP_ASSOCIATE_SECRETE_CODE, data : '' });
+          break;
+
+        case 'onFailure' :
+          reject({ type : RespType.ON_FAILURE, data : { message : 'Auth failed' } });
           break;
       }
     }));
@@ -54,20 +55,20 @@ export class AuthService
       switch(response)
       {
         case 'onSuccess' :
-          resolve({ code : 1 });
+          resolve({ type : RespType.ON_SUCCESS, data : '' });
           break;
         case 'inputVerificationCode' :
-          resolve({ code : 2 });
+          resolve({ type : RespType.INPUT_VERIFICATION_CODE, data : '' });
           break;
 
         case 'onFailure' :
-          reject();
+          reject({ type : RespType.ON_FAILURE, data : { message : 'ForgotPassword failed' } });
           break;
       }
     }));
   }
 
-  public fakeChangePassword(newPassword : string, response? : string) : Observable<any>
+  public fakeNewPasswordRequired(newPassword : string, response? : string) : Observable<any>
   {
     if(!response)
       response = 'onSuccess';
@@ -77,14 +78,14 @@ export class AuthService
       switch(response)
       {
         case 'onSuccess' :
-          resolve({ code : 1 });
+          resolve({ type : RespType.ON_SUCCESS, data : '' });
           break;
         case 'mfaRequired' :
-          resolve({ code : 2 });
+          resolve({ type : RespType.MFA_REQUIRED, data : '' });
           break;
 
         case 'onFailure' :
-          reject();
+          reject({ type : RespType.ON_FAILURE, data : { message : 'NewPasswordRequired failed' } });
           break;
       }
     }));
@@ -100,11 +101,11 @@ export class AuthService
       switch(response)
       {
         case 'onSuccess' :
-          resolve();
+          resolve({ type : RespType.ON_SUCCESS, data : '' });
           break;
 
         case 'onFailure' :
-          reject();
+          reject({ type : RespType.ON_FAILURE, data : { message : 'ConfirmPassword failed' } });
           break;
       }
     }));
