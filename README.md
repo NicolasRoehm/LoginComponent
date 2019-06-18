@@ -41,7 +41,7 @@ ng serve
 ## Installation
 Install `@caliatys/login-form` in your project :
 ```sh
-npm install @caliatys/login-form@2.1.5 --save
+npm install @caliatys/login-form@2.1.6 --save
 ```
 
 Import the `LoginFormModule` inside a `login.module.ts` :
