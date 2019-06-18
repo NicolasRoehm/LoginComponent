@@ -4,7 +4,7 @@ import { ViewChild }          from '@angular/core';
 import { OnInit }             from '@angular/core';
 import { OnDestroy }          from '@angular/core';
 import { ChangeDetectorRef }  from '@angular/core';
-import { MatSnackBar }        from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 // External modules
 declare var CssDebug : any;
@@ -31,7 +31,7 @@ export class AppComponent implements OnInit, OnDestroy
 {
   public loginForm : LoginFormComponent;
   public reset : any[] = [{}];
-  @ViewChild('loginForm') set content(content : LoginFormComponent)
+  @ViewChild('loginForm', { static: false }) set content(content : LoginFormComponent)
   {
     this.loginForm = content;
     this.changeDemo();

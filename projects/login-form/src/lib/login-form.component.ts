@@ -9,8 +9,8 @@ import { Input }           from '@angular/core';
 import { Output }          from '@angular/core';
 import { Component }       from '@angular/core';
 import { EventEmitter }    from '@angular/core';
-import { MatDialog }       from '@angular/material';
-import { MatIconRegistry } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
+import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer }    from '@angular/platform-browser';
 
 // External modules
@@ -111,15 +111,15 @@ export class LoginFormComponent implements OnInit, OnChanges, AfterViewInit, OnD
   public    formId         : string  = null;
   public    formProperties : any     = {};
 
-  @ViewChild('defaultLoginForm') defaultLoginForm : DynamicBuilderComponent;
+  @ViewChild('defaultLoginForm', { static: false }) defaultLoginForm : DynamicBuilderComponent;
   public    loginParams    : any     = {};
   public    loginFields    : any[]   = [];
 
-  @ViewChild('usrForm')   usrForm   : DynamicBuilderComponent;
+  @ViewChild('usrForm', { static: false })   usrForm   : DynamicBuilderComponent;
   public    usrParams      : any     = {};
   public    usrFields      : any[]   = [];
 
-  @ViewChild('pwdForm')   pwdForm   : DynamicBuilderComponent;
+  @ViewChild('pwdForm', { static: false })   pwdForm   : DynamicBuilderComponent;
   public    pwdParams      : any     = {};
   public    pwdFields      : any[]   = [];
 

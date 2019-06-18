@@ -21,7 +21,7 @@ import { TranslateHttpLoader }      from '@ngx-translate/http-loader';
 // import { MatSelectModule }          from '@angular/material';
 // import { MatSlideToggleModule }     from '@angular/material';
 // import { MatMenuModule }            from '@angular/material';
- import { MatSidenavModule }         from '@angular/material';
+ import { MatSidenavModule } from '@angular/material/sidenav';
 // import { MatToolbarModule }         from '@angular/material';
 // import { MatGridListModule }        from '@angular/material';
 // import { MatTooltipModule }         from '@angular/material';
@@ -37,7 +37,7 @@ import { TranslateHttpLoader }      from '@ngx-translate/http-loader';
 // import { MatStepperModule }         from '@angular/material';
 // import { MatPaginatorModule }       from '@angular/material';
 // import { MatDialogModule }          from '@angular/material';
-import { MatSnackBarModule }        from '@angular/material';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 // import { MatExpansionModule }       from '@angular/material';
 
 // Components
