@@ -4,8 +4,8 @@ import { OnInit }          from '@angular/core';
 import { OnDestroy }       from '@angular/core';
 import { Inject }          from '@angular/core';
 import { EventEmitter }    from '@angular/core';
-import { MatDialogRef }    from '@angular/material';
-import { MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // External modules
 import { Subscription }    from 'rxjs';
