@@ -1,8 +1,8 @@
 # Login Form Component
-Angular component providing login and password management using [Angular Material](https://material.angular.io) library.
+Angular component providing login and password management using [Angular Material 6](https://v6.material.angular.io/) library.
 
-<a href="https://nodei.co/npm/@caliatys/login-form/" target="_blank">
-  <img src="https://nodei.co/npm/@caliatys/login-form.svg?downloads=true">
+<a href="https://www.npmjs.com/package/@caliatys/login-form" target="_blank">
+  <img alt="npm version" src="https://img.shields.io/npm/v/@caliatys/login-form.svg?style=flat-square"/>
 </a>
 
 ## Table of contents
@@ -41,7 +41,7 @@ ng serve
 ## Installation
 Install `@caliatys/login-form` in your project :
 ```sh
-npm install @caliatys/login-form --save
+npm install @caliatys/login-form@2.1.5 --save
 ```
 
 Import the `LoginFormModule` inside a `login.module.ts` :
