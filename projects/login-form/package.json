@@ -1,11 +1,11 @@
 {
-  "name": "@caliatys/login-form",
-  "description": "JavaScript library that provides a login component for Angular",
-  "version": "2.1.5",
-  "author": "Nicolas Roehm <nicolas.roehm@gmail.com>",
-  "license": "MIT",
-  "private": false,
-  "keywords": [
+  "name"        : "@caliatys/login-form",
+  "description" : "JavaScript library that provides a login component for Angular",
+  "version"     : "2.1.5",
+  "author"      : "Nicolas Roehm <nicolas.roehm@gmail.com>",
+  "license"     : "MIT",
+  "private"     : false,
+  "keywords"    : [
     "login",
     "form",
     "component",
@@ -14,15 +14,14 @@
     "typescript",
     "javascript"
   ],
-  "peerDependencies": {
-    "@angular/common": "^6.0.0-rc.0 || ^6.0.0",
-    "@angular/core": "^6.0.0-rc.0 || ^6.0.0",
-    "@angular/material": "^6.0.0-rc.0 || ^6.0.0",
-    "rxjs": "^6.0.0",
-    "rxjs-compat": "^6.0.0",
-    "bootstrap": "^4.0.0"
+  "peerDependencies"     : {
+    "@angular/common"    : "^7.0.0",
+    "@angular/core"      : "^7.0.0",
+    "@angular/material"  : "^7.0.0",
+    "rxjs"               : "^6.0.0",
+    "bootstrap"          : "^4.0.0"
   },
-  "optionalDependencies": {
-    "angularx-qrcode": "^1.1.7"
+  "optionalDependencies" : {
+    "angularx-qrcode"    : "^1.1.7"
   }
 }

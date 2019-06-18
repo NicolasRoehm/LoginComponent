@@ -1,5 +1,5 @@
 # Login Form Component
-Angular component providing login and password management using [Angular Material 6](https://v6.material.angular.io/) library.
+Angular component providing login and password management using [Angular Material 7](https://v7.material.angular.io/) library.
 
 <a href="https://www.npmjs.com/package/@caliatys/login-form" target="_blank">
   <img alt="npm version" src="https://img.shields.io/npm/v/@caliatys/login-form.svg?style=flat-square"/>
